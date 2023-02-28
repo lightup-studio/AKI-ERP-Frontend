@@ -1,0 +1,72 @@
+{
+  "name": "aki-erp",
+  "$schema": "node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "./src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/aki-erp"
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/vite:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "aki-erp:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "aki-erp:build:development",
+          "hmr": true
+        },
+        "production": {
+          "buildTarget": "aki-erp:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "preview": {
+      "executor": "@nrwl/vite:preview-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "aki-erp:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "aki-erp:build:development"
+        },
+        "production": {
+          "buildTarget": "aki-erp:build:production"
+        }
+      }
+    },
+    "test": {
+      "executor": "@nrwl/vite:test",
+      "outputs": ["coverage/aki-erp"],
+      "options": {
+        "passWithNoTests": true,
+        "reportsDirectory": "coverage/aki-erp"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["./src/**/*.{ts,tsx,js,jsx}"]
+      }
+    }
+  },
+  "tags": []
+}
