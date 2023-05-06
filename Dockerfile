@@ -20,8 +20,8 @@ RUN yarn build
 
 FROM nginx:stable-alpine as final
 
-COPY --from=builder ./nginx/nginx.conf /etc/nginx/nginx.config
+COPY --from=builder ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY --from=builder ./dist/aki-erp /app
+COPY --from=builder /app/dist/aki-erp /app
 
 EXPOSE 80
