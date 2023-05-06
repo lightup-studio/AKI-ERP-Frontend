@@ -1,0 +1,20 @@
+name: Build Docker Image
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build_image:
+    name: Build Image Then Push To GHCR
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2    
+    - name: Build
+      run: docker build -t ghcr.io/lightup-studio/aki-erp:${{ github.event.release.tag_name }} -t ghcr.io/lightup-studio/aki-erp:latest -f ./Dockerfile ./
+    - name: Login ghcr
+      run: echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ secrets.GHCR_USER }} --password-stdin
+    - name: Push Image(version)
+      run: docker push ghcr.io/lightup-studio/aki-erp:${{ github.event.release.tag_name }}
+    - name: Push Image(latest)
+      run: docker push ghcr.io/lightup-studio/aki-erp:latest

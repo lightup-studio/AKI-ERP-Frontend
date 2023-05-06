@@ -1,0 +1,27 @@
+FROM --platform=linux/arm64 node:latest as builder
+
+WORKDIR /app
+
+# COPY Project files into the container
+COPY . .
+
+# Remove node_modules and lock file
+RUN rm -f -r ./node_modules
+RUN rm -f ./package-lock.json
+RUN rm -f ./yarn.lock
+
+# Install dependencies
+RUN yarn install
+
+# Build the project
+RUN yarn run build
+
+# =====
+
+FROM nginx:stable-alpine as final
+
+COPY --from=builder ./build/nginx.conf /etc/nginx/nginx.config
+
+COPY --from=builder ./dist/aki-erp /app
+
+EXPOSE 80
