@@ -20,7 +20,7 @@ RUN yarn build
 
 FROM nginx:stable-alpine as final
 
-COPY --from=builder ./build/nginx.conf /etc/nginx/nginx.config
+COPY --from=builder ./nginx/nginx.conf /etc/nginx/nginx.config
 
 COPY --from=builder ./dist/aki-erp /app
 
