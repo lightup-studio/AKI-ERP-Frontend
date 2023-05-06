@@ -14,7 +14,7 @@ RUN rm -f ./yarn.lock
 RUN yarn install
 
 # Build the project
-RUN yarn run build
+RUN yarn build
 
 # =====
 
