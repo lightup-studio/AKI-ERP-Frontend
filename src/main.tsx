@@ -25,7 +25,7 @@ const rootApp = (
   </Suspense>
 );
 
-if (import.meta.env.MODE === 'development') {
+// if (import.meta.env.MODE === 'development') {
   import('../mocks/browser')
     .then(({ worker }) => {
       worker.start({
@@ -35,6 +35,6 @@ if (import.meta.env.MODE === 'development') {
     .then(() => {
       root.render(rootApp);
     });
-} else {
-  root.render(rootApp);
-}
+// } else {
+  // root.render(rootApp);
+// }
