@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import classnames from 'classnames';
 import { fetchData, fetchSelectOptions } from 'data-access/apis/artworks.api';
 import { Artwork } from 'data-access/models';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 import { XMarkIcon } from '@heroicons/react/20/solid';
 import { useQuery } from '@tanstack/react-query';
@@ -16,11 +16,13 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 
-import { IndeterminateCheckbox } from './components/IndeterminateCheckbox';
+import IndeterminateCheckbox from './components/IndeterminateCheckbox';
 import MyCombobox, { Option as ComboboxOption } from './components/MyCombobox';
 import SearchInput from './components/SearchInput';
 import { DOTS, usePagination } from './hooks/usePagination';
 import { removeSingleValueForSearchParams } from './utils';
+import { setPageTitle } from 'features/common/headerSlice';
+import { useDispatch } from 'react-redux';
 
 type SelectItem = {
   key: string;
@@ -46,49 +48,30 @@ const SELECT_ITEMS = [
 ];
 
 function ArtworksList() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setPageTitle({ title: '藝術作品 > 庫存' }));
+  }, [dispatch]);
+
   const [searchParams, setSearchParams] = useSearchParams();
+  const [keyword, setKeyword] = useState<string | undefined>();
 
-  const [rowSelection, setRowSelection] = React.useState<
-    Record<Artwork['id'], Artwork>
-  >({});
-
-  const handleAllRowSelectionChange = (rows: Row<Artwork>[]) => {
-    const selectedRows = rows.filter((row) => row.original.id in rowSelection);
-    const isAnyRowSelected = selectedRows.length > 0;
-
-    if (isAnyRowSelected) {
-      selectedRows.forEach((row) => delete rowSelection[row.original.id]);
-    } else {
-      selectedRows.forEach(
-        (row) => (rowSelection[row.original.id] = row.original)
-      );
-    }
-
-    setRowSelection(structuredClone(rowSelection));
-  };
-
-  const handleRowSelectionChange = (row: Row<Artwork>) => {
-    const { id } = row.original;
-
-    if (id in rowSelection) {
-      delete rowSelection[id];
-    } else {
-      rowSelection[id] = row.original;
-    }
-
-    setRowSelection(structuredClone(rowSelection));
-  };
-
-  const [{ pageIndex, pageSize }, setPagination] =
-    React.useState<PaginationState>({
-      pageIndex: 0,
-      pageSize: 10,
+  useEffect(() => {
+    setSearchParams((searchParams) => {
+      keyword
+        ? searchParams.set('keyword', keyword)
+        : searchParams.delete('keyword');
+      return searchParams;
     });
+  }, [keyword, setSearchParams]);
 
-  const fetchDataOptions = {
-    pageIndex,
-    pageSize,
-  };
+  const handleSearch = useCallback(
+    (keyword?: string) => {
+      setKeyword(keyword);
+    },
+    [setKeyword]
+  );
 
   const selectOptionsQuery = useQuery({
     queryKey: ['selectOptions'],
@@ -134,6 +117,19 @@ function ArtworksList() {
       return obj;
     }, {});
 
+    setSelectItems((selectItems) => {
+      selectItems?.forEach((selectItem) => {
+        const selectedOptionValues = selectedOptionMapByKey[
+          selectItem.key
+        ]?.map((option) => option.value);
+
+        selectItem.options = selectOptionsQuery.data[selectItem.key].filter(
+          (option) => !selectedOptionValues?.includes(option.value)
+        );
+      });
+      return [...(selectItems || [])];
+    });
+
     setSelectedOptions(
       SELECT_ITEMS?.filter(
         (item) => item.key in selectedOptionMapByKey
@@ -150,22 +146,6 @@ function ArtworksList() {
         }
         return searchParams;
       });
-
-      // setSelectItems((selectItems) => {
-      //   const options =
-      //     selectItems?.find((item) => item.key === selectItemKey)?.options ||
-      //     [];
-
-      //   const index = options.findIndex(
-      //     (option) => option.value === selectedOptionValue
-      //   );
-
-      //   if (index > -1) {
-      //     options.splice(index, 1);
-      //   }
-
-      //   return [...(selectItems || [])];
-      // });
     },
     [setSearchParams]
   );
@@ -187,19 +167,64 @@ function ArtworksList() {
     [setSearchParams]
   );
 
+  const [{ pageIndex, pageSize }, setPagination] =
+    React.useState<PaginationState>({
+      pageIndex: 0,
+      pageSize: 10,
+    });
+  const pagination = useMemo(
+    () => ({ pageIndex, pageSize }),
+    [pageIndex, pageSize]
+  );
+
+  useEffect(() => {
+    setSearchParams((searchParams) => {
+      pageIndex > 0
+        ? searchParams.set('pageIndex', `${pageIndex}`)
+        : searchParams.delete('pageIndex');
+      pageSize > 10
+        ? searchParams.set('pageSize', `${pageSize}`)
+        : searchParams.delete('pageSize');
+      return searchParams;
+    });
+  }, [pageIndex, pageSize, setSearchParams]);
+
   const dataQuery = useQuery(
-    ['data', fetchDataOptions],
-    () => fetchData(fetchDataOptions),
+    ['data', keyword, selectItems, pagination],
+    () => fetchData(searchParams),
     { keepPreviousData: true }
   );
 
-  const pagination = React.useMemo(
-    () => ({
-      pageIndex,
-      pageSize,
-    }),
-    [pageIndex, pageSize]
-  );
+  const [rowSelection, setRowSelection] = React.useState<
+    Record<Artwork['id'], Artwork>
+  >({});
+
+  const handleAllRowSelectionChange = (rows: Row<Artwork>[]) => {
+    const selectedRows = rows.filter((row) => row.original.id in rowSelection);
+    const isAnyRowSelected = selectedRows.length > 0;
+
+    if (isAnyRowSelected) {
+      selectedRows.forEach((row) => delete rowSelection[row.original.id]);
+    } else {
+      selectedRows.forEach(
+        (row) => (rowSelection[row.original.id] = row.original)
+      );
+    }
+
+    setRowSelection(structuredClone(rowSelection));
+  };
+
+  const handleRowSelectionChange = (row: Row<Artwork>) => {
+    const { id } = row.original;
+
+    if (id in rowSelection) {
+      delete rowSelection[id];
+    } else {
+      rowSelection[id] = row.original;
+    }
+
+    setRowSelection(structuredClone(rowSelection));
+  };
 
   const columns: ColumnDef<Artwork, any>[] = [
     {
@@ -230,6 +255,17 @@ function ArtworksList() {
     {
       header: 'ID',
       accessorKey: 'id',
+      cell: ({ cell }) => (
+        <Link
+          className="text-info"
+          to={
+            cell.getValue() +
+            (searchParams.toString() && '?' + searchParams.toString())
+          }
+        >
+          {cell.getValue()}
+        </Link>
+      ),
     },
     {
       header: 'Artist',
@@ -295,7 +331,7 @@ function ArtworksList() {
   return (
     <div className="card w-full p-6 bg-base-100 shadow-xl mt-2">
       <div className="md:w-1/2 mb-3">
-        <SearchInput />
+        <SearchInput onSearch={handleSearch} />
       </div>
 
       <div className="flex gap-2 flex-col md:flex-row">
@@ -471,20 +507,6 @@ function ArtworksList() {
           >
             {'>>'}
           </button>
-
-          {/* <select
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => {
-              table.setPageSize(Number(e.target.value));
-            }}
-          >
-            {[10, 20, 30, 40, 50].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
-              </option>
-            ))}
-          </select>
-          {dataQuery.isFetching ? 'Loading...' : null} */}
         </div>
       </div>
     </div>

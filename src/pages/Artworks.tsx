@@ -16,14 +16,13 @@ function ArtworksRoutes() {
       element: <ArtworksDetail />,
     },
     {
-      path: ':artworksId/detail',
+      path: ':artworksId',
       element: <ArtworksDetail />,
     },
   ]);
 }
 
 function Artworks() {
-  console.log('xxx');
   return (
     <Suspense fallback={<SuspenseContent />}>
       <ArtworksRoutes />

@@ -1,6 +1,10 @@
 import { lazy } from 'react';
 
-import { RouteObject } from 'react-router-dom';
+import {
+  Navigate,
+  RouteObject,
+} from 'react-router-dom';
+import checkAuth from 'src/app/auth';
 
 const Artworks = lazy(() => import('../pages/Artworks'));
 const Dashboard = lazy(() => import('../pages/protected/Dashboard'));
@@ -15,9 +19,11 @@ const GettingStarted = lazy(() => import('../pages/GettingStarted'));
 const DocFeatures = lazy(() => import('../pages/DocFeatures'));
 const DocComponents = lazy(() => import('../pages/DocComponents'));
 
+const token = checkAuth();
+
 const routes: RouteObject[] = [
   {
-    path: '/artworks/*',
+    path: '/inventory-artworks/*',
     async loader() {
       const res = await new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -66,7 +72,7 @@ const routes: RouteObject[] = [
   },
   {
     path: '*',
-    element: <Page404 />,
+    element: <Navigate to={token ? '/app/inventory-artworks' : '/login'} replace />,
   },
 ];
 

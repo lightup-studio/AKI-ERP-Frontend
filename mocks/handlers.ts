@@ -60,8 +60,8 @@ export const handlers = [
         ],
         stockStatus: [
           { label: '在庫', value: 'in_stock' },
-          { label: '借展', value: 'lend_out' },
           { label: '維修', value: 'repair' },
+          { label: '借展', value: 'lend_out' },
           { label: '手填內容', value: 'other' },
         ],
         stockLocations: [
@@ -113,7 +113,7 @@ export const handlers = [
     const pageSize = +(req.url.searchParams.get('pageSize') || 10);
     const rows = Array.from(new Array(1000).keys()).flatMap((i) => [
       {
-        id: i + '.20230205-2',
+        id: i + '-20230205-2',
         artist: 'Yayoi Kusama',
         image: 'https://picsum.photos/id/1/200/300',
         medium: 'Acrylic on canvas',
@@ -125,7 +125,7 @@ export const handlers = [
         assetCategory: 'B',
       },
       {
-        id: i + '.20230205-3',
+        id: i + '-20230205-3',
         artist: 'Ai Weiwei',
         image: 'https://picsum.photos/id/2/200/300',
         medium: 'Marble',
@@ -137,7 +137,7 @@ export const handlers = [
         assetCategory: 'A',
       },
       {
-        id: i + '.20230205-4',
+        id: i + '-20230205-4',
         artist: 'Banksy',
         image: 'https://picsum.photos/id/4/200/300',
         medium: 'Screen print',
@@ -149,7 +149,7 @@ export const handlers = [
         assetCategory: 'C',
       },
       {
-        id: i + '.20230205-5',
+        id: i + '-20230205-5',
         artist: 'David Hockney',
         image: 'https://picsum.photos/id/5/200/300',
         medium: 'iPad drawing printed on paper',
@@ -161,7 +161,7 @@ export const handlers = [
         assetCategory: 'B',
       },
       {
-        id: i + '.20230205-6',
+        id: i + '-20230205-6',
         artist: 'Tracey Emin',
         image: 'https://picsum.photos/id/6/200/300',
         medium: 'Neon',
@@ -173,7 +173,7 @@ export const handlers = [
         assetCategory: 'B',
       },
       {
-        id: i + '.20230205-7',
+        id: i + '-20230205-7',
         artist: 'Gerhard Richter',
         image: 'https://picsum.photos/id/7/200/300',
         medium: 'Oil on canvas',
@@ -185,7 +185,7 @@ export const handlers = [
         assetCategory: 'A',
       },
       {
-        id: i + '.20230205-8',
+        id: i + '-20230205-8',
         artist: 'Takashi Murakami',
         image: 'https://picsum.photos/id/8/200/300',
         medium: 'Acrylic on canvas',

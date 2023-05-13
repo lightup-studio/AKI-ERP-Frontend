@@ -9,18 +9,9 @@ export async function fetchSelectOptions() {
   return res.data.data;
 }
 
-export async function fetchData(option: {
-  pageIndex: number;
-  pageSize: number;
-}) {
+export async function fetchData(searchParams: URLSearchParams) {
   const res = await axios.get<ApiResponse<Pagination<Artwork>>>(
-    '/api/artworks',
-    {
-      params: {
-        pageIndex: option.pageIndex,
-        pageSize: option.pageSize,
-      },
-    }
+    `/api/artworks?${searchParams}`
   );
   return res.data.data;
 }

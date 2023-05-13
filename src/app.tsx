@@ -40,7 +40,7 @@ const router = createBrowserRouter([
   },
   {
     path: '*',
-    element: <Navigate to={token ? '/app/welcome' : '/login'} replace />,
+    element: <Navigate to={token ? '/app/artworks' : '/login'} replace />,
   },
 ]);
 

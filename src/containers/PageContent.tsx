@@ -3,7 +3,7 @@ import { Suspense, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useRoutes } from 'react-router-dom';
 
-import routes from '../routes/test';
+import routes from '../routes';
 import Header from './Header';
 import SuspenseContent from './SuspenseContent';
 
