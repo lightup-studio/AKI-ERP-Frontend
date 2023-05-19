@@ -39,7 +39,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Update nginx.conf
       run: |
-        sed -i 's/\$VERSION$/${{ github.event.release.tag_name }}/g' ./nginx/nginx-s3.conf
+        sed -i 's/\$VERSION/${{ github.event.release.tag_name }}/g' ./nginx/nginx-s3.conf
     - name: Copy nginx.confg via ssh
       uses: appleboy/scp-action@v0.1.4
       with:
@@ -47,7 +47,8 @@ jobs:
         username: root
         key: ${{ secrets.SERVER_SSH_KEY }}
         source: ./nginx/nginx-s3.conf
-        target: ~/aki_erp_nginx/
+        target: ~/aki_erp_config/
+        overwrite: true
     - name: Restart nginx container 
       uses: appleboy/ssh-action@master
       with:
@@ -57,4 +58,4 @@ jobs:
         script: |
           docker stop aki-erp 2> /dev/null
           docker rm aki-erp 2> /dev/null
-          docker run -d --name aki-erp -v ~/aki_erp_nginx/nginx-s3.conf:/etc/nginx/conf.d/default.conf -p 18888:80 nginx
+          docker run -d --name aki-erp -v ~/aki_erp_config/nginx/nginx-s3.conf:/etc/nginx/conf.d/default.conf -p 18888:80 nginx:stable-alpine
