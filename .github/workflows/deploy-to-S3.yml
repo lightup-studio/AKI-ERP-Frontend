@@ -1,0 +1,32 @@
+name: Deploy to S3
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Build application then push to S3
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2    
+    - name: Set Node.js 16.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+    - name: Run install
+      uses: borales/actions-yarn@v4
+      with:
+        cmd: install # will run `yarn install` command
+    - name: Run build
+      uses: borales/actions-yarn@v4
+      with:
+        cmd: build # will run `yarn build` command   
+    - uses: shallwefootball/s3-upload-action@master
+      with:
+        aws_key_id: ${{ secrets.S3_ACCESS_KEY }}
+        aws_secret_access_key: ${{ secrets.S3_SECRET_KEY }}
+        aws_bucket: ${{ env.S3_BUCKET }}
+        source_dir: 'dist'
+        destination_dir: ${{ env.S3_KEY_PREFIX }}/${{ github.event.release.tag_name }}
+        endpoint: ${{ env.S3_ENDPOINT }}
