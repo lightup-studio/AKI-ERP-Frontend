@@ -26,7 +26,7 @@ jobs:
       with:
         aws_key_id: ${{ secrets.S3_ACCESS_KEY }}
         aws_secret_access_key: ${{ secrets.S3_SECRET_KEY }}
-        aws_bucket: ${{ env.S3_BUCKET }}
+        aws_bucket: ${{ vars.S3_BUCKET }}
         source_dir: 'dist'
-        destination_dir: ${{ env.S3_KEY_PREFIX }}/${{ github.event.release.tag_name }}
-        endpoint: ${{ env.S3_ENDPOINT }}
+        destination_dir: ${{ vars.S3_KEY_PREFIX }}/${{ github.event.release.tag_name }}
+        endpoint: ${{ vars.S3_ENDPOINT }}
