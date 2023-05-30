@@ -1,5 +1,10 @@
 import React, { useEffect } from 'react';
 
+import {
+  fetchArtworkDetail,
+  updateArtworkDetail,
+} from 'data-access/apis/artworks.api';
+import { ArtworkDetail } from 'data-access/models';
 import { setPageTitle } from 'features/common/headerSlice';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -9,6 +14,9 @@ import * as yup from 'yup';
 import PlusIcon from '@heroicons/react/24/outline/PlusIcon';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useMutation, useQuery } from '@tanstack/react-query';
+
+import ArtworksTitle, { ArtworksTitleProps } from './components/ArtworksTitle';
 
 const schema = yup.object().shape({
   image: yup.string(),
@@ -59,58 +67,55 @@ const schema = yup.object().shape({
   }),
 });
 
-function ArtworksDetail() {
+type ArtworksDetailProps = ArtworksTitleProps;
+
+function ArtworksDetail({ type }: ArtworksDetailProps) {
   const params = useParams();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setPageTitle({ title: `藝術作品 > 庫存 > ${params.artworksId}` }));
-  }, [dispatch, params.artworksId]);
+    dispatch(
+      setPageTitle({
+        title: <ArtworksTitle type={type} />,
+      })
+    );
+  }, [dispatch, params.artworksId, type]);
+
+  const { data, isLoading } = useQuery(
+    ['data', params.artworksId],
+    () => fetchArtworkDetail(params.artworksId || ''),
+    {
+      enabled: !!params.artworksId, // only run the query if the id exists
+    }
+  );
+
+  const mutation = useMutation({
+    mutationFn: (data: ArtworkDetail) =>
+      updateArtworkDetail(params.artworksId || '', data),
+    onSuccess: (data) => {
+      console.log(data);
+      console.log("%c Line:97 🍐", "color:#2eafb0");
+    },
+  });
 
   const {
     control,
+    reset,
     register,
+    trigger,
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm({
+  } = useForm<ArtworkDetail>({
     resolver: yupResolver(schema),
-    defaultValues: {
-      image: '',
-      artistNames: [{ chineseName: '', englishName: '' }],
-
-      assetCategory: '',
-      type: '',
-      agentGalleries: [{ name: '' }],
-      nationality: '',
-
-      name: '',
-      length: '',
-      width: '',
-      height: '',
-      customSize: '',
-      serialNumber: '',
-      media: '',
-      year: '',
-      edition: '',
-
-      otherInfo: {
-        frame: false,
-        frameDimensions: '',
-        pedestal: false,
-        pedestalDimensions: '',
-        cardboardBox: false,
-        woodenBox: false,
-      },
-
-      stockLocationId: '',
-      stockStatus: {
-        id: '',
-        unitText: '',
-        remark: '',
-      },
-    },
   });
+
+  React.useEffect(() => {
+    if (data) {
+      reset(data);
+      trigger();
+    }
+  }, [data, reset, trigger]);
 
   const {
     fields: artworkNameFields,
@@ -130,9 +135,14 @@ function ArtworksDetail() {
     name: 'agentGalleries',
   });
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const onSubmit = async (data: ArtworkDetail) => {
+    await mutation.mutateAsync(data);
   };
+
+
+  if (isLoading) {
+    return <>loading...</>;
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -508,6 +518,10 @@ function ArtworksDetail() {
                 </div>
               </div>
             </div>
+          </div>
+          <div className="bg-base-100 p-4 md:col-span-2 flex gap-2 justify-end">
+            <button className="btn btn-outline btn-secondary">取消</button>
+            <button className="btn btn-outline btn-primary">儲存</button>
           </div>
         </div>
       </div>

@@ -1,9 +1,9 @@
 import React, { Suspense } from 'react';
 
+import SuspenseContent from 'containers/SuspenseContent';
 import ArtworksDetail from 'features/artworks/ArtworksDetail';
 import ArtworksList from 'features/artworks/ArtworksList';
 import { useRoutes } from 'react-router-dom';
-import SuspenseContent from 'src/containers/SuspenseContent';
 
 function ArtworksRoutes() {
   return useRoutes([

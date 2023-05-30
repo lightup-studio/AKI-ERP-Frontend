@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import classnames from 'classnames';
-import { fetchData, fetchSelectOptions } from 'data-access/apis/artworks.api';
+import { fetchArtworkList, fetchSelectOptions } from 'data-access/apis/artworks.api';
 import { Artwork } from 'data-access/models';
+import { setPageTitle } from 'features/common/headerSlice';
+import { useDispatch } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
 
 import { XMarkIcon } from '@heroicons/react/20/solid';
@@ -16,13 +18,12 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 
+import ArtworksTitle, { ArtworksTitleProps } from './components/ArtworksTitle';
 import IndeterminateCheckbox from './components/IndeterminateCheckbox';
 import MyCombobox, { Option as ComboboxOption } from './components/MyCombobox';
 import SearchInput from './components/SearchInput';
 import { DOTS, usePagination } from './hooks/usePagination';
 import { removeSingleValueForSearchParams } from './utils';
-import { setPageTitle } from 'features/common/headerSlice';
-import { useDispatch } from 'react-redux';
 
 type SelectItem = {
   key: string;
@@ -47,12 +48,14 @@ const SELECT_ITEMS = [
   { key: 'otherInfos', placeholder: '其他資訊' },
 ];
 
-function ArtworksList() {
+type ArtworksListProps = ArtworksTitleProps;
+
+function ArtworksList({ type }: ArtworksListProps) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setPageTitle({ title: '藝術作品 > 庫存' }));
-  }, [dispatch]);
+    dispatch(setPageTitle({ title: <ArtworksTitle type={type} /> }));
+  }, [dispatch, type]);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [keyword, setKeyword] = useState<string | undefined>();
@@ -191,7 +194,7 @@ function ArtworksList() {
 
   const dataQuery = useQuery(
     ['data', keyword, selectItems, pagination],
-    () => fetchData(searchParams),
+    () => fetchArtworkList(searchParams),
     { keepPreviousData: true }
   );
 

@@ -21,6 +21,7 @@
     "strict": true,
     "types": ["vite/client", "vitest"],
     "paths": {
+      "containers/*": ["src/containers/*"],
       "components/*": ["src/components/*"],
       "data-access/*": ["src/data-access/*"],
       "features/*": ["src/features/*"],

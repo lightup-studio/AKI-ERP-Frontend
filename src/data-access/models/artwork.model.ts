@@ -23,3 +23,48 @@ export interface Artwork {
   /** 資產類別 */
   assetCategory: string;
 }
+
+export interface ArtworkDetail {
+  image: string;
+  artistNames: ArtistName[];
+  assetCategory: string;
+  type: string;
+  agentGalleries: AgentGallery[];
+  nationality: string;
+  name: string;
+  length: string;
+  width: string;
+  height: string;
+  customSize: string;
+  serialNumber: string;
+  media: string;
+  year: string;
+  edition: string;
+  otherInfo: OtherInfo;
+  stockLocationId: string;
+  stockStatus: StockStatus;
+}
+
+interface StockStatus {
+  id: string;
+  unitText: string;
+  remark: string;
+}
+
+interface OtherInfo {
+  frame: boolean;
+  frameDimensions: string;
+  pedestal: boolean;
+  pedestalDimensions: string;
+  cardboardBox: boolean;
+  woodenBox: boolean;
+}
+
+interface AgentGallery {
+  name: string;
+}
+
+interface ArtistName {
+  chineseName: string;
+  englishName: string;
+}

@@ -1,12 +1,13 @@
 import { lazy } from 'react';
 
-import {
-  Navigate,
-  RouteObject,
-} from 'react-router-dom';
+import { Navigate, RouteObject } from 'react-router-dom';
 import checkAuth from 'src/app/auth';
 
-const Artworks = lazy(() => import('../pages/Artworks'));
+const InventoryArtworks = lazy(
+  () => import('../pages/artworks/InventoryArtworks')
+);
+const Artworks = lazy(() => import('../pages/artworks/Artworks'));
+const DraftArtworks = lazy(() => import('../pages/artworks/DraftArtworks'));
 const Dashboard = lazy(() => import('../pages/protected/Dashboard'));
 const Welcome = lazy(() => import('../pages/protected/Welcome'));
 const Page404 = lazy(() => import('../pages/protected/404'));
@@ -24,15 +25,15 @@ const token = checkAuth();
 const routes: RouteObject[] = [
   {
     path: '/inventory-artworks/*',
-    async loader() {
-      const res = await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve({ status: 'success' });
-        }, 3000);
-      });
-      return res;
-    },
+    element: <InventoryArtworks />,
+  },
+  {
+    path: '/artworks/*',
     element: <Artworks />,
+  },
+  {
+    path: '/draft-artworks/*',
+    element: <DraftArtworks />,
   },
   {
     path: '/dashboard', // the url
@@ -72,7 +73,9 @@ const routes: RouteObject[] = [
   },
   {
     path: '*',
-    element: <Navigate to={token ? '/app/inventory-artworks' : '/login'} replace />,
+    element: (
+      <Navigate to={token ? '/app/inventory-artworks' : '/login'} replace />
+    ),
   },
 ];
 
