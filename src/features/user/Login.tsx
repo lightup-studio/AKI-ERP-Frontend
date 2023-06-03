@@ -4,8 +4,6 @@ import InputText, { InputTextProps } from 'components/Input/InputText';
 import ErrorText from 'components/Typography/ErrorText';
 import { Link } from 'react-router-dom';
 
-import LandingIntro from './LandingIntro';
-
 const INITIAL_LOGIN_DATA = {
   password: '',
   emailId: '',
@@ -21,9 +19,9 @@ function Login() {
     setErrorMessage('');
 
     if (loginObj.emailId.trim() === '')
-      return setErrorMessage('Email Id is required! (use any value)');
+      return setErrorMessage('請輸入帳號');
     if (loginObj.password.trim() === '')
-      return setErrorMessage('Password is required! (use any value)');
+      return setErrorMessage('請輸入密碼');
     else {
       setLoading(true);
       // Call API to check user credentials and save token in localstorage
@@ -46,12 +44,10 @@ function Login() {
 
   return (
     <div className="min-h-screen bg-base-200 flex items-center">
-      <div className="card mx-auto w-full max-w-5xl  shadow-xl">
-        <div className="grid  md:grid-cols-2 grid-cols-1  bg-base-100 rounded-xl">
-          <div className="">
-            <LandingIntro />
-          </div>
+      <div className="card mx-auto w-full max-w-md  shadow-xl">
+        <div className="grid  md:grid-cols-1  bg-base-100 rounded-xl">
           <div className="py-24 px-10">
+            <img className="mx-auto mb-10" src='/assets/logo.svg' alt='AKI'/>
             <h2 className="text-2xl font-semibold mb-2 text-center">Login</h2>
             <form onSubmit={(e) => submitForm(e)}>
               <div className="mb-4">
@@ -60,7 +56,7 @@ function Login() {
                   defaultValue={loginObj.emailId}
                   updateType="emailId"
                   containerStyle="mt-4"
-                  labelTitle="Email Id"
+                  labelTitle="Accout"
                   updateFormValue={
                     updateFormValue as InputTextProps['updateFormValue']
                   }
@@ -95,15 +91,6 @@ function Login() {
               >
                 Login
               </button>
-
-              <div className="text-center mt-4">
-                Don't have an account yet?{' '}
-                <Link to="/register">
-                  <span className="  inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200">
-                    Register
-                  </span>
-                </Link>
-              </div>
             </form>
           </div>
         </div>

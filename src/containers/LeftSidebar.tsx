@@ -11,16 +11,9 @@ const LeftSidebar = memo(() => {
   return (
     <div className="drawer-side">
       <label htmlFor="left-sidebar-drawer" className="drawer-overlay"></label>
-      <ul className="menu menu-lg gap-2 w-80 bg-base-100 text-base-content">
-        <li className="font-semibold text-xl">
-          <Link to={'/app/welcome'}>
-            <img
-              className="mask mask-squircle w-10"
-              src="/assets/logo192.png"
-              alt="DashWind Logo"
-            />
-            DashWind
-          </Link>{' '}
+      <ul className="menu  pt-2 w-80 bg-base-100 text-base-content">
+        <li className="mb-2 font-semibold text-xl">
+            <img src="/assets/logo.svg" alt="AKI ERP"/>
         </li>
         {routes.map((route, k) => (
           <li className="" key={k}>

@@ -6,7 +6,6 @@ import CheckCircleIcon from '@heroicons/react/24/solid/CheckCircleIcon';
 
 import InputText from '../../components/Input/InputText';
 import ErrorText from '../../components/Typography/ErrorText';
-import LandingIntro from './LandingIntro';
 
 function ForgotPassword() {
   const INITIAL_USER_OBJ = {
@@ -42,7 +41,6 @@ function ForgotPassword() {
       <div className="card mx-auto w-full max-w-5xl  shadow-xl">
         <div className="grid  md:grid-cols-2 grid-cols-1  bg-base-100 rounded-xl">
           <div className="">
-            <LandingIntro />
           </div>
           <div className="py-24 px-10">
             <h2 className="text-2xl font-semibold mb-2 text-center">
