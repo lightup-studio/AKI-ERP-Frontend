@@ -1,13 +1,20 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import classnames from 'classnames';
-import { fetchArtworkList, fetchSelectOptions } from 'data-access/apis/artworks.api';
+import {
+  fetchArtworkList,
+  fetchSelectOptions,
+} from 'data-access/apis/artworks.api';
 import { Artwork } from 'data-access/models';
 import { setPageTitle } from 'features/common/headerSlice';
 import { useDispatch } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
 
-import { XMarkIcon } from '@heroicons/react/20/solid';
+import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
+import PencilSquareIcon from '@heroicons/react/24/solid/PencilSquareIcon';
+import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
+import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
+import XMarkIcon from '@heroicons/react/24/solid/XMarkIcon';
 import { useQuery } from '@tanstack/react-query';
 import {
   ColumnDef,
@@ -48,7 +55,7 @@ const SELECT_ITEMS = [
   { key: 'otherInfos', placeholder: '其他資訊' },
 ];
 
-type ArtworksListProps = ArtworksTitleProps;
+type ArtworksListProps = Pick<ArtworksTitleProps, 'type'>;
 
 function ArtworksList({ type }: ArtworksListProps) {
   const dispatch = useDispatch();
@@ -202,6 +209,11 @@ function ArtworksList({ type }: ArtworksListProps) {
     Record<Artwork['id'], Artwork>
   >({});
 
+  const selectedRowCount = useMemo(
+    () => Object.keys(rowSelection).length,
+    [rowSelection]
+  );
+
   const handleAllRowSelectionChange = (rows: Row<Artwork>[]) => {
     const selectedRows = rows.filter((row) => row.original.id in rowSelection);
     const isAnyRowSelected = selectedRows.length > 0;
@@ -209,9 +221,7 @@ function ArtworksList({ type }: ArtworksListProps) {
     if (isAnyRowSelected) {
       selectedRows.forEach((row) => delete rowSelection[row.original.id]);
     } else {
-      selectedRows.forEach(
-        (row) => (rowSelection[row.original.id] = row.original)
-      );
+      rows.forEach((row) => (rowSelection[row.original.id] = row.original));
     }
 
     setRowSelection(structuredClone(rowSelection));
@@ -235,9 +245,8 @@ function ArtworksList({ type }: ArtworksListProps) {
       header: ({ table }) => (
         <IndeterminateCheckbox
           {...{
-            checked:
-              Object.keys(rowSelection).length === dataQuery.data?.totalCount,
-            indeterminate: Object.keys(rowSelection).length > 0,
+            checked: selectedRowCount === dataQuery.data?.totalCount,
+            indeterminate: selectedRowCount > 0,
             onChange: () =>
               handleAllRowSelectionChange(table.getRowModel().rows),
           }}
@@ -260,13 +269,14 @@ function ArtworksList({ type }: ArtworksListProps) {
       accessorKey: 'id',
       cell: ({ cell }) => (
         <Link
-          className="text-info"
+          className="text-info flex items-center whitespace-nowrap"
           to={
             cell.getValue() +
             (searchParams.toString() && '?' + searchParams.toString())
           }
         >
           {cell.getValue()}
+          <PencilSquareIcon className="h-4 w-4 ml-2 inline-block"></PencilSquareIcon>
         </Link>
       ),
     },
@@ -332,14 +342,14 @@ function ArtworksList({ type }: ArtworksListProps) {
   });
 
   return (
-    <div className="card w-full p-6 bg-base-100 shadow-xl mt-2">
+    <div className="card w-full p-6 bg-base-100 shadow-xl">
       <div className="md:w-1/2 mb-3">
         <SearchInput onSearch={handleSearch} />
       </div>
 
       <div className="flex gap-2 flex-col md:flex-row">
         <div className="flex-grow flex flex-col gap-3">
-          <div className="flex items-center flex-col md:flex-row">
+          <div className="flex items-center flex-col md:flex-row min-h-[6rem]">
             <label className="text-lg break-keep">篩選條件：</label>
             <div className="flex-grow flex flex-wrap gap-2">
               {selectItems?.map((item) => (
@@ -355,7 +365,7 @@ function ArtworksList({ type }: ArtworksListProps) {
             </div>
           </div>
 
-          <div className="flex items-center flex-col md:flex-row">
+          <div className="flex items-center flex-col md:flex-row min-h-12">
             <label className="text-lg break-keep">已選條件：</label>
             <div className="flex-grow flex flex-wrap gap-2">
               {selectedOptions.map((option, i) => (
@@ -384,7 +394,7 @@ function ArtworksList({ type }: ArtworksListProps) {
           <div className="flex md:flex-col gap-2">
             <button
               aria-label="export excel file"
-              className="btn btn-accent flex-1"
+              className="btn btn-accent flex-1 truncate"
             >
               Excel 匯出
             </button>
@@ -405,14 +415,31 @@ function ArtworksList({ type }: ArtworksListProps) {
           >
             {[10, 20, 30, 40, 50].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
-                Show {pageSize}
+                {pageSize} 筆
               </option>
             ))}
           </select>
         </div>
       </div>
 
-      <div className="divider mt-2"></div>
+      <div className="divider mt-2 mb-0"></div>
+
+      <div className="flex items-center gap-2 py-2 mb-2">
+        <span>已選擇 {selectedRowCount} 筆</span>
+        <button className="btn btn-success" disabled={selectedRowCount === 0}>
+          <PencilIcon className="h-5 w-5"></PencilIcon>
+          編輯
+        </button>
+        <button className="btn btn-error" disabled={selectedRowCount === 0}>
+          <TrashIcon className="h-5 w-5"></TrashIcon>
+          刪除
+        </button>
+        <i className="flex-grow"></i>
+        <button className="btn btn-info">
+          <PlusIcon className="h-5 w-5"></PlusIcon>
+          新增
+        </button>
+      </div>
 
       <div className="h-full w-full pb-6 bg-base-100 text-center">
         <div className="overflow-x-auto w-full">
@@ -458,16 +485,16 @@ function ArtworksList({ type }: ArtworksListProps) {
           </table>
         </div>
         <div className="divider mt-2" />
-        <div className="btn-group">
+        <div className="join">
           <button
-            className="btn"
+            className="join-item btn"
             onClick={() => table.setPageIndex(pageIndex - 5)}
             disabled={!table.getCanNextPage()}
           >
             {'<<'}
           </button>
           <button
-            className="btn"
+            className="join-item btn"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
@@ -477,7 +504,7 @@ function ArtworksList({ type }: ArtworksListProps) {
           {paginationRange?.map((pageNumber, key) => {
             if (pageNumber === DOTS) {
               return (
-                <button key={key} className="btn btn-disabled">
+                <button key={key} className="join-item btn btn-disabled">
                   {DOTS}
                 </button>
               );
@@ -486,7 +513,7 @@ function ArtworksList({ type }: ArtworksListProps) {
             return (
               <button
                 key={key}
-                className={classnames('btn', {
+                className={classnames('join-item btn w-14', {
                   'btn-active': Number(pageNumber) - 1 === pageIndex,
                 })}
                 onClick={() => table.setPageIndex(Number(pageNumber) - 1)}
@@ -497,14 +524,14 @@ function ArtworksList({ type }: ArtworksListProps) {
           })}
 
           <button
-            className="btn"
+            className="join-item btn"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
             {'>'}
           </button>
           <button
-            className="btn"
+            className="join-item btn"
             onClick={() => table.setPageIndex(pageIndex + 5)}
             disabled={!table.getCanNextPage()}
           >

@@ -40,40 +40,40 @@ const routes = [
     groupName: '進銷存',
   },
   {
-    path: '/app/purchase-order',
+    path: '/app/purchase/orders',
     name: '進貨單',
-    submenu: [{ path: '/app/purchase-return-order', name: '進貨退還單' }],
+    submenu: [{ path: '/app/purchase/return-orders', name: '進貨退還單' }],
   },
   {
-    path: '/app/transfer-order',
+    path: '/app/transfer/orders',
     name: '調撥單',
   },
   {
-    path: '/app/loan-order',
+    path: '/app/loan/orders',
     name: '借出單',
     submenu: [
       {
-        path: '/app/loan-return-order',
+        path: '/app/loan/return-orders',
         name: '借出歸還單',
       },
     ],
   },
   {
-    path: '/app/maintenance-order',
+    path: '/app/repair/orders',
     name: '維修單',
     submenu: [
       {
-        path: '/app/maintenance-return-order',
+        path: '/app/repair/return-orders',
         name: '維修歸還單',
       },
     ],
   },
   {
-    path: '/app/shipment-order',
+    path: '/app/shipment/orders',
     name: '出貨單',
     submenu: [
       {
-        path: '/app/shipment-return-order',
+        path: '/app/shipment/return-orders',
         name: '退貨單',
       },
     ],

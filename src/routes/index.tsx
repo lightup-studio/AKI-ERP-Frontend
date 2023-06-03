@@ -8,6 +8,12 @@ const InventoryArtworks = lazy(
 );
 const Artworks = lazy(() => import('../pages/artworks/Artworks'));
 const DraftArtworks = lazy(() => import('../pages/artworks/DraftArtworks'));
+const ErpPurchase = lazy(() => import('../pages/erp/Purchase'));
+const ErpTransfer = lazy(() => import('../pages/erp/Transfer'));
+const ErpLoan = lazy(() => import('../pages/erp/Loan'));
+const ErpRepair = lazy(() => import('../pages/erp/Repair'));
+const ErpShipment = lazy(() => import('../pages/erp/Shipment'));
+
 const Dashboard = lazy(() => import('../pages/protected/Dashboard'));
 const Welcome = lazy(() => import('../pages/protected/Welcome'));
 const Page404 = lazy(() => import('../pages/protected/404'));
@@ -34,6 +40,26 @@ const routes: RouteObject[] = [
   {
     path: '/draft-artworks/*',
     element: <DraftArtworks />,
+  },
+  {
+    path: '/purchase/*',
+    element: <ErpPurchase />,
+  },
+  {
+    path: '/transfer/*',
+    element: <ErpTransfer />,
+  },
+  {
+    path: '/loan/*',
+    element: <ErpLoan />,
+  },
+  {
+    path: '/repair/*',
+    element: <ErpRepair />,
+  },
+  {
+    path: '/shipment/*',
+    element: <ErpShipment />,
   },
   {
     path: '/dashboard', // the url

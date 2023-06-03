@@ -67,7 +67,7 @@ const schema = yup.object().shape({
   }),
 });
 
-type ArtworksDetailProps = ArtworksTitleProps;
+type ArtworksDetailProps = Pick<ArtworksTitleProps, 'type'>;
 
 function ArtworksDetail({ type }: ArtworksDetailProps) {
   const params = useParams();
@@ -76,7 +76,7 @@ function ArtworksDetail({ type }: ArtworksDetailProps) {
   useEffect(() => {
     dispatch(
       setPageTitle({
-        title: <ArtworksTitle type={type} />,
+        title: <ArtworksTitle id={params.artworksId} type={type} />,
       })
     );
   }, [dispatch, params.artworksId, type]);
@@ -94,7 +94,7 @@ function ArtworksDetail({ type }: ArtworksDetailProps) {
       updateArtworkDetail(params.artworksId || '', data),
     onSuccess: (data) => {
       console.log(data);
-      console.log("%c Line:97 🍐", "color:#2eafb0");
+      console.log('%c Line:97 🍐', 'color:#2eafb0');
     },
   });
 
@@ -102,7 +102,6 @@ function ArtworksDetail({ type }: ArtworksDetailProps) {
     control,
     reset,
     register,
-    trigger,
     handleSubmit,
     formState: { errors },
     watch,
@@ -113,9 +112,8 @@ function ArtworksDetail({ type }: ArtworksDetailProps) {
   React.useEffect(() => {
     if (data) {
       reset(data);
-      trigger();
     }
-  }, [data, reset, trigger]);
+  }, [data, reset]);
 
   const {
     fields: artworkNameFields,
@@ -138,7 +136,6 @@ function ArtworksDetail({ type }: ArtworksDetailProps) {
   const onSubmit = async (data: ArtworkDetail) => {
     await mutation.mutateAsync(data);
   };
-
 
   if (isLoading) {
     return <>loading...</>;
@@ -520,8 +517,10 @@ function ArtworksDetail({ type }: ArtworksDetailProps) {
             </div>
           </div>
           <div className="bg-base-100 p-4 md:col-span-2 flex gap-2 justify-end">
-            <button className="btn btn-outline btn-secondary">取消</button>
-            <button className="btn btn-outline btn-primary">儲存</button>
+            <button className="btn btn-outline btn-base-200" type="button">
+              取消
+            </button>
+            <button className="btn btn-outline btn-info">儲存</button>
           </div>
         </div>
       </div>

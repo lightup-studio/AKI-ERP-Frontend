@@ -18,7 +18,7 @@ const IndeterminateCheckbox = React.forwardRef<
   return (
     <input
       type="checkbox"
-      className={'checkbox ' + className}
+      className={`checkbox !animate-none ${className ?? ''}`}
       ref={combinedRef}
       {...rest}
     />
