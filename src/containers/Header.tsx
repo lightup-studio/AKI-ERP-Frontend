@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
+import { openRightDrawer } from 'features/common/rightDrawerSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import useTheme from 'shared/hooks/useTheme';
 import { AppDispatch, RootState } from 'src/app/store';
-import { themeChange } from 'theme-change';
 import { RIGHT_DRAWER_TYPES } from 'utils/globalConstantUtil';
 
 import Bars3Icon from '@heroicons/react/24/outline/Bars3Icon';
@@ -11,31 +12,12 @@ import BellIcon from '@heroicons/react/24/outline/BellIcon';
 import MoonIcon from '@heroicons/react/24/outline/MoonIcon';
 import SunIcon from '@heroicons/react/24/outline/SunIcon';
 
-import { openRightDrawer } from '../features/common/rightDrawerSlice';
-
 function Header() {
   const dispatch = useDispatch<AppDispatch>();
   const { noOfNotifications, pageTitle } = useSelector(
     (state: RootState) => state.header
   );
-  const [currentTheme, setCurrentTheme] = useState(
-    localStorage.getItem('theme')
-  );
-
-  useEffect(() => {
-    themeChange(false);
-    if (currentTheme === null) {
-      if (
-        window.matchMedia &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches
-      ) {
-        setCurrentTheme('dark');
-      } else {
-        setCurrentTheme('light');
-      }
-    }
-    // 👆 false parameter is required for react project
-  }, []);
+  const currentTheme = useTheme();
 
   // Opening right sidebar for notification
   const openNotification = () => {

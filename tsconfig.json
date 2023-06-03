@@ -26,6 +26,7 @@
       "data-access/*": ["src/data-access/*"],
       "features/*": ["src/features/*"],
       "layouts/*": ["src/layouts/*"],
+      "shared/*": ["src/shared/*"],
       "utils/*": ["src/utils/*"],
     }
   },

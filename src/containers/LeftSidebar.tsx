@@ -1,11 +1,16 @@
 import { memo } from 'react';
 
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
+import { ThemeType } from 'shared/hooks/useTheme';
 
 import routes from '../routes/sidebar';
 import SidebarSubmenu from './SidebarSubmenu';
 
-const LeftSidebar = memo(() => {
+type LeftSidebarProps = {
+  currentTheme: ThemeType;
+};
+
+const LeftSidebar = memo(({ currentTheme }: LeftSidebarProps) => {
   const location = useLocation();
 
   return (
@@ -13,7 +18,7 @@ const LeftSidebar = memo(() => {
       <label htmlFor="left-sidebar-drawer" className="drawer-overlay"></label>
       <ul className="menu  pt-2 w-80 bg-base-100 text-base-content">
         <li className="mb-2 font-semibold text-xl">
-            <img src="/assets/logo.svg" alt="AKI ERP"/>
+          <img src={`/assets/${currentTheme}/logo.svg`} alt="AKI ERP" />
         </li>
         {routes.map((route, k) => (
           <li className="" key={k}>
