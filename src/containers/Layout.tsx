@@ -1,12 +1,9 @@
-import useTheme from 'shared/hooks/useTheme';
 import LeftSidebar from './LeftSidebar';
 import ModalLayout from './ModalLayout';
 import PageContent from './PageContent';
 import RightSidebar from './RightSidebar';
 
 function Layout() {
-  const currentTheme = useTheme();
-
   return (
     <>
       {/* Left drawer - containing page content and side bar (always open) */}
@@ -17,7 +14,7 @@ function Layout() {
           className="drawer-toggle"
         />
         <PageContent />
-        <LeftSidebar currentTheme={currentTheme} />
+        <LeftSidebar />
       </div>
 
       {/* Right drawer - containing secondary content like notifications list etc.. */}

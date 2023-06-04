@@ -1,16 +1,14 @@
 import { memo } from 'react';
 
+import { useSelector } from 'react-redux';
 import { NavLink, useLocation } from 'react-router-dom';
-import { ThemeType } from 'shared/hooks/useTheme';
+import { RootState } from 'src/app/store';
 
 import routes from '../routes/sidebar';
 import SidebarSubmenu from './SidebarSubmenu';
 
-type LeftSidebarProps = {
-  currentTheme: ThemeType;
-};
-
-const LeftSidebar = memo(({ currentTheme }: LeftSidebarProps) => {
+const LeftSidebar = memo(() => {
+  const { currentTheme } = useSelector((state: RootState) => state.settings);
   const location = useLocation();
 
   return (

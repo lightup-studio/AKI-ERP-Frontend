@@ -3,7 +3,7 @@ import {
     useSelector,
 } from 'react-redux';
 
-import { closeModal } from '../features/common/modalSlice';
+import { closeModal } from '../features/common/modalSlice.ts';
 import AddLeadModalBody from '../features/leads/components/AddLeadModalBody';
 import { MODAL_BODY_TYPES } from '../utils/globalConstantUtil';
 

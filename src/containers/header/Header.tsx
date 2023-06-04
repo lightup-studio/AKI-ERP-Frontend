@@ -3,21 +3,19 @@ import React from 'react';
 import { openRightDrawer } from 'features/common/rightDrawerSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import useTheme from 'shared/hooks/useTheme';
 import { AppDispatch, RootState } from 'src/app/store';
 import { RIGHT_DRAWER_TYPES } from 'utils/globalConstantUtil';
 
 import Bars3Icon from '@heroicons/react/24/outline/Bars3Icon';
 import BellIcon from '@heroicons/react/24/outline/BellIcon';
-import MoonIcon from '@heroicons/react/24/outline/MoonIcon';
-import SunIcon from '@heroicons/react/24/outline/SunIcon';
+
+import ThemeToggleButton from './ThemeToggleButton';
 
 function Header() {
   const dispatch = useDispatch<AppDispatch>();
   const { noOfNotifications, pageTitle } = useSelector(
     (state: RootState) => state.header
   );
-  const currentTheme = useTheme();
 
   // Opening right sidebar for notification
   const openNotification = () => {
@@ -59,26 +57,7 @@ function Header() {
                     <option value="retro">Retro</option>
                 </select> */}
 
-        {/* Light and dark theme selection toogle **/}
-        <label className="swap ">
-          <input type="checkbox" />
-          <SunIcon
-            data-set-theme="light"
-            data-act-class="ACTIVECLASS"
-            className={
-              'fill-current w-6 h-6 ' +
-              (currentTheme === 'dark' ? 'swap-on' : 'swap-off')
-            }
-          />
-          <MoonIcon
-            data-set-theme="dark"
-            data-act-class="ACTIVECLASS"
-            className={
-              'fill-current w-6 h-6 ' +
-              (currentTheme === 'light' ? 'swap-on' : 'swap-off')
-            }
-          />
-        </label>
+        <ThemeToggleButton></ThemeToggleButton>
 
         {/* Notification icon */}
         <button
