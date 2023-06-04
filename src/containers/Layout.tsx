@@ -7,7 +7,7 @@ function Layout() {
   return (
     <>
       {/* Left drawer - containing page content and side bar (always open) */}
-      <div className="drawer lg:drawer-open">
+      <div className="drawer block lg:drawer-open lg:grid">
         <input
           id="left-sidebar-drawer"
           type="checkbox"

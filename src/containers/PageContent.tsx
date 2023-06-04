@@ -24,7 +24,7 @@ function PageContent() {
   }, [pageTitle]);
 
   return (
-    <div className="drawer-content flex flex-col ">
+    <div className="drawer-content flex flex-col">
       <Header />
       <main
         className="flex-1 overflow-y-auto pt-4 px-4 bg-base-200"
