@@ -77,6 +77,7 @@
     "react-notifications": "^1.7.4",
     "react-redux": "^8.0.5",
     "react-router-dom": "6.10",
+    "theme-change": "^2.5.0",
     "yup": "^1.1.1"
   },
   "msw": {
