@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from 'src/app/store';
 
 import { MoonIcon, SunIcon } from '@heroicons/react/20/solid';
+import classNames from 'classnames';
 
 function ThemeToggleButton() {
   const dispatch = useDispatch<AppDispatch>();
@@ -22,28 +23,24 @@ function ThemeToggleButton() {
     document.documentElement.dataset.theme = currentTheme;
   }, [currentTheme]);
 
-  const toggleTheme = () => {
-    dispatch(setCurrentTheme(currentTheme === 'light' ? 'dark' : 'light'));
-  };
-
   return (
-    <label className="swap" onClick={toggleTheme}>
+    <label className="swap">
       <input type="checkbox" />
       <SunIcon
         data-set-theme="light"
         data-act-class="ACTIVECLASS"
-        className={
-          'fill-current w-6 h-6 ' +
-          (currentTheme === 'dark' ? 'swap-on' : 'swap-off')
-        }
+        className={classNames('fill-current w-6 h-6', {
+          hidden: currentTheme !== 'light',
+        })}
+        onClick={() => dispatch(setCurrentTheme('dark'))}
       />
       <MoonIcon
         data-set-theme="dark"
         data-act-class="ACTIVECLASS"
-        className={
-          'fill-current w-6 h-6 ' +
-          (currentTheme === 'light' ? 'swap-on' : 'swap-off')
-        }
+        className={classNames('fill-current w-6 h-6', {
+          hidden: currentTheme !== 'dark',
+        })}
+        onClick={() => dispatch(setCurrentTheme('light'))}
       />
     </label>
   );

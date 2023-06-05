@@ -14,9 +14,14 @@ const LeftSidebar = memo(() => {
   return (
     <div className="drawer-side">
       <label htmlFor="left-sidebar-drawer" className="drawer-overlay"></label>
-      <ul className="menu gap-2 pt-2 w-80 bg-base-100 text-base-content h-full">
+      <ul className="menu gap-2 pt-2 w-80 bg-base-100 text-base-content h-full flex-nowrap">
         <li className="mb-2 font-semibold text-xl">
-          <img src={`/assets/${currentTheme}/logo.svg`} alt="AKI ERP" />
+          <img
+            src={`/assets/${currentTheme}/logo.svg`}
+            alt="AKI ERP"
+            width={177}
+            height={30}
+          />
         </li>
         {routes.map((route, k) => (
           <li className="" key={k}>
