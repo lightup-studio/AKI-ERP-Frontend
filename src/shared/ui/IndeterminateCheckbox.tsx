@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { useCombinedRefs } from '../hooks';
+import { useCombinedRefs } from 'shared/hooks';
 
 const IndeterminateCheckbox = React.forwardRef<
   HTMLInputElement,

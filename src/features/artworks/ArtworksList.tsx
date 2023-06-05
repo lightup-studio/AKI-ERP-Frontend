@@ -9,6 +9,11 @@ import { Artwork } from 'data-access/models';
 import { setPageTitle } from 'features/common/headerSlice';
 import { useDispatch } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
+import { DOTS, usePagination } from 'shared/hooks/usePagination';
+import IndeterminateCheckbox from 'shared/ui/IndeterminateCheckbox';
+import MyCombobox, { Option as ComboboxOption } from 'shared/ui/MyCombobox';
+import SearchInput from 'shared/ui/SearchInput';
+import { removeSingleValueForSearchParams } from 'utils/searchParamsUtil';
 
 import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
 import PencilSquareIcon from '@heroicons/react/24/solid/PencilSquareIcon';
@@ -25,12 +30,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 
-import ArtworksTitle, { ArtworksTitleProps } from './components/ArtworksTitle';
-import IndeterminateCheckbox from './components/IndeterminateCheckbox';
-import MyCombobox, { Option as ComboboxOption } from './components/MyCombobox';
-import SearchInput from './components/SearchInput';
-import { DOTS, usePagination } from './hooks/usePagination';
-import { removeSingleValueForSearchParams } from './utils';
+import ArtworksTitle, { ArtworksTitleProps } from './ui/ArtworksTitle';
 
 type SelectItem = {
   key: string;

@@ -16,7 +16,7 @@ import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import ArtworksTitle, { ArtworksTitleProps } from './components/ArtworksTitle';
+import ArtworksTitle, { ArtworksTitleProps } from './ui/ArtworksTitle';
 
 const schema = yup.object().shape({
   image: yup.string(),
