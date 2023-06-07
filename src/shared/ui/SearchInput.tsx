@@ -30,7 +30,7 @@ export const SearchInput = ({
     <div className="relative">
       <input
         type="text"
-        className={'bg-purple-white shadow rounded border-0 p-3 w-full'}
+        className={'input input-bordered shadow rounded p-3 w-full'}
         placeholder={'請輸入關鍵字...'}
         value={searchTerm}
         onChange={handleInputChange}

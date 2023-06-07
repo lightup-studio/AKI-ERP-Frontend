@@ -110,7 +110,7 @@ export const handlers = [
 
   rest.get('/api/artworks', (req, res, ctx) => {
     const pageIndex = +(req.url.searchParams.get('pageIndex') || 0);
-    const pageSize = +(req.url.searchParams.get('pageSize') || 10);
+    const pageSize = +(req.url.searchParams.get('pageSize') || 50);
     const rows = Array.from(new Array(1000).keys()).flatMap((i) => [
       {
         id: i + '-20230205-2',

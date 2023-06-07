@@ -4,7 +4,19 @@ import rightDrawerSlice from 'features/common/rightDrawerSlice';
 import leadsSlice from 'features/leads/leadSlice';
 import settingsSlice from 'features/settings/settingsSlice';
 
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, Middleware } from '@reduxjs/toolkit';
+
+const localStorageMiddleware: Middleware<unknown> = () => {
+  return (next) => (action) => {
+    const { type, payload } = next(action);
+
+    if (type === 'settings/setCurrentTheme') {
+      localStorage.setItem('theme', payload);
+    }
+
+    return { type, payload };
+  };
+};
 
 const combinedReducer = {
   header: headerSlice,
@@ -16,6 +28,8 @@ const combinedReducer = {
 
 const store = configureStore({
   reducer: combinedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(localStorageMiddleware),
 });
 
 export type AppDispatch = typeof store.dispatch;

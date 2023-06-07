@@ -26,15 +26,15 @@ const rootApp = (
 );
 
 // if (import.meta.env.MODE === 'development') {
-  import('../mocks/browser')
-    .then(({ worker }) => {
-      worker.start({
-        onUnhandledRequest: 'bypass',
-      });
-    })
-    .then(() => {
-      root.render(rootApp);
+import('../mocks/browser')
+  .then(({ worker }) => {
+    worker.start({
+      onUnhandledRequest: 'bypass',
     });
+  })
+  .then(() => {
+    root.render(rootApp);
+  });
 // } else {
-  // root.render(rootApp);
+// root.render(rootApp);
 // }

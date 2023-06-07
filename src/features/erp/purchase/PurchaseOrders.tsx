@@ -30,7 +30,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 
-
 type SelectItem = {
   key: string;
   placeholder: string;
@@ -54,24 +53,28 @@ const SELECT_ITEMS = [
   { key: 'otherInfos', placeholder: '其他資訊' },
 ];
 
-
 function PurchaseOrders() {
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   dispatch(setPageTitle({ title: <ArtworksTitle type={type} /> }));
-  // }, [dispatch, type]);
+  useEffect(() => {
+    dispatch(setPageTitle({ title: '進銷存 / 進貨單' }));
+  }, [dispatch]);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [keyword, setKeyword] = useState<string | undefined>();
 
   useEffect(() => {
-    setSearchParams((searchParams) => {
-      keyword
-        ? searchParams.set('keyword', keyword)
-        : searchParams.delete('keyword');
-      return searchParams;
-    });
+    setSearchParams(
+      (searchParams) => {
+        keyword
+          ? searchParams.set('keyword', keyword)
+          : searchParams.delete('keyword');
+        return searchParams;
+      },
+      {
+        replace: true,
+      }
+    );
   }, [keyword, setSearchParams]);
 
   const handleSearch = useCallback(
@@ -145,40 +148,40 @@ function PurchaseOrders() {
     );
   }, [searchParams, selectOptionsQuery.data]);
 
-  const addSelectedOptionBySelectItemKey = useCallback(
-    (selectItemKey: string, selectedOptionValue: string) => {
-      setSearchParams((searchParams) => {
-        const values = searchParams.getAll(selectItemKey);
-        if (!values.includes(selectedOptionValue)) {
-          searchParams.append(selectItemKey, selectedOptionValue);
-        }
-        return searchParams;
-      });
-    },
-    [setSearchParams]
-  );
+  const addSelectedOptionBySelectItemKey = (
+    selectItemKey: string,
+    selectedOptionValue: string
+  ) => {
+    setSearchParams((searchParams) => {
+      const values = searchParams.getAll(selectItemKey);
+      if (!values.includes(selectedOptionValue)) {
+        searchParams.append(selectItemKey, selectedOptionValue);
+      }
+      return searchParams;
+    });
+  };
 
-  const removeSelectedOptionBySelectItemKey = useCallback(
-    (selectItemKey: string, selectedOptionValue: string) => {
-      setSearchParams((searchParams) => {
-        const values = searchParams.getAll(selectItemKey);
-        if (values.includes(selectedOptionValue)) {
-          removeSingleValueForSearchParams(
-            searchParams,
-            selectItemKey,
-            selectedOptionValue
-          );
-        }
-        return searchParams;
-      });
-    },
-    [setSearchParams]
-  );
+  const removeSelectedOptionBySelectItemKey = (
+    selectItemKey: string,
+    selectedOptionValue: string
+  ) => {
+    setSearchParams((searchParams) => {
+      const values = searchParams.getAll(selectItemKey);
+      if (values.includes(selectedOptionValue)) {
+        removeSingleValueForSearchParams(
+          searchParams,
+          selectItemKey,
+          selectedOptionValue
+        );
+      }
+      return searchParams;
+    });
+  };
 
   const [{ pageIndex, pageSize }, setPagination] =
     React.useState<PaginationState>({
       pageIndex: 0,
-      pageSize: 10,
+      pageSize: 50,
     });
   const pagination = useMemo(
     () => ({ pageIndex, pageSize }),
@@ -186,15 +189,20 @@ function PurchaseOrders() {
   );
 
   useEffect(() => {
-    setSearchParams((searchParams) => {
-      pageIndex > 0
-        ? searchParams.set('pageIndex', `${pageIndex}`)
-        : searchParams.delete('pageIndex');
-      pageSize > 10
-        ? searchParams.set('pageSize', `${pageSize}`)
-        : searchParams.delete('pageSize');
-      return searchParams;
-    });
+    setSearchParams(
+      (searchParams) => {
+        pageIndex > 0
+          ? searchParams.set('pageIndex', `${pageIndex}`)
+          : searchParams.delete('pageIndex');
+        pageSize !== 50
+          ? searchParams.set('pageSize', `${pageSize}`)
+          : searchParams.delete('pageSize');
+        return searchParams;
+      },
+      {
+        replace: true,
+      }
+    );
   }, [pageIndex, pageSize, setSearchParams]);
 
   const dataQuery = useQuery(
@@ -411,7 +419,7 @@ function PurchaseOrders() {
               table.setPageSize(Number(e.target.value));
             }}
           >
-            {[10, 20, 30, 40, 50].map((pageSize) => (
+            {[10, 30, 50, 80, 100].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 {pageSize} 筆
               </option>
@@ -433,10 +441,15 @@ function PurchaseOrders() {
           刪除
         </button>
         <i className="flex-grow"></i>
-        <button className="btn btn-info">
+        <Link
+          className="btn btn-info"
+          to={
+            './add' + (searchParams.toString() && '?' + searchParams.toString())
+          }
+        >
           <PlusIcon className="h-5 w-5"></PlusIcon>
-          新增
-        </button>
+          新增進貨單
+        </Link>
       </div>
 
       <div className="h-full w-full pb-6 bg-base-100 text-center">
@@ -487,7 +500,7 @@ function PurchaseOrders() {
           <button
             className="join-item btn"
             onClick={() => table.setPageIndex(pageIndex - 5)}
-            disabled={!table.getCanNextPage()}
+            disabled={!table.getCanPreviousPage()}
           >
             {'<<'}
           </button>
@@ -499,10 +512,17 @@ function PurchaseOrders() {
             {'<'}
           </button>
 
+          <button className="join-item btn btn-active block md:hidden">
+            第 {pageIndex + 1} 頁
+          </button>
+
           {paginationRange?.map((pageNumber, key) => {
             if (pageNumber === DOTS) {
               return (
-                <button key={key} className="join-item btn btn-disabled">
+                <button
+                  key={key}
+                  className="join-item btn btn-disabled hidden md:block"
+                >
                   {DOTS}
                 </button>
               );
@@ -511,7 +531,7 @@ function PurchaseOrders() {
             return (
               <button
                 key={key}
-                className={classnames('join-item btn w-14', {
+                className={classnames('join-item btn w-14 hidden md:block', {
                   'btn-active': Number(pageNumber) - 1 === pageIndex,
                 })}
                 onClick={() => table.setPageIndex(Number(pageNumber) - 1)}

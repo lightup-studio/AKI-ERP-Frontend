@@ -15,6 +15,8 @@
     "reduxjs",
     "Sidenav",
     "svgr",
+    "Swal",
+    "sweetalert",
     "tailwindcss",
     "tanstack"
   ]

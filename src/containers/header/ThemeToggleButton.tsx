@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 
+import classNames from 'classnames';
 import {
   setCurrentTheme,
   setInitialTheme,
@@ -8,7 +9,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from 'src/app/store';
 
 import { MoonIcon, SunIcon } from '@heroicons/react/20/solid';
-import classNames from 'classnames';
 
 function ThemeToggleButton() {
   const dispatch = useDispatch<AppDispatch>();
