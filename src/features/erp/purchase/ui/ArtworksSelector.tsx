@@ -66,6 +66,7 @@ function ArtworksSelector({
     if (!mainElement) {
       return;
     }
+    mainElement.scrollTo(0, 0);
     mainElement.style.overflow = isOpen ? 'hidden' : 'auto';
   }, [isOpen]);
 
@@ -403,7 +404,7 @@ function ArtworksSelector({
 
   return (
     <div
-      className={classnames('modal absolute', {
+      className={classnames('modal absolute z-10', {
         'modal-open': isOpen,
       })}
     >

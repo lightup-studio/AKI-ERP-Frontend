@@ -445,10 +445,15 @@ function ArtworksList({ type }: ArtworksListProps) {
           刪除
         </button>
         <i className="flex-grow"></i>
-        <button className="btn btn-info">
+        <Link
+          className="btn btn-info"
+          to={
+            './add' + (searchParams.toString() && '?' + searchParams.toString())
+          }
+        >
           <PlusIcon className="h-5 w-5"></PlusIcon>
           新增
-        </button>
+        </Link>
       </div>
 
       <div className="h-full w-full pb-6 bg-base-100 text-center">

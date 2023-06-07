@@ -73,10 +73,14 @@ function ArtworksDetail({ type }: ArtworksDetailProps) {
   const params = useParams();
   const dispatch = useDispatch();
 
+  console.log('params.artworksId', params.artworksId);
+
   useEffect(() => {
     dispatch(
       setPageTitle({
-        title: <ArtworksTitle id={params.artworksId} type={type} />,
+        title: (
+          <ArtworksTitle id={params.artworksId} type={type} pageType="detail" />
+        ),
       })
     );
   }, [dispatch, params.artworksId, type]);
@@ -137,7 +141,7 @@ function ArtworksDetail({ type }: ArtworksDetailProps) {
     await mutation.mutateAsync(data);
   };
 
-  if (isLoading) {
+  if (!!params.artworksId && isLoading) {
     return <>loading...</>;
   }
 
