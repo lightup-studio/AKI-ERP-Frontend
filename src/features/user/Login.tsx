@@ -47,7 +47,7 @@ function Login() {
       <div className="card mx-auto w-full max-w-md  shadow-xl">
         <div className="grid  md:grid-cols-1  bg-base-100 rounded-xl">
           <div className="py-24 px-10">
-            <img className="mx-auto mb-10" src='/assets/logo.svg' alt='AKI'/>
+            <img className="mx-auto mb-10" src='/assets/dark/logo.svg' alt='AKI'/>
             <h2 className="text-2xl font-semibold mb-2 text-center">Login</h2>
             <form onSubmit={(e) => submitForm(e)}>
               <div className="mb-4">
