@@ -19,7 +19,7 @@ export interface Artwork {
   /** 庫存狀態 */
   inventoryStatus: string;
   /** 銷售狀態 */
-  salesStatus: string;
+  salesTypes: string;
   /** 資產類別 */
   assetCategory: string;
 }
@@ -27,10 +27,11 @@ export interface Artwork {
 export interface ArtworkDetail {
   image: string;
   artistNames: ArtistName[];
-  assetCategory: string;
-  type: string;
+  assetCategory: string | null;
+  type: string | null;
   agentGalleries: AgentGallery[];
-  nationality: string;
+  nationality: string | null;
+  purchasingUnit: string;
   name: string;
   length: string;
   width: string;
@@ -38,17 +39,36 @@ export interface ArtworkDetail {
   customSize: string;
   serialNumber: string;
   media: string;
-  year: string;
+  startYear?: number | null;
+  endYear?: number | null;
   edition: string;
   otherInfo: OtherInfo;
-  stockLocationId: string;
-  stockStatus: StockStatus;
+  warehouseId: string | null;
+  warehouseLocation?: string;
+  stockType?:
+    | 'lend'
+    | 'returnedLend'
+    | 'repair'
+    | 'returnedRepair'
+    | 'shipping'
+    | 'returnedShipping';
+  lendDepartment?: string;
+  returnedLendDepartment?: string;
+  repairDepartment?: string;
+  repairNote?: string;
+  returnRepairDepartment?: string;
+  shippingDepartment?: string;
+  returnedShippingDepartment?: string;
+  salesOrder?: SalesOrder;
 }
 
-interface StockStatus {
-  id: string;
-  unitText: string;
-  remark: string;
+interface ArtistName {
+  chineseName: string;
+  englishName: string;
+}
+
+interface AgentGallery {
+  name: string;
 }
 
 interface OtherInfo {
@@ -60,11 +80,35 @@ interface OtherInfo {
   woodenBox: boolean;
 }
 
-interface AgentGallery {
-  name: string;
+interface SalesOrder {
+  saleDepartment: string;
+  saleDate: string;
+  recipientName: string;
+  contractPersonName: string;
+  recipientPhone: string;
+  contractPersonPhone: string;
+  address: string;
+  remark?: string;
 }
 
-interface ArtistName {
-  chineseName: string;
-  englishName: string;
+export interface AssetsType {
+  id: string;
+  name: string;
+  description: string;
+  sort: 0;
+  status: string;
+}
+
+export interface StoreType {
+  id: string;
+  name: string;
+  sort: 0;
+  status: string;
+}
+
+export interface SalesType {
+  id: string;
+  name: string;
+  sort: 0;
+  status: string;
 }

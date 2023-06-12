@@ -5,7 +5,7 @@ import { fetchArtworkList } from 'data-access/apis/artworks.api';
 import { Artwork } from 'data-access/models';
 import { setPageTitle } from 'features/common/headerSlice';
 import { useDispatch } from 'react-redux';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { DOTS, usePagination } from 'shared/hooks/usePagination';
 import IndeterminateCheckbox from 'shared/ui/IndeterminateCheckbox';
 import MyDatePicker from 'shared/ui/MyDatePicker';
@@ -28,10 +28,12 @@ import {
 } from '@tanstack/react-table';
 
 import ArtworksSelector from './ui/ArtworksSelector';
+import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
 
 function AddPurchaseOrder() {
   const dispatch = useDispatch();
   const [isOpenArtworksSelector, setIsOpenArtworksSelector] = useState(false);
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
@@ -111,7 +113,9 @@ function AddPurchaseOrder() {
       header: ({ table }) => (
         <IndeterminateCheckbox
           {...{
-            checked: selectedRowCount === dataQuery.data?.totalCount,
+            checked:
+              dataQuery.data?.totalCount !== 0 &&
+              selectedRowCount === dataQuery.data?.totalCount,
             indeterminate: selectedRowCount > 0,
             onChange: () =>
               handleAllRowSelectionChange(table.getRowModel().rows),
@@ -131,55 +135,77 @@ function AddPurchaseOrder() {
       ),
     },
     {
-      header: 'ID',
+      header: '編號',
       accessorKey: 'id',
+    },
+    {
+      header: '作品名稱',
+      accessorKey: 'name',
+    },
+    {
+      header: '作品圖',
+      accessorKey: 'displayImageUrl',
       cell: ({ cell }) => (
-        <span className="whitespace-nowrap">{cell.getValue()}</span>
+        <div>
+          <DialogTrigger>
+            <Button>
+              <img
+                src={cell.getValue()}
+                alt="Artwork"
+                loading="lazy"
+                className="h-20"
+              />
+            </Button>
+            <Popover placement="right">
+              <Dialog className="h-[80vh]">
+                <img
+                  src={cell.getValue()}
+                  alt="Artwork"
+                  className="w-full h-full object-contain"
+                  loading="lazy"
+                />
+              </Dialog>
+            </Popover>
+          </DialogTrigger>
+        </div>
       ),
     },
     {
-      header: 'Artist',
+      header: '藝術家',
       accessorKey: 'artist',
     },
     {
-      header: 'Image',
-      accessorKey: 'image',
-      cell: ({ cell }) => (
-        <img src={cell.getValue()} alt="Artwork" width={50} loading="lazy" />
-      ),
+      header: '媒材',
+      accessorKey: 'materialInfo',
     },
     {
-      header: 'Medium',
-      accessorKey: 'medium',
+      header: '尺寸',
+      accessorKey: 'sizeInfo',
     },
     {
-      header: 'Size',
-      accessorKey: 'size',
+      header: '年代',
+      accessorKey: 'yearsInfo',
     },
     {
-      header: 'Year',
-      accessorKey: 'year',
-    },
-    {
-      header: 'Other Info',
+      header: '其他資訊',
       accessorKey: 'otherInfo',
     },
     {
-      header: 'Inventory Status',
-      accessorKey: 'inventoryStatus',
+      header: '庫存狀態',
+      accessorKey: 'storeInfo',
     },
     {
-      header: 'Sales Status',
-      accessorKey: 'salesStatus',
+      header: '銷售狀態',
+      accessorKey: 'salesStatusId',
     },
     {
-      header: 'Asset Category',
-      accessorKey: 'assetCategory',
+      header: '資產類型',
+      accessorKey: 'assetsTypeId',
     },
   ];
 
   const table = useReactTable({
-    data: dataQuery.data?.rows ?? [],
+    data: dataQuery.data?.data ?? [],
     columns,
     pageCount: dataQuery.data?.pageCount ?? -1,
     state: {
@@ -479,7 +505,11 @@ function AddPurchaseOrder() {
             <button className="btn btn-success" onClick={addPurchaseOrder}>
               <CheckIcon className="w-4"></CheckIcon> 儲存
             </button>
-            <button className="btn btn-error btn-base-200" type="button">
+            <button
+              className="btn btn-error btn-base-200"
+              type="button"
+              onClick={() => navigate(-1)}
+            >
               <XMarkIcon className="w-4"></XMarkIcon> 取消
             </button>
           </div>

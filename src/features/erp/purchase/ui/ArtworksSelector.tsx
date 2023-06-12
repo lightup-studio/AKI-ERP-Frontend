@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import classnames from 'classnames';
 import {
@@ -6,8 +6,6 @@ import {
   fetchSelectOptions,
 } from 'data-access/apis/artworks.api';
 import { Artwork } from 'data-access/models';
-import { setPageTitle } from 'features/common/headerSlice';
-import { useDispatch } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
 import { DOTS, usePagination } from 'shared/hooks/usePagination';
 import IndeterminateCheckbox from 'shared/ui/IndeterminateCheckbox';
@@ -31,35 +29,37 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 
+type SelectItemKey = keyof Awaited<ReturnType<typeof fetchSelectOptions>>;
+
 type SelectItem = {
-  key: string;
+  key: SelectItemKey;
   placeholder: string;
   options: ComboboxOption[];
 };
 
 type SelectedOption = ComboboxOption & {
-  selectItemKey: string;
+  selectItemKey: SelectItemKey;
 };
 
-const SELECT_ITEMS = [
+const SELECT_ITEMS: Pick<SelectItem, 'key' | 'placeholder'>[] = [
   { key: 'nationalities', placeholder: '國籍' },
   { key: 'artists', placeholder: '藝術家' },
-  { key: 'editions', placeholder: '號數' },
+  { key: 'serialNumbers', placeholder: '號數' },
   { key: 'years', placeholder: '年代' },
-  { key: 'stockStatus', placeholder: '庫存狀態' },
-  { key: 'salesStatus', placeholder: '銷售狀態' },
-  { key: 'assetCategories', placeholder: '資產類別' },
+  { key: 'storeTypes', placeholder: '庫存狀態' },
+  { key: 'salesTypes', placeholder: '銷售狀態' },
+  { key: 'assetsTypes', placeholder: '資產類別' },
   { key: 'mediums', placeholder: '媒材' },
   { key: 'agentGalleries', placeholder: '藝廊資訊' },
   { key: 'otherInfos', placeholder: '其他資訊' },
 ];
 
 function ArtworksSelector({
-  isOpen,
+  isOpen = false,
   onClose,
 }: {
-  isOpen: boolean;
-  onClose?: (...args: any[]) => void;
+  isOpen?: boolean;
+  onClose?: (rowSelection?: Record<Artwork['id'], Artwork>) => void;
 }) {
   useEffect(() => {
     const mainElement = document.querySelector('main');
@@ -68,32 +68,14 @@ function ArtworksSelector({
     }
     mainElement.scrollTo(0, 0);
     mainElement.style.overflow = isOpen ? 'hidden' : 'auto';
+
+    return () => {
+      mainElement.style.overflow = 'auto';
+    };
   }, [isOpen]);
 
-  const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [keyword, setKeyword] = useState<string | undefined>();
-
-  useEffect(() => {
-    dispatch(
-      setPageTitle({
-        title: (
-          <>
-            進銷存 /{' '}
-            <Link
-              to={
-                '../orders' + searchParams.toString() &&
-                '?' + searchParams.toString()
-              }
-            >
-              進貨單
-            </Link>{' '}
-            / 新增
-          </>
-        ),
-      })
-    );
-  }, [dispatch, searchParams]);
+  const [keyword, setKeyword] = useState(searchParams.get('keyword'));
 
   useEffect(() => {
     setSearchParams(
@@ -101,6 +83,8 @@ function ArtworksSelector({
         keyword
           ? searchParams.set('keyword', keyword)
           : searchParams.delete('keyword');
+        // reset page index
+        searchParams.delete('pageIndex');
         return searchParams;
       },
       {
@@ -109,12 +93,12 @@ function ArtworksSelector({
     );
   }, [keyword, setSearchParams]);
 
-  const handleSearch = useCallback(
-    (keyword?: string) => {
+  const handleSearch = (keyword?: string | null) => {
+    if (keyword) {
       setKeyword(keyword);
-    },
-    [setKeyword]
-  );
+      setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
+    }
+  };
 
   const selectOptionsQuery = useQuery({
     queryKey: ['selectOptions'],
@@ -127,11 +111,14 @@ function ArtworksSelector({
   useEffect(() => {
     if (selectOptionsQuery.isSuccess) {
       const selectItems = SELECT_ITEMS.filter(
-        (item) => item.key in selectOptionsQuery.data
-      ).map((item) => ({
-        ...item,
-        options: selectOptionsQuery.data[item.key],
-      }));
+        ({ key }) => key in selectOptionsQuery.data
+      ).map(
+        (item) =>
+          ({
+            ...item,
+            options: selectOptionsQuery.data[item.key],
+          } as SelectItem)
+      );
       setSelectItems(selectItems);
     }
   }, [selectOptionsQuery.isSuccess, selectOptionsQuery.data]);
@@ -139,26 +126,26 @@ function ArtworksSelector({
   useEffect(() => {
     if (!selectOptionsQuery.data) return;
 
-    const selectedOptions = [...searchParams.entries()]
+    const selectedOptions = (
+      [...searchParams.entries()] as [SelectItemKey, string][]
+    )
       .filter(([key]) => key in selectOptionsQuery.data)
-      .map(([key, value]) => ({
+      .map<SelectedOption>(([key, value]) => ({
         selectItemKey: key,
         label:
-          selectOptionsQuery.data[key].find((option) => option.value === value)
-            ?.label || '',
+          selectOptionsQuery.data[key].find((x) => x.value === value)?.label ||
+          '',
         value,
       }));
 
-    const selectedOptionMapByKey = selectedOptions.reduce<
-      Record<string, SelectedOption[]>
-    >((obj, item) => {
+    const selectedOptionMapByKey = selectedOptions.reduce((obj, item) => {
       if (item.selectItemKey in obj) {
         obj[item.selectItemKey].push(item);
       } else {
         obj[item.selectItemKey] = [item];
       }
       return obj;
-    }, {});
+    }, {} as Record<SelectItemKey, SelectedOption[]>);
 
     setSelectItems((selectItems) => {
       selectItems?.forEach((selectItem) => {
@@ -180,40 +167,47 @@ function ArtworksSelector({
     );
   }, [searchParams, selectOptionsQuery.data]);
 
-  const addSelectedOptionBySelectItemKey = useCallback(
-    (selectItemKey: string, selectedOptionValue: string) => {
-      setSearchParams((searchParams) => {
-        const values = searchParams.getAll(selectItemKey);
-        if (!values.includes(selectedOptionValue)) {
-          searchParams.append(selectItemKey, selectedOptionValue);
-        }
-        return searchParams;
-      });
-    },
-    [setSearchParams]
-  );
+  const addSelectedOptionBySelectItemKey = (
+    selectItemKey: SelectItemKey,
+    selectedOptionValue: string
+  ) => {
+    setSearchParams((searchParams) => {
+      const values = searchParams.getAll(selectItemKey);
+      if (!values.includes(selectedOptionValue)) {
+        searchParams.append(selectItemKey, selectedOptionValue);
+      }
+      // reset page index
+      searchParams.delete('pageIndex');
+      setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
+      return searchParams;
+    });
+  };
 
-  const removeSelectedOptionBySelectItemKey = useCallback(
-    (selectItemKey: string, selectedOptionValue: string) => {
-      setSearchParams((searchParams) => {
-        const values = searchParams.getAll(selectItemKey);
-        if (values.includes(selectedOptionValue)) {
-          removeSingleValueForSearchParams(
-            searchParams,
-            selectItemKey,
-            selectedOptionValue
-          );
-        }
-        return searchParams;
-      });
-    },
-    [setSearchParams]
-  );
+  const removeSelectedOptionBySelectItemKey = (
+    selectItemKey: SelectItemKey,
+    selectedOptionValue: string
+  ) => {
+    setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
+    setSearchParams((searchParams) => {
+      const values = searchParams.getAll(selectItemKey);
+      if (values.includes(selectedOptionValue)) {
+        removeSingleValueForSearchParams(
+          searchParams,
+          selectItemKey,
+          selectedOptionValue
+        );
+      }
+      // reset page index
+      searchParams.delete('pageIndex');
+      setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
+      return searchParams;
+    });
+  };
 
   const [{ pageIndex, pageSize }, setPagination] =
     React.useState<PaginationState>({
-      pageIndex: 0,
-      pageSize: 50,
+      pageIndex: +(searchParams.get('pageIndex') || 0),
+      pageSize: +(searchParams.get('pageSize') || 50),
     });
   const pagination = useMemo(
     () => ({ pageIndex, pageSize }),
@@ -221,6 +215,13 @@ function ArtworksSelector({
   );
 
   useEffect(() => {
+    if (
+      pageIndex === +(searchParams.get('pageIndex') || 0) &&
+      pageSize === +(searchParams.get('pageSize') || 50)
+    ) {
+      return;
+    }
+
     setSearchParams(
       (searchParams) => {
         pageIndex > 0
@@ -235,12 +236,12 @@ function ArtworksSelector({
         replace: true,
       }
     );
-  }, [pageIndex, pageSize, setSearchParams]);
+  }, [pageIndex, pageSize, searchParams, setSearchParams]);
 
   const dataQuery = useQuery(
-    ['data', keyword, selectItems, pagination],
+    ['data', searchParams.toString()],
     () => fetchArtworkList(searchParams),
-    { keepPreviousData: true }
+    { enabled: !!selectItems, keepPreviousData: true }
   );
 
   const [rowSelection, setRowSelection] = React.useState<
@@ -323,19 +324,19 @@ function ArtworksSelector({
       accessorKey: 'artist',
     },
     {
-      header: 'Image',
-      accessorKey: 'image',
+      header: '作品圖',
+      accessorKey: 'displayImageUrl',
       cell: ({ cell }) => (
         <img src={cell.getValue()} alt="Artwork" width={50} loading="lazy" />
       ),
     },
     {
-      header: 'Medium',
-      accessorKey: 'medium',
+      header: '媒材',
+      accessorKey: 'materialInfo',
     },
     {
-      header: 'Size',
-      accessorKey: 'size',
+      header: '尺寸',
+      accessorKey: 'sizeInfo',
     },
     {
       header: 'Year',
@@ -351,7 +352,7 @@ function ArtworksSelector({
     },
     {
       header: 'Sales Status',
-      accessorKey: 'salesStatus',
+      accessorKey: 'salesTypes',
     },
     {
       header: 'Asset Category',
@@ -360,7 +361,7 @@ function ArtworksSelector({
   ];
 
   const table = useReactTable({
-    data: dataQuery.data?.rows ?? [],
+    data: dataQuery.data?.data ?? [],
     columns,
     pageCount: dataQuery.data?.pageCount ?? -1,
     state: {

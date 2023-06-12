@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import classnames from 'classnames';
 import {
@@ -7,6 +7,7 @@ import {
 } from 'data-access/apis/artworks.api';
 import { Artwork } from 'data-access/models';
 import { setPageTitle } from 'features/common/headerSlice';
+import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
 import { useDispatch } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
 import { DOTS, usePagination } from 'shared/hooks/usePagination';
@@ -16,7 +17,6 @@ import SearchInput from 'shared/ui/SearchInput';
 import { removeSingleValueForSearchParams } from 'utils/searchParamsUtil';
 
 import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
-import PencilSquareIcon from '@heroicons/react/24/solid/PencilSquareIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
 import XMarkIcon from '@heroicons/react/24/solid/XMarkIcon';
@@ -30,24 +30,26 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 
+type SelectItemKey = keyof Awaited<ReturnType<typeof fetchSelectOptions>>;
+
 type SelectItem = {
-  key: string;
+  key: SelectItemKey;
   placeholder: string;
   options: ComboboxOption[];
 };
 
 type SelectedOption = ComboboxOption & {
-  selectItemKey: string;
+  selectItemKey: SelectItemKey;
 };
 
-const SELECT_ITEMS = [
+const SELECT_ITEMS: Pick<SelectItem, 'key' | 'placeholder'>[] = [
   { key: 'nationalities', placeholder: '國籍' },
   { key: 'artists', placeholder: '藝術家' },
-  { key: 'editions', placeholder: '號數' },
+  { key: 'serialNumbers', placeholder: '號數' },
   { key: 'years', placeholder: '年代' },
-  { key: 'stockStatus', placeholder: '庫存狀態' },
-  { key: 'salesStatus', placeholder: '銷售狀態' },
-  { key: 'assetCategories', placeholder: '資產類別' },
+  { key: 'storeTypes', placeholder: '庫存狀態' },
+  { key: 'salesTypes', placeholder: '銷售狀態' },
+  { key: 'assetsTypes', placeholder: '資產類別' },
   { key: 'mediums', placeholder: '媒材' },
   { key: 'agentGalleries', placeholder: '藝廊資訊' },
   { key: 'otherInfos', placeholder: '其他資訊' },
@@ -61,7 +63,7 @@ function PurchaseOrders() {
   }, [dispatch]);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [keyword, setKeyword] = useState<string | undefined>();
+  const [keyword, setKeyword] = useState(searchParams.get('keyword'));
 
   useEffect(() => {
     setSearchParams(
@@ -69,6 +71,8 @@ function PurchaseOrders() {
         keyword
           ? searchParams.set('keyword', keyword)
           : searchParams.delete('keyword');
+        // reset page index
+        searchParams.delete('pageIndex');
         return searchParams;
       },
       {
@@ -77,12 +81,12 @@ function PurchaseOrders() {
     );
   }, [keyword, setSearchParams]);
 
-  const handleSearch = useCallback(
-    (keyword?: string) => {
+  const handleSearch = (keyword?: string | null) => {
+    if (keyword) {
       setKeyword(keyword);
-    },
-    [setKeyword]
-  );
+      setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
+    }
+  };
 
   const selectOptionsQuery = useQuery({
     queryKey: ['selectOptions'],
@@ -95,11 +99,14 @@ function PurchaseOrders() {
   useEffect(() => {
     if (selectOptionsQuery.isSuccess) {
       const selectItems = SELECT_ITEMS.filter(
-        (item) => item.key in selectOptionsQuery.data
-      ).map((item) => ({
-        ...item,
-        options: selectOptionsQuery.data[item.key],
-      }));
+        ({ key }) => key in selectOptionsQuery.data
+      ).map(
+        (item) =>
+          ({
+            ...item,
+            options: selectOptionsQuery.data[item.key],
+          } as SelectItem)
+      );
       setSelectItems(selectItems);
     }
   }, [selectOptionsQuery.isSuccess, selectOptionsQuery.data]);
@@ -107,26 +114,26 @@ function PurchaseOrders() {
   useEffect(() => {
     if (!selectOptionsQuery.data) return;
 
-    const selectedOptions = [...searchParams.entries()]
+    const selectedOptions = (
+      [...searchParams.entries()] as [SelectItemKey, string][]
+    )
       .filter(([key]) => key in selectOptionsQuery.data)
-      .map(([key, value]) => ({
+      .map<SelectedOption>(([key, value]) => ({
         selectItemKey: key,
         label:
-          selectOptionsQuery.data[key].find((option) => option.value === value)
-            ?.label || '',
+          selectOptionsQuery.data[key].find((x) => x.value === value)?.label ||
+          '',
         value,
       }));
 
-    const selectedOptionMapByKey = selectedOptions.reduce<
-      Record<string, SelectedOption[]>
-    >((obj, item) => {
+    const selectedOptionMapByKey = selectedOptions.reduce((obj, item) => {
       if (item.selectItemKey in obj) {
         obj[item.selectItemKey].push(item);
       } else {
         obj[item.selectItemKey] = [item];
       }
       return obj;
-    }, {});
+    }, {} as Record<SelectItemKey, SelectedOption[]>);
 
     setSelectItems((selectItems) => {
       selectItems?.forEach((selectItem) => {
@@ -149,7 +156,7 @@ function PurchaseOrders() {
   }, [searchParams, selectOptionsQuery.data]);
 
   const addSelectedOptionBySelectItemKey = (
-    selectItemKey: string,
+    selectItemKey: SelectItemKey,
     selectedOptionValue: string
   ) => {
     setSearchParams((searchParams) => {
@@ -157,14 +164,18 @@ function PurchaseOrders() {
       if (!values.includes(selectedOptionValue)) {
         searchParams.append(selectItemKey, selectedOptionValue);
       }
+      // reset page index
+      searchParams.delete('pageIndex');
+      setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
       return searchParams;
     });
   };
 
   const removeSelectedOptionBySelectItemKey = (
-    selectItemKey: string,
+    selectItemKey: SelectItemKey,
     selectedOptionValue: string
   ) => {
+    setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
     setSearchParams((searchParams) => {
       const values = searchParams.getAll(selectItemKey);
       if (values.includes(selectedOptionValue)) {
@@ -174,14 +185,17 @@ function PurchaseOrders() {
           selectedOptionValue
         );
       }
+      // reset page index
+      searchParams.delete('pageIndex');
+      setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
       return searchParams;
     });
   };
 
   const [{ pageIndex, pageSize }, setPagination] =
     React.useState<PaginationState>({
-      pageIndex: 0,
-      pageSize: 50,
+      pageIndex: +(searchParams.get('pageIndex') || 0),
+      pageSize: +(searchParams.get('pageSize') || 50),
     });
   const pagination = useMemo(
     () => ({ pageIndex, pageSize }),
@@ -189,6 +203,13 @@ function PurchaseOrders() {
   );
 
   useEffect(() => {
+    if (
+      pageIndex === +(searchParams.get('pageIndex') || 0) &&
+      pageSize === +(searchParams.get('pageSize') || 50)
+    ) {
+      return;
+    }
+
     setSearchParams(
       (searchParams) => {
         pageIndex > 0
@@ -203,12 +224,12 @@ function PurchaseOrders() {
         replace: true,
       }
     );
-  }, [pageIndex, pageSize, setSearchParams]);
+  }, [pageIndex, pageSize, searchParams, setSearchParams]);
 
   const dataQuery = useQuery(
-    ['data', keyword, selectItems, pagination],
+    ['data', searchParams.toString()],
     () => fetchArtworkList(searchParams),
-    { keepPreviousData: true }
+    { enabled: !!selectItems, keepPreviousData: true }
   );
 
   const [rowSelection, setRowSelection] = React.useState<
@@ -251,7 +272,9 @@ function PurchaseOrders() {
       header: ({ table }) => (
         <IndeterminateCheckbox
           {...{
-            checked: selectedRowCount === dataQuery.data?.totalCount,
+            checked:
+              dataQuery.data?.totalCount !== 0 &&
+              selectedRowCount === dataQuery.data?.totalCount,
             indeterminate: selectedRowCount > 0,
             onChange: () =>
               handleAllRowSelectionChange(table.getRowModel().rows),
@@ -271,64 +294,77 @@ function PurchaseOrders() {
       ),
     },
     {
-      header: 'ID',
+      header: '編號',
       accessorKey: 'id',
+    },
+    {
+      header: '作品名稱',
+      accessorKey: 'name',
+    },
+    {
+      header: '作品圖',
+      accessorKey: 'displayImageUrl',
       cell: ({ cell }) => (
-        <Link
-          className="text-info flex items-center whitespace-nowrap"
-          to={
-            cell.getValue() +
-            (searchParams.toString() && '?' + searchParams.toString())
-          }
-        >
-          {cell.getValue()}
-          <PencilSquareIcon className="h-4 w-4 ml-2 inline-block"></PencilSquareIcon>
-        </Link>
+        <div>
+          <DialogTrigger>
+            <Button>
+              <img
+                src={cell.getValue()}
+                alt="Artwork"
+                loading="lazy"
+                className="h-20"
+              />
+            </Button>
+            <Popover placement="right">
+              <Dialog className="h-[80vh]">
+                <img
+                  src={cell.getValue()}
+                  alt="Artwork"
+                  className="w-full h-full object-contain"
+                  loading="lazy"
+                />
+              </Dialog>
+            </Popover>
+          </DialogTrigger>
+        </div>
       ),
     },
     {
-      header: 'Artist',
+      header: '藝術家',
       accessorKey: 'artist',
     },
     {
-      header: 'Image',
-      accessorKey: 'image',
-      cell: ({ cell }) => (
-        <img src={cell.getValue()} alt="Artwork" width={50} loading="lazy" />
-      ),
+      header: '媒材',
+      accessorKey: 'materialInfo',
     },
     {
-      header: 'Medium',
-      accessorKey: 'medium',
+      header: '尺寸',
+      accessorKey: 'sizeInfo',
     },
     {
-      header: 'Size',
-      accessorKey: 'size',
+      header: '年代',
+      accessorKey: 'yearsInfo',
     },
     {
-      header: 'Year',
-      accessorKey: 'year',
-    },
-    {
-      header: 'Other Info',
+      header: '其他資訊',
       accessorKey: 'otherInfo',
     },
     {
-      header: 'Inventory Status',
-      accessorKey: 'inventoryStatus',
+      header: '庫存狀態',
+      accessorKey: 'storeInfo',
     },
     {
-      header: 'Sales Status',
-      accessorKey: 'salesStatus',
+      header: '銷售狀態',
+      accessorKey: 'salesStatusId',
     },
     {
-      header: 'Asset Category',
-      accessorKey: 'assetCategory',
+      header: '資產類型',
+      accessorKey: 'assetsTypeId',
     },
   ];
 
   const table = useReactTable({
-    data: dataQuery.data?.rows ?? [],
+    data: dataQuery.data?.data ?? [],
     columns,
     pageCount: dataQuery.data?.pageCount ?? -1,
     state: {

@@ -75,7 +75,7 @@ export default function MyCombobox({
                 <Combobox.Option
                   key={option.value}
                   className={({ active }) =>
-                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                    `relative cursor-default select-none py-2 px-4 ${
                       active ? 'bg-teal-600 text-white' : 'text-base-content'
                     }`
                   }

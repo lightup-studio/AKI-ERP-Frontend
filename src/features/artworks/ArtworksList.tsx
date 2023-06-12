@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useEffect, useMemo, useState } from 'react';
 
 import classnames from 'classnames';
 import {
@@ -7,6 +8,7 @@ import {
 } from 'data-access/apis/artworks.api';
 import { Artwork } from 'data-access/models';
 import { setPageTitle } from 'features/common/headerSlice';
+import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
 import { useDispatch } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
 import { DOTS, usePagination } from 'shared/hooks/usePagination';
@@ -20,8 +22,9 @@ import PencilSquareIcon from '@heroicons/react/24/solid/PencilSquareIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
 import XMarkIcon from '@heroicons/react/24/solid/XMarkIcon';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
+  CellContext,
   ColumnDef,
   flexRender,
   getCoreRowModel,
@@ -32,28 +35,99 @@ import {
 
 import ArtworksTitle, { ArtworksTitleProps } from './ui/ArtworksTitle';
 
+type SelectItemKey = keyof Awaited<ReturnType<typeof fetchSelectOptions>>;
+
 type SelectItem = {
-  key: string;
+  key: SelectItemKey;
   placeholder: string;
   options: ComboboxOption[];
 };
 
 type SelectedOption = ComboboxOption & {
-  selectItemKey: string;
+  selectItemKey: SelectItemKey;
 };
 
-const SELECT_ITEMS = [
+const SELECT_ITEMS: Pick<SelectItem, 'key' | 'placeholder'>[] = [
   { key: 'nationalities', placeholder: '國籍' },
   { key: 'artists', placeholder: '藝術家' },
-  { key: 'editions', placeholder: '號數' },
+  { key: 'serialNumbers', placeholder: '號數' },
   { key: 'years', placeholder: '年代' },
-  { key: 'stockStatus', placeholder: '庫存狀態' },
-  { key: 'salesStatus', placeholder: '銷售狀態' },
-  { key: 'assetCategories', placeholder: '資產類別' },
+  { key: 'storeTypes', placeholder: '庫存狀態' },
+  { key: 'salesTypes', placeholder: '銷售狀態' },
+  { key: 'assetsTypes', placeholder: '資產類別' },
   { key: 'mediums', placeholder: '媒材' },
   { key: 'agentGalleries', placeholder: '藝廊資訊' },
   { key: 'otherInfos', placeholder: '其他資訊' },
 ];
+
+// Give our default column cell renderer editing superpowers!
+const inputColumn = ({
+  getValue,
+  row: { index },
+  column: { id },
+  table,
+}: CellContext<Artwork, any>) => {
+  const initialValue = getValue();
+  // We need to keep and update the state of the cell normally
+  const [value, setValue] = useState(initialValue);
+
+  const onBlur = () => {
+    (table.options.meta as any)?.updateColumnData(index, id, value);
+  };
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  return (
+    <input
+      className="input px-1 w-full"
+      value={value as string}
+      onChange={(e) => setValue(e.target.value)}
+      onBlur={onBlur}
+    />
+  );
+};
+
+// Give our default column cell renderer editing superpowers!
+const selectColumn = (
+  {
+    getValue,
+    row: { index },
+    column: { id },
+    table,
+  }: CellContext<Artwork, any>,
+  options: ComboboxOption[]
+) => {
+  const initialValue = getValue();
+  // We need to keep and update the state of the cell normally
+  const [value, setValue] = useState(initialValue);
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  return (
+    <select
+      className="input appearance-none p-0 -mx-1 w-full text-center"
+      value={value as string}
+      onChange={(e) => {
+        setValue(e.target.value);
+        (table.options.meta as any)?.updateColumnData(
+          index,
+          id,
+          e.target.value
+        );
+      }}
+    >
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  );
+};
 
 type ArtworksListProps = Pick<ArtworksTitleProps, 'type'>;
 
@@ -65,7 +139,7 @@ function ArtworksList({ type }: ArtworksListProps) {
   }, [dispatch, type]);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [keyword, setKeyword] = useState<string | undefined>();
+  const [keyword, setKeyword] = useState(searchParams.get('keyword'));
 
   useEffect(() => {
     setSearchParams(
@@ -73,6 +147,8 @@ function ArtworksList({ type }: ArtworksListProps) {
         keyword
           ? searchParams.set('keyword', keyword)
           : searchParams.delete('keyword');
+        // reset page index
+        searchParams.delete('pageIndex');
         return searchParams;
       },
       {
@@ -81,12 +157,12 @@ function ArtworksList({ type }: ArtworksListProps) {
     );
   }, [keyword, setSearchParams]);
 
-  const handleSearch = useCallback(
-    (keyword?: string) => {
+  const handleSearch = (keyword?: string | null) => {
+    if (keyword) {
       setKeyword(keyword);
-    },
-    [setKeyword]
-  );
+      setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
+    }
+  };
 
   const selectOptionsQuery = useQuery({
     queryKey: ['selectOptions'],
@@ -99,11 +175,14 @@ function ArtworksList({ type }: ArtworksListProps) {
   useEffect(() => {
     if (selectOptionsQuery.isSuccess) {
       const selectItems = SELECT_ITEMS.filter(
-        (item) => item.key in selectOptionsQuery.data
-      ).map((item) => ({
-        ...item,
-        options: selectOptionsQuery.data[item.key],
-      }));
+        ({ key }) => key in selectOptionsQuery.data
+      ).map(
+        (item) =>
+          ({
+            ...item,
+            options: selectOptionsQuery.data[item.key],
+          } as SelectItem)
+      );
       setSelectItems(selectItems);
     }
   }, [selectOptionsQuery.isSuccess, selectOptionsQuery.data]);
@@ -111,26 +190,26 @@ function ArtworksList({ type }: ArtworksListProps) {
   useEffect(() => {
     if (!selectOptionsQuery.data) return;
 
-    const selectedOptions = [...searchParams.entries()]
+    const selectedOptions = (
+      [...searchParams.entries()] as [SelectItemKey, string][]
+    )
       .filter(([key]) => key in selectOptionsQuery.data)
-      .map(([key, value]) => ({
+      .map<SelectedOption>(([key, value]) => ({
         selectItemKey: key,
         label:
-          selectOptionsQuery.data[key].find((option) => option.value === value)
-            ?.label || '',
+          selectOptionsQuery.data[key].find((x) => x.value === value)?.label ||
+          '',
         value,
       }));
 
-    const selectedOptionMapByKey = selectedOptions.reduce<
-      Record<string, SelectedOption[]>
-    >((obj, item) => {
+    const selectedOptionMapByKey = selectedOptions.reduce((obj, item) => {
       if (item.selectItemKey in obj) {
         obj[item.selectItemKey].push(item);
       } else {
         obj[item.selectItemKey] = [item];
       }
       return obj;
-    }, {});
+    }, {} as Record<SelectItemKey, SelectedOption[]>);
 
     setSelectItems((selectItems) => {
       selectItems?.forEach((selectItem) => {
@@ -152,40 +231,47 @@ function ArtworksList({ type }: ArtworksListProps) {
     );
   }, [searchParams, selectOptionsQuery.data]);
 
-  const addSelectedOptionBySelectItemKey = useCallback(
-    (selectItemKey: string, selectedOptionValue: string) => {
-      setSearchParams((searchParams) => {
-        const values = searchParams.getAll(selectItemKey);
-        if (!values.includes(selectedOptionValue)) {
-          searchParams.append(selectItemKey, selectedOptionValue);
-        }
-        return searchParams;
-      });
-    },
-    [setSearchParams]
-  );
+  const addSelectedOptionBySelectItemKey = (
+    selectItemKey: SelectItemKey,
+    selectedOptionValue: string
+  ) => {
+    setSearchParams((searchParams) => {
+      const values = searchParams.getAll(selectItemKey);
+      if (!values.includes(selectedOptionValue)) {
+        searchParams.append(selectItemKey, selectedOptionValue);
+      }
+      // reset page index
+      searchParams.delete('pageIndex');
+      setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
+      return searchParams;
+    });
+  };
 
-  const removeSelectedOptionBySelectItemKey = useCallback(
-    (selectItemKey: string, selectedOptionValue: string) => {
-      setSearchParams((searchParams) => {
-        const values = searchParams.getAll(selectItemKey);
-        if (values.includes(selectedOptionValue)) {
-          removeSingleValueForSearchParams(
-            searchParams,
-            selectItemKey,
-            selectedOptionValue
-          );
-        }
-        return searchParams;
-      });
-    },
-    [setSearchParams]
-  );
+  const removeSelectedOptionBySelectItemKey = (
+    selectItemKey: SelectItemKey,
+    selectedOptionValue: string
+  ) => {
+    setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
+    setSearchParams((searchParams) => {
+      const values = searchParams.getAll(selectItemKey);
+      if (values.includes(selectedOptionValue)) {
+        removeSingleValueForSearchParams(
+          searchParams,
+          selectItemKey,
+          selectedOptionValue
+        );
+      }
+      // reset page index
+      searchParams.delete('pageIndex');
+      setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
+      return searchParams;
+    });
+  };
 
   const [{ pageIndex, pageSize }, setPagination] =
     React.useState<PaginationState>({
-      pageIndex: 0,
-      pageSize: 50,
+      pageIndex: +(searchParams.get('pageIndex') || 0),
+      pageSize: +(searchParams.get('pageSize') || 50),
     });
   const pagination = useMemo(
     () => ({ pageIndex, pageSize }),
@@ -193,6 +279,13 @@ function ArtworksList({ type }: ArtworksListProps) {
   );
 
   useEffect(() => {
+    if (
+      pageIndex === +(searchParams.get('pageIndex') || 0) &&
+      pageSize === +(searchParams.get('pageSize') || 50)
+    ) {
+      return;
+    }
+
     setSearchParams(
       (searchParams) => {
         pageIndex > 0
@@ -207,13 +300,22 @@ function ArtworksList({ type }: ArtworksListProps) {
         replace: true,
       }
     );
-  }, [pageIndex, pageSize, setSearchParams]);
+  }, [pageIndex, pageSize, searchParams, setSearchParams]);
 
   const dataQuery = useQuery(
-    ['data', keyword, selectItems, pagination],
+    ['data', searchParams.toString()],
     () => fetchArtworkList(searchParams),
-    { keepPreviousData: true }
+    { enabled: !!selectItems, keepPreviousData: true }
   );
+
+  const [tableData, setTableData] = useState<Artwork[]>([]);
+
+  useEffect(() => {
+    if (dataQuery.isSuccess) {
+      const tableData = structuredClone(dataQuery.data.data);
+      setTableData(tableData);
+    }
+  }, [dataQuery.isSuccess, dataQuery.data]);
 
   const [rowSelection, setRowSelection] = React.useState<
     Record<Artwork['id'], Artwork>
@@ -253,14 +355,18 @@ function ArtworksList({ type }: ArtworksListProps) {
     {
       id: 'select',
       header: ({ table }) => (
-        <IndeterminateCheckbox
-          {...{
-            checked: selectedRowCount === dataQuery.data?.totalCount,
-            indeterminate: selectedRowCount > 0,
-            onChange: () =>
-              handleAllRowSelectionChange(table.getRowModel().rows),
-          }}
-        />
+        <div className="px-1">
+          <IndeterminateCheckbox
+            {...{
+              checked:
+                dataQuery.data?.totalCount !== 0 &&
+                selectedRowCount === dataQuery.data?.totalCount,
+              indeterminate: selectedRowCount > 0,
+              onChange: () =>
+                handleAllRowSelectionChange(table.getRowModel().rows),
+            }}
+          />
+        </div>
       ),
       cell: ({ row }) => (
         <div className="px-1">
@@ -275,7 +381,7 @@ function ArtworksList({ type }: ArtworksListProps) {
       ),
     },
     {
-      header: 'ID',
+      header: '編號',
       accessorKey: 'id',
       cell: ({ cell }) => (
         <Link
@@ -291,57 +397,135 @@ function ArtworksList({ type }: ArtworksListProps) {
       ),
     },
     {
-      header: 'Artist',
-      accessorKey: 'artist',
+      header: '作品名稱',
+      accessorKey: 'name',
+      cell: inputColumn,
     },
     {
-      header: 'Image',
-      accessorKey: 'image',
+      header: '作品圖',
+      accessorKey: 'displayImageUrl',
       cell: ({ cell }) => (
-        <img src={cell.getValue()} alt="Artwork" width={50} loading="lazy" />
+        <div>
+          <DialogTrigger>
+            <Button>
+              <img
+                src={cell.getValue()}
+                alt="Artwork"
+                loading="lazy"
+                className="h-20"
+              />
+            </Button>
+            <Popover placement="right">
+              <Dialog className="h-[80vh]">
+                <img
+                  src={cell.getValue()}
+                  alt="Artwork"
+                  className="w-full h-full object-contain"
+                  loading="lazy"
+                />
+              </Dialog>
+            </Popover>
+          </DialogTrigger>
+        </div>
       ),
     },
     {
-      header: 'Medium',
-      accessorKey: 'medium',
+      header: '藝術家',
+      accessorKey: 'artist',
     },
     {
-      header: 'Size',
-      accessorKey: 'size',
+      header: '媒材',
+      accessorKey: 'materialInfo',
     },
     {
-      header: 'Year',
-      accessorKey: 'year',
+      header: '尺寸',
+      accessorKey: 'sizeInfo',
     },
     {
-      header: 'Other Info',
+      header: '年代',
+      accessorKey: 'yearsInfo',
+    },
+    {
+      header: '其他資訊',
       accessorKey: 'otherInfo',
     },
     {
-      header: 'Inventory Status',
-      accessorKey: 'inventoryStatus',
+      header: '庫存狀態',
+      accessorKey: 'storeInfo',
     },
     {
-      header: 'Sales Status',
-      accessorKey: 'salesStatus',
+      header: '銷售狀態',
+      accessorKey: 'salesStatusId',
+      cell: (cellContext: CellContext<Artwork, any>) =>
+        selectColumn(
+          cellContext,
+          selectOptionsQuery.data?.['salesTypes'] || []
+        ),
     },
     {
-      header: 'Asset Category',
-      accessorKey: 'assetCategory',
+      id: 'assetsTypeId',
+      header: '資產類型',
+      accessorKey: 'assetsTypeId',
+      cell: (cellContext: CellContext<Artwork, any>) =>
+        selectColumn(
+          cellContext,
+          selectOptionsQuery.data?.['assetsTypes'] || []
+        ),
     },
   ];
 
+  const columnMutation = useMutation({
+    mutationFn: ({
+      id,
+      columnId,
+      value,
+    }: {
+      id: string;
+      columnId: keyof Artwork;
+      value: Artwork[keyof Artwork];
+    }) => {
+      return Promise.resolve({ id, columnId, value });
+    },
+    onSuccess: (data) => {
+      setTableData((tableData) =>
+        tableData.map((row) => {
+          if (row.id === data.id) {
+            return {
+              ...row,
+              [data.columnId]: data.value,
+            };
+          }
+          return row;
+        })
+      );
+    },
+  });
+
   const table = useReactTable({
-    data: dataQuery.data?.rows ?? [],
+    data: tableData,
     columns,
     pageCount: dataQuery.data?.pageCount ?? -1,
     state: {
       pagination,
     },
-    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
-    debugTable: true,
+    onPaginationChange: setPagination,
+    meta: {
+      updateColumnData: async function <TColumnId extends keyof Artwork>(
+        rowIndex: number,
+        columnId: TColumnId,
+        value: Artwork[TColumnId]
+      ) {
+        const row = table.getRowModel().rows[rowIndex];
+        const id = row.original.id;
+        await columnMutation.mutateAsync({
+          id,
+          columnId,
+          value,
+        });
+      },
+    },
   });
 
   const paginationRange = usePagination({
@@ -354,7 +538,7 @@ function ArtworksList({ type }: ArtworksListProps) {
   return (
     <div className="card w-full p-6 bg-base-100 shadow-xl">
       <div className="md:w-1/2 mb-3">
-        <SearchInput onSearch={handleSearch} />
+        <SearchInput value={keyword} onSearch={handleSearch} />
       </div>
 
       <div className="flex gap-2 flex-col md:flex-row">
@@ -458,13 +642,33 @@ function ArtworksList({ type }: ArtworksListProps) {
 
       <div className="h-full w-full pb-6 bg-base-100 text-center">
         <div className="overflow-x-auto w-full">
-          <table className="table w-full">
+          <table className="table text-[1rem] w-full">
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
+                <tr key={headerGroup.id} className="text-[1rem]">
                   {headerGroup.headers.map((header) => {
                     return (
-                      <td key={header.id} colSpan={header.colSpan}>
+                      <td
+                        key={header.id}
+                        colSpan={header.colSpan}
+                        className={classnames('p-2', {
+                          'min-w-[10rem]': ![
+                            'select',
+                            'displayImageUrl',
+                            'storeTypeId',
+                            'salesStatusId',
+                            'assetsTypeId',
+                          ].includes(header.id),
+                          'min-w-[3rem]': [
+                            'storeTypeId',
+                            'salesStatusId',
+                            'assetsTypeId',
+                          ].includes(header.id),
+                          'text-center': ['mediumKey', 'assetsTypeId'].includes(
+                            header.id
+                          ),
+                        })}
+                      >
                         {header.isPlaceholder ? null : (
                           <div>
                             {flexRender(
@@ -485,7 +689,7 @@ function ArtworksList({ type }: ArtworksListProps) {
                   <tr key={row.id}>
                     {row.getVisibleCells().map((cell) => {
                       return (
-                        <td key={cell.id}>
+                        <td key={cell.id} className="p-2">
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext()

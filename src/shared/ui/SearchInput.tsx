@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 
 export const SearchInput = ({
+  value,
   onSearch,
 }: {
-  onSearch?: (value?: string) => void;
+  value?: string | null;
+  onSearch?: (value?: string | null) => void;
 }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(value);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -32,7 +34,7 @@ export const SearchInput = ({
         type="text"
         className={'input input-bordered shadow rounded p-3 w-full'}
         placeholder={'請輸入關鍵字...'}
-        value={searchTerm}
+        value={searchTerm || ''}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
       />

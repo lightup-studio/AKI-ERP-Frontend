@@ -5,9 +5,9 @@ export interface ApiResponse<T> {
 }
 
 export interface Pagination<T> {
-  rows: T[];
-  pageIndex: number;
-  pageSize: number;
+  data: T[];
+  offset: number;
+  take: number;
   pageCount: number;
   totalCount: number;
 }
