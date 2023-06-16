@@ -44,8 +44,8 @@ function AddPurchaseOrder() {
             進銷存 /{' '}
             <Link
               to={
-                '../orders' + searchParams.toString() &&
-                '?' + searchParams.toString()
+                '/app/purchase/orders' +
+                (searchParams.toString() && '?' + searchParams)
               }
             >
               進貨單
@@ -193,14 +193,6 @@ function AddPurchaseOrder() {
     {
       header: '庫存狀態',
       accessorKey: 'storeInfo',
-    },
-    {
-      header: '銷售狀態',
-      accessorKey: 'salesStatusId',
-    },
-    {
-      header: '資產類型',
-      accessorKey: 'assetsTypeId',
     },
   ];
 

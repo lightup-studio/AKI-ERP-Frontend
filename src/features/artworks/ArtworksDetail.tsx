@@ -169,7 +169,7 @@ function ArtworksDetail({ type }: ArtworksDetailProps) {
       warehouseId: null,
     },
     resolver: yupResolver(schema),
-    mode: 'onTouched',
+    mode: 'all',
   });
 
   React.useEffect(() => {

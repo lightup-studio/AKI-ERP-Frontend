@@ -97,7 +97,7 @@ export default function MyCombobox({
                             active ? 'text-white' : 'text-teal-600'
                           }`}
                         >
-                          <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                          {/* <CheckIcon className="h-5 w-5" aria-hidden="true" /> */}
                         </span>
                       ) : null}
                     </>

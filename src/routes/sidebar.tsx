@@ -87,15 +87,15 @@ const routes = [
     groupName: '通用資訊'
   },
   {
-    path: '',
+    path: '/app/partners/artists',
     name: '藝術家',
   },
   {
-    path: '',
+    path: '/app/partners/collector',
     name: '藏家',
   },
   {
-    path: '',
+    path: '/app/partners/company',
     name: '廠商',
   },
 

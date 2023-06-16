@@ -17,7 +17,6 @@ import MyCombobox, { Option as ComboboxOption } from 'shared/ui/MyCombobox';
 import SearchInput from 'shared/ui/SearchInput';
 import { removeSingleValueForSearchParams } from 'utils/searchParamsUtil';
 
-import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
 import PencilSquareIcon from '@heroicons/react/24/solid/PencilSquareIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
@@ -158,10 +157,8 @@ function ArtworksList({ type }: ArtworksListProps) {
   }, [keyword, setSearchParams]);
 
   const handleSearch = (keyword?: string | null) => {
-    if (keyword) {
-      setKeyword(keyword);
-      setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
-    }
+    setKeyword(keyword || '');
+    setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
   };
 
   const selectOptionsQuery = useQuery({
@@ -431,7 +428,16 @@ function ArtworksList({ type }: ArtworksListProps) {
     },
     {
       header: '藝術家',
-      accessorKey: 'artist',
+      accessorKey: 'artistId',
+      cell: ({ cell }) => (
+        <div>
+          {
+            selectOptionsQuery.data?.['artists'].find(
+              (artist) => artist.value === `${cell.getValue()}`
+            )?.label
+          }
+        </div>
+      ),
     },
     {
       header: '媒材',
@@ -480,24 +486,14 @@ function ArtworksList({ type }: ArtworksListProps) {
       columnId,
       value,
     }: {
-      id: string;
+      id: number;
       columnId: keyof Artwork;
       value: Artwork[keyof Artwork];
     }) => {
       return Promise.resolve({ id, columnId, value });
     },
     onSuccess: (data) => {
-      setTableData((tableData) =>
-        tableData.map((row) => {
-          if (row.id === data.id) {
-            return {
-              ...row,
-              [data.columnId]: data.value,
-            };
-          }
-          return row;
-        })
-      );
+      console.log('mutation success :>>', data);
     },
   });
 
@@ -517,8 +513,21 @@ function ArtworksList({ type }: ArtworksListProps) {
         columnId: TColumnId,
         value: Artwork[TColumnId]
       ) {
-        const row = table.getRowModel().rows[rowIndex];
-        const id = row.original.id;
+        const currentRow = table.getRowModel().rows[rowIndex];
+        const id = currentRow.original.id;
+
+        setTableData((tableData) =>
+          tableData.map((row) => {
+            if (row.id === id) {
+              return {
+                ...row,
+                [columnId]: value,
+              };
+            }
+            return row;
+          })
+        );
+
         await columnMutation.mutateAsync({
           id,
           columnId,
@@ -620,10 +629,6 @@ function ArtworksList({ type }: ArtworksListProps) {
 
       <div className="flex items-center gap-2 py-2 mb-2">
         <span>已選擇 {selectedRowCount} 筆</span>
-        <button className="btn btn-success" disabled={selectedRowCount === 0}>
-          <PencilIcon className="h-5 w-5"></PencilIcon>
-          編輯
-        </button>
         <button className="btn btn-error" disabled={selectedRowCount === 0}>
           <TrashIcon className="h-5 w-5"></TrashIcon>
           刪除
@@ -642,10 +647,10 @@ function ArtworksList({ type }: ArtworksListProps) {
 
       <div className="h-full w-full pb-6 bg-base-100 text-center">
         <div className="overflow-x-auto w-full">
-          <table className="table text-[1rem] w-full">
+          <table className="table w-full">
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id} className="text-[1rem]">
+                <tr key={headerGroup.id} className="text-sm">
                   {headerGroup.headers.map((header) => {
                     return (
                       <td
@@ -654,7 +659,6 @@ function ArtworksList({ type }: ArtworksListProps) {
                         className={classnames('p-2', {
                           'min-w-[10rem]': ![
                             'select',
-                            'displayImageUrl',
                             'storeTypeId',
                             'salesStatusId',
                             'assetsTypeId',
@@ -686,7 +690,7 @@ function ArtworksList({ type }: ArtworksListProps) {
             <tbody>
               {table.getRowModel().rows.map((row) => {
                 return (
-                  <tr key={row.id}>
+                  <tr key={row.id} className="text-sm">
                     {row.getVisibleCells().map((cell) => {
                       return (
                         <td key={cell.id} className="p-2">

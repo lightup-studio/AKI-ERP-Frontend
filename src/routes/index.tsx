@@ -13,6 +13,9 @@ const ErpTransfer = lazy(() => import('../pages/erp/Transfer'));
 const ErpLoan = lazy(() => import('../pages/erp/Loan'));
 const ErpRepair = lazy(() => import('../pages/erp/Repair'));
 const ErpShipment = lazy(() => import('../pages/erp/Shipment'));
+const Artists = lazy(() => import('../pages/partners/Artists'));
+const Collector = lazy(() => import('../pages/partners/Collector'));
+const Company = lazy(() => import('../pages/partners/Company'));
 
 const Dashboard = lazy(() => import('../pages/protected/Dashboard'));
 const Welcome = lazy(() => import('../pages/protected/Welcome'));
@@ -60,6 +63,27 @@ const routes: RouteObject[] = [
   {
     path: '/shipment/*',
     element: <ErpShipment />,
+  },
+  {
+    path: '/partners/*',
+    children: [
+      {
+        path: 'artists/*',
+        element: <Artists />,
+      },
+      {
+        path: 'collector/*',
+        element: <Collector />,
+      },
+      {
+        path: 'company/*',
+        element: <Company />,
+      },
+      {
+        path: '*',
+        element: <Navigate to="./artists" replace />,
+      },
+    ],
   },
   {
     path: '/dashboard', // the url

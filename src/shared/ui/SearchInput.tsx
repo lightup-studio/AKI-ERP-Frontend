@@ -24,6 +24,8 @@ export const SearchInput = ({
   };
 
   const handleClear = () => {
+    
+    console.log("%c Line:28 🍔", "color:#2eafb0");
     setSearchTerm('');
     onSearch?.('');
   };

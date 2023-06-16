@@ -94,10 +94,8 @@ function ArtworksSelector({
   }, [keyword, setSearchParams]);
 
   const handleSearch = (keyword?: string | null) => {
-    if (keyword) {
-      setKeyword(keyword);
-      setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
-    }
+    setKeyword(keyword || '');
+    setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
   };
 
   const selectOptionsQuery = useQuery({
@@ -331,6 +329,10 @@ function ArtworksSelector({
       ),
     },
     {
+      header: '藝術家',
+      accessorKey: 'artist',
+    },
+    {
       header: '媒材',
       accessorKey: 'materialInfo',
     },
@@ -339,24 +341,16 @@ function ArtworksSelector({
       accessorKey: 'sizeInfo',
     },
     {
-      header: 'Year',
-      accessorKey: 'year',
+      header: '年代',
+      accessorKey: 'yearsInfo',
     },
     {
-      header: 'Other Info',
+      header: '其他資訊',
       accessorKey: 'otherInfo',
     },
     {
-      header: 'Inventory Status',
-      accessorKey: 'inventoryStatus',
-    },
-    {
-      header: 'Sales Status',
-      accessorKey: 'salesTypes',
-    },
-    {
-      header: 'Asset Category',
-      accessorKey: 'assetCategory',
+      header: '庫存狀態',
+      accessorKey: 'storeInfo',
     },
   ];
 
@@ -388,7 +382,11 @@ function ArtworksSelector({
       <ul class="list-disc"> ${Object.keys(rowSelection)
         .map(
           (key) =>
-            `<li><a class="text-info" href="/app/artworks/${rowSelection[key].id}" target="_blank" rel="noopener noreferrer" >${rowSelection[key].id}</a></li>`
+            `<li><a class="text-info" href="/app/artworks/${
+              rowSelection[+key].id
+            }" target="_blank" rel="noopener noreferrer" >${
+              rowSelection[+key].id
+            }</a></li>`
         )
         .join('')} </ul>
       `,
