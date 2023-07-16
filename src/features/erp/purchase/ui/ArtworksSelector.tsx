@@ -396,9 +396,8 @@ function ArtworksSelector({
       return;
     }
 
-    showSuccess('已成功新增藝術品至進貨單！').then(() =>
-      onClose?.(rowSelection)
-    );
+    await showSuccess('已成功新增藝術品至進貨單！');
+    onClose?.(rowSelection)
   };
 
   return (

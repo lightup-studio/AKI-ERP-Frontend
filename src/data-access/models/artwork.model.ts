@@ -1,3 +1,5 @@
+import { storeTypeOptions } from 'src/constants/artwork.constant';
+
 /**
  * 藝術品物件
  */
@@ -25,46 +27,73 @@ export interface Artwork {
 }
 
 export interface ArtworkDetail {
-  image: string;
-  artistNames: ArtistName[];
-  assetCategory: string | null;
-  type: string | null;
-  agentGalleries: AgentGallery[];
-  nationality: string | null;
-  purchasingUnit: string;
-  name: string;
-  length: string;
-  width: string;
-  height: string;
-  customSize: string;
-  serialNumber: string;
-  media: string;
-  startYear?: number | null;
-  endYear?: number | null;
-  edition: string;
-  otherInfo: OtherInfo;
-  warehouseId: string | null;
-  warehouseLocation?: string;
-  stockType?:
-    | 'lend'
-    | 'returnedLend'
-    | 'repair'
-    | 'returnedRepair'
-    | 'shipping'
-    | 'returnedShipping';
-  lendDepartment?: string;
-  returnedLendDepartment?: string;
-  repairDepartment?: string;
-  repairNote?: string;
-  returnRepairDepartment?: string;
-  shippingDepartment?: string;
-  returnedShippingDepartment?: string;
-  salesOrder?: SalesOrder;
+  id: number;
+  displayId: string;
+  warehouseId: number | null;
+  zhName: string;
+  enName: string;
+  imageUrl: string;
+  thumbnailUrl: string;
+  /** 國籍 (取代既有的 nationality) */
+  countryCode: string | null;
+  createTime: string | Date;
+  lastModifyTime: string | Date;
+  status: 'Disabled' | 'Draft' | 'Enabled';
+  artists: Artist[];
+  /** 取代 startYear */
+  yearRangeStart?: number | null;
+  /** 取代 endYear */
+  yearRangeEnd?: number | null;
+  metadata?: {
+    /** 作品類型 */
+    artworkType: string | null;
+    /** 資產類別 */
+    assetsType: string | null;
+    /** 代理藝廊 */
+    agentGalleries: AgentGallery[];
+    /** 進貨單位 */
+    purchasingUnit: string;
+    /** 長 */
+    length: string;
+    /** 寬 */
+    width: string;
+    /** 高 */
+    height: string;
+    /** 自定義尺寸 */
+    customSize: string;
+    /** 號數 */
+    serialNumber: string;
+    /** 媒材 */
+    media: string;
+    /** 版次 ed. */
+    edition: string;
+
+    otherInfo: OtherInfo;
+
+    /** 自填庫存位置 */
+    warehouseLocation?: string;
+    /** 庫存狀態 */
+    storeType?: (typeof storeTypeOptions)[number]['value'];
+    /** 借展，單位 */
+    lendDepartment?: string;
+    /** 維修，單位 */
+    repairDepartment?: string;
+    /** 維修，狀態說明 */
+    repairNote?: string;
+    /** 已歸還，單位 */
+    returnRepairDepartment?: string;
+    /** 已退回，單位 */
+    returnedShippingDepartment?: string;
+
+    /** 銷售狀態 */
+    salesType?: 'sold' | 'unsold';
+    salesOrder?: SalesOrder;
+  };
 }
 
-interface ArtistName {
-  chineseName: string;
-  englishName: string;
+export interface Artist {
+  zhName: string;
+  enName: string;
 }
 
 interface AgentGallery {
@@ -72,11 +101,17 @@ interface AgentGallery {
 }
 
 interface OtherInfo {
+  /** 表框 */
   frame: boolean;
+  /** 表框，尺寸 */
   frameDimensions: string;
+  /** 台座 */
   pedestal: boolean;
+  /** 台座，尺寸 */
   pedestalDimensions: string;
+  /** 紙箱 */
   cardboardBox: boolean;
+  /** 木箱 */
   woodenBox: boolean;
 }
 

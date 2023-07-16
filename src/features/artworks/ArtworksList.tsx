@@ -2,11 +2,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import classnames from 'classnames';
-import {
-  fetchArtworkList,
-  fetchSelectOptions,
-} from 'data-access/apis/artworks.api';
-import { Artwork } from 'data-access/models';
+import { deleteArtworks, fetchArtworkList2, fetchSelectOptions, patchArtwork } from 'data-access/apis/artworks.api';
+import { ArtworkDetail } from 'data-access/models';
 import { setPageTitle } from 'features/common/headerSlice';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
 import { useDispatch } from 'react-redux';
@@ -15,6 +12,7 @@ import { DOTS, usePagination } from 'shared/hooks/usePagination';
 import IndeterminateCheckbox from 'shared/ui/IndeterminateCheckbox';
 import MyCombobox, { Option as ComboboxOption } from 'shared/ui/MyCombobox';
 import SearchInput from 'shared/ui/SearchInput';
+import { assetsTypeOptions, salesTypeOptions, storeTypeOptionMap } from 'src/constants/artwork.constant';
 import { removeSingleValueForSearchParams } from 'utils/searchParamsUtil';
 
 import PencilSquareIcon from '@heroicons/react/24/solid/PencilSquareIcon';
@@ -22,15 +20,7 @@ import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
 import XMarkIcon from '@heroicons/react/24/solid/XMarkIcon';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import {
-  CellContext,
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  PaginationState,
-  Row,
-  useReactTable,
-} from '@tanstack/react-table';
+import { CellContext, ColumnDef, flexRender, getCoreRowModel, PaginationState, Row, useReactTable } from '@tanstack/react-table';
 
 import ArtworksTitle, { ArtworksTitleProps } from './ui/ArtworksTitle';
 
@@ -60,12 +50,7 @@ const SELECT_ITEMS: Pick<SelectItem, 'key' | 'placeholder'>[] = [
 ];
 
 // Give our default column cell renderer editing superpowers!
-const inputColumn = ({
-  getValue,
-  row: { index },
-  column: { id },
-  table,
-}: CellContext<Artwork, any>) => {
+const inputColumn = ({ getValue, row: { index }, column: { id }, table }: CellContext<ArtworkDetail, any>) => {
   const initialValue = getValue();
   // We need to keep and update the state of the cell normally
   const [value, setValue] = useState(initialValue);
@@ -78,27 +63,16 @@ const inputColumn = ({
     setValue(initialValue);
   }, [initialValue]);
 
-  return (
-    <input
-      className="input px-1 w-full"
-      value={value as string}
-      onChange={(e) => setValue(e.target.value)}
-      onBlur={onBlur}
-    />
-  );
+  return <input className="input px-1 w-full" value={value as string} onChange={(e) => setValue(e.target.value)} onBlur={onBlur} />;
 };
 
 // Give our default column cell renderer editing superpowers!
 const selectColumn = (
-  {
-    getValue,
-    row: { index },
-    column: { id },
-    table,
-  }: CellContext<Artwork, any>,
-  options: ComboboxOption[]
+  { getValue, row: { index }, column: { id }, table }: CellContext<ArtworkDetail, any>,
+  options: ComboboxOption[],
+  config?: { getValue?: () => any; onChange?: (value: string) => void }
 ) => {
-  const initialValue = getValue();
+  const initialValue = config?.getValue?.() ?? getValue();
   // We need to keep and update the state of the cell normally
   const [value, setValue] = useState(initialValue);
 
@@ -108,15 +82,15 @@ const selectColumn = (
 
   return (
     <select
-      className="input appearance-none p-0 -mx-1 w-full text-center"
+      className="input appearance-none p-0 text-center text-sm w-[3rem]"
       value={value as string}
       onChange={(e) => {
         setValue(e.target.value);
-        (table.options.meta as any)?.updateColumnData(
-          index,
-          id,
-          e.target.value
-        );
+        if (config?.onChange) {
+          config?.onChange?.(e.target.value);
+        } else {
+          (table.options.meta as any)?.updateColumnData(index, id, value);
+        }
       }}
     >
       {options.map((option) => (
@@ -143,9 +117,7 @@ function ArtworksList({ type }: ArtworksListProps) {
   useEffect(() => {
     setSearchParams(
       (searchParams) => {
-        keyword
-          ? searchParams.set('keyword', keyword)
-          : searchParams.delete('keyword');
+        keyword ? searchParams.set('keyword', keyword) : searchParams.delete('keyword');
         // reset page index
         searchParams.delete('pageIndex');
         return searchParams;
@@ -171,9 +143,7 @@ function ArtworksList({ type }: ArtworksListProps) {
 
   useEffect(() => {
     if (selectOptionsQuery.isSuccess) {
-      const selectItems = SELECT_ITEMS.filter(
-        ({ key }) => key in selectOptionsQuery.data
-      ).map(
+      const selectItems = SELECT_ITEMS.filter(({ key }) => key in selectOptionsQuery.data).map(
         (item) =>
           ({
             ...item,
@@ -187,15 +157,11 @@ function ArtworksList({ type }: ArtworksListProps) {
   useEffect(() => {
     if (!selectOptionsQuery.data) return;
 
-    const selectedOptions = (
-      [...searchParams.entries()] as [SelectItemKey, string][]
-    )
+    const selectedOptions = ([...searchParams.entries()] as [SelectItemKey, string][])
       .filter(([key]) => key in selectOptionsQuery.data)
       .map<SelectedOption>(([key, value]) => ({
         selectItemKey: key,
-        label:
-          selectOptionsQuery.data[key].find((x) => x.value === value)?.label ||
-          '',
+        label: selectOptionsQuery.data[key].find((x) => x.value === value)?.label || '',
         value,
       }));
 
@@ -210,28 +176,19 @@ function ArtworksList({ type }: ArtworksListProps) {
 
     setSelectItems((selectItems) => {
       selectItems?.forEach((selectItem) => {
-        const selectedOptionValues = selectedOptionMapByKey[
-          selectItem.key
-        ]?.map((option) => option.value);
+        const selectedOptionValues = selectedOptionMapByKey[selectItem.key]?.map((option) => option.value);
 
-        selectItem.options = selectOptionsQuery.data[selectItem.key].filter(
-          (option) => !selectedOptionValues?.includes(option.value)
-        );
+        selectItem.options = selectOptionsQuery.data[selectItem.key].filter((option) => !selectedOptionValues?.includes(option.value));
       });
       return [...(selectItems || [])];
     });
 
     setSelectedOptions(
-      SELECT_ITEMS?.filter(
-        (item) => item.key in selectedOptionMapByKey
-      ).flatMap((item) => selectedOptionMapByKey[item.key]) || []
+      SELECT_ITEMS?.filter((item) => item.key in selectedOptionMapByKey).flatMap((item) => selectedOptionMapByKey[item.key]) || []
     );
   }, [searchParams, selectOptionsQuery.data]);
 
-  const addSelectedOptionBySelectItemKey = (
-    selectItemKey: SelectItemKey,
-    selectedOptionValue: string
-  ) => {
+  const addSelectedOptionBySelectItemKey = (selectItemKey: SelectItemKey, selectedOptionValue: string) => {
     setSearchParams((searchParams) => {
       const values = searchParams.getAll(selectItemKey);
       if (!values.includes(selectedOptionValue)) {
@@ -244,19 +201,12 @@ function ArtworksList({ type }: ArtworksListProps) {
     });
   };
 
-  const removeSelectedOptionBySelectItemKey = (
-    selectItemKey: SelectItemKey,
-    selectedOptionValue: string
-  ) => {
+  const removeSelectedOptionBySelectItemKey = (selectItemKey: SelectItemKey, selectedOptionValue: string) => {
     setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
     setSearchParams((searchParams) => {
       const values = searchParams.getAll(selectItemKey);
       if (values.includes(selectedOptionValue)) {
-        removeSingleValueForSearchParams(
-          searchParams,
-          selectItemKey,
-          selectedOptionValue
-        );
+        removeSingleValueForSearchParams(searchParams, selectItemKey, selectedOptionValue);
       }
       // reset page index
       searchParams.delete('pageIndex');
@@ -265,32 +215,21 @@ function ArtworksList({ type }: ArtworksListProps) {
     });
   };
 
-  const [{ pageIndex, pageSize }, setPagination] =
-    React.useState<PaginationState>({
-      pageIndex: +(searchParams.get('pageIndex') || 0),
-      pageSize: +(searchParams.get('pageSize') || 50),
-    });
-  const pagination = useMemo(
-    () => ({ pageIndex, pageSize }),
-    [pageIndex, pageSize]
-  );
+  const [{ pageIndex, pageSize }, setPagination] = React.useState<PaginationState>({
+    pageIndex: +(searchParams.get('pageIndex') || 0),
+    pageSize: +(searchParams.get('pageSize') || 50),
+  });
+  const pagination = useMemo(() => ({ pageIndex, pageSize }), [pageIndex, pageSize]);
 
   useEffect(() => {
-    if (
-      pageIndex === +(searchParams.get('pageIndex') || 0) &&
-      pageSize === +(searchParams.get('pageSize') || 50)
-    ) {
+    if (pageIndex === +(searchParams.get('pageIndex') || 0) && pageSize === +(searchParams.get('pageSize') || 50)) {
       return;
     }
 
     setSearchParams(
       (searchParams) => {
-        pageIndex > 0
-          ? searchParams.set('pageIndex', `${pageIndex}`)
-          : searchParams.delete('pageIndex');
-        pageSize !== 50
-          ? searchParams.set('pageSize', `${pageSize}`)
-          : searchParams.delete('pageSize');
+        pageIndex > 0 ? searchParams.set('pageIndex', `${pageIndex}`) : searchParams.delete('pageIndex');
+        pageSize !== 50 ? searchParams.set('pageSize', `${pageSize}`) : searchParams.delete('pageSize');
         return searchParams;
       },
       {
@@ -301,11 +240,14 @@ function ArtworksList({ type }: ArtworksListProps) {
 
   const dataQuery = useQuery(
     ['data', searchParams.toString()],
-    () => fetchArtworkList(searchParams),
-    { enabled: !!selectItems, keepPreviousData: true }
+    () => fetchArtworkList2(type === 'inventory' ? 'Enabled' : type === 'draft' ? 'Draft' : 'Disabled', searchParams),
+    {
+      enabled: !!selectItems,
+      keepPreviousData: true,
+    }
   );
 
-  const [tableData, setTableData] = useState<Artwork[]>([]);
+  const [tableData, setTableData] = useState<ArtworkDetail[]>([]);
 
   useEffect(() => {
     if (dataQuery.isSuccess) {
@@ -314,16 +256,11 @@ function ArtworksList({ type }: ArtworksListProps) {
     }
   }, [dataQuery.isSuccess, dataQuery.data]);
 
-  const [rowSelection, setRowSelection] = React.useState<
-    Record<Artwork['id'], Artwork>
-  >({});
+  const [rowSelection, setRowSelection] = React.useState<Record<ArtworkDetail['id'], ArtworkDetail>>({});
 
-  const selectedRowCount = useMemo(
-    () => Object.keys(rowSelection).length,
-    [rowSelection]
-  );
+  const selectedRowCount = useMemo(() => Object.keys(rowSelection).length, [rowSelection]);
 
-  const handleAllRowSelectionChange = (rows: Row<Artwork>[]) => {
+  const handleAllRowSelectionChange = (rows: Row<ArtworkDetail>[]) => {
     const selectedRows = rows.filter((row) => row.original.id in rowSelection);
     const isAnyRowSelected = selectedRows.length > 0;
 
@@ -336,7 +273,7 @@ function ArtworksList({ type }: ArtworksListProps) {
     setRowSelection(structuredClone(rowSelection));
   };
 
-  const handleRowSelectionChange = (row: Row<Artwork>) => {
+  const handleRowSelectionChange = (row: Row<ArtworkDetail>) => {
     const { id } = row.original;
 
     if (id in rowSelection) {
@@ -348,19 +285,31 @@ function ArtworksList({ type }: ArtworksListProps) {
     setRowSelection(structuredClone(rowSelection));
   };
 
-  const columns: ColumnDef<Artwork, any>[] = [
+  const deleteMutation = useMutation({
+    mutationKey: ['deleteArtworks'],
+    mutationFn: deleteArtworks,
+    onSuccess: () => {
+      dataQuery.refetch();
+    },
+  });
+
+  const onDelete = () => {
+    if (selectedRowCount > 0) {
+      deleteMutation.mutate(Object.keys(rowSelection));
+      setRowSelection({});
+    }
+  };
+
+  const columns: ColumnDef<ArtworkDetail, any>[] = [
     {
       id: 'select',
       header: ({ table }) => (
         <div className="px-1">
           <IndeterminateCheckbox
             {...{
-              checked:
-                dataQuery.data?.totalCount !== 0 &&
-                selectedRowCount === dataQuery.data?.totalCount,
+              checked: dataQuery.data?.totalCount !== 0 && selectedRowCount === dataQuery.data?.totalCount,
               indeterminate: selectedRowCount > 0,
-              onChange: () =>
-                handleAllRowSelectionChange(table.getRowModel().rows),
+              onChange: () => handleAllRowSelectionChange(table.getRowModel().rows),
             }}
           />
         </div>
@@ -379,14 +328,11 @@ function ArtworksList({ type }: ArtworksListProps) {
     },
     {
       header: '編號',
-      accessorKey: 'id',
+      accessorKey: 'displayId',
       cell: ({ cell }) => (
         <Link
           className="text-info flex items-center whitespace-nowrap"
-          to={
-            cell.getValue() +
-            (searchParams.toString() && '?' + searchParams.toString())
-          }
+          to={cell.getValue() + (searchParams.toString() && '?' + searchParams.toString())}
         >
           {cell.getValue()}
           <PencilSquareIcon className="h-4 w-4 ml-2 inline-block"></PencilSquareIcon>
@@ -395,7 +341,7 @@ function ArtworksList({ type }: ArtworksListProps) {
     },
     {
       header: '作品名稱',
-      accessorKey: 'name',
+      accessorKey: 'enName',
       cell: inputColumn,
     },
     {
@@ -405,21 +351,11 @@ function ArtworksList({ type }: ArtworksListProps) {
         <div>
           <DialogTrigger>
             <Button>
-              <img
-                src={cell.getValue()}
-                alt="Artwork"
-                loading="lazy"
-                className="h-20"
-              />
+              <img src={cell.getValue()} alt="Artwork" loading="lazy" className="h-20" />
             </Button>
             <Popover placement="right">
               <Dialog className="h-[80vh]">
-                <img
-                  src={cell.getValue()}
-                  alt="Artwork"
-                  className="w-full h-full object-contain"
-                  loading="lazy"
-                />
+                <img src={cell.getValue()} alt="Artwork" className="w-full h-full object-contain" loading="lazy" />
               </Dialog>
             </Popover>
           </DialogTrigger>
@@ -428,72 +364,129 @@ function ArtworksList({ type }: ArtworksListProps) {
     },
     {
       header: '藝術家',
-      accessorKey: 'artistId',
+      accessorKey: 'artists',
       cell: ({ cell }) => (
         <div>
-          {
-            selectOptionsQuery.data?.['artists'].find(
-              (artist) => artist.value === `${cell.getValue()}`
-            )?.label
-          }
+          {cell
+            .getValue<ArtworkDetail['artists']>()
+            ?.map((artist) => `${artist.zhName} ${artist.enName}`)
+            .join(',')}
         </div>
       ),
     },
     {
+      id: 'media',
       header: '媒材',
-      accessorKey: 'materialInfo',
+      accessorKey: 'metadata',
+      cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => cell.getValue()?.media ?? '無',
     },
     {
+      id: 'size',
       header: '尺寸',
-      accessorKey: 'sizeInfo',
+      accessorKey: 'metadata',
+      cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
+        const { length, width, height } = cell.getValue<ArtworkDetail['metadata']>() || {};
+        const lengthText = length && `長 ${length}`;
+        const widthText = width && `寬 ${width}`;
+        const heightText = height && `高 ${height}`;
+        return lengthText && widthText && heightText
+          ? `${lengthText} x ${widthText} x ${heightText}`
+          : widthText && heightText
+          ? `${widthText} x ${heightText}`
+          : lengthText && widthText
+          ? `${lengthText} x ${widthText}`
+          : lengthText
+          ? `${lengthText}`
+          : widthText
+          ? `${widthText}`
+          : heightText
+          ? `${heightText}`
+          : '無';
+      },
     },
     {
+      id: 'year',
       header: '年代',
-      accessorKey: 'yearsInfo',
+      cell: ({ row }) => {
+        const { yearRangeStart, yearRangeEnd } = row.original;
+        return yearRangeStart === yearRangeEnd
+          ? yearRangeStart && yearRangeStart !== 0
+            ? yearRangeEnd
+            : '無'
+          : `${yearRangeStart}~${yearRangeEnd}`;
+      },
     },
     {
+      id: 'otherInfo',
       header: '其他資訊',
-      accessorKey: 'otherInfo',
+      accessorKey: 'metadata',
+      cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
+        const { frame, frameDimensions, pedestal, pedestalDimensions, cardboardBox, woodenBox } = cell.getValue()?.otherInfo || {};
+        if (frame) return '表框' + frameDimensions && `，尺寸 ${frameDimensions}`;
+        if (pedestal) return '台座' + pedestalDimensions && `，尺寸 ${pedestalDimensions}`;
+        if (cardboardBox) return '紙箱';
+        if (woodenBox) return '木箱';
+        return '無';
+      },
     },
     {
+      id: 'storeType',
       header: '庫存狀態',
-      accessorKey: 'storeInfo',
+      accessorKey: 'metadata',
+      cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
+        const storeTypeId = cell.getValue()?.storeType ?? 'inStock';
+        return storeTypeOptionMap[storeTypeId].label;
+      },
     },
     {
+      id: 'salesType',
       header: '銷售狀態',
-      accessorKey: 'salesStatusId',
-      cell: (cellContext: CellContext<Artwork, any>) =>
-        selectColumn(
-          cellContext,
-          selectOptionsQuery.data?.['salesTypes'] || []
-        ),
+      accessorKey: 'metadata',
+      cell: (cellContext: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
+        const {
+          getValue,
+          row: { index },
+          table,
+        } = cellContext;
+        return selectColumn(cellContext, [...salesTypeOptions], {
+          getValue: () => getValue()?.salesType ?? 'unsold',
+          onChange: (value) => {
+            (table.options.meta as any)?.updateColumnData(index, 'metadata', {
+              ...(getValue() || {}),
+              salesType: value,
+            });
+          },
+        });
+      },
     },
     {
-      id: 'assetsTypeId',
+      id: 'assetsType',
       header: '資產類型',
-      accessorKey: 'assetsTypeId',
-      cell: (cellContext: CellContext<Artwork, any>) =>
-        selectColumn(
-          cellContext,
-          selectOptionsQuery.data?.['assetsTypes'] || []
-        ),
+      accessorKey: 'metadata',
+      cell: (cellContext: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
+        const {
+          getValue,
+          row: { index },
+          table,
+        } = cellContext;
+        return selectColumn(cellContext, [...assetsTypeOptions], {
+          getValue: () => getValue()?.assetsType ?? 'A',
+          onChange: (value) => {
+            (table.options.meta as any)?.updateColumnData(index, 'metadata', {
+              ...(getValue() || {}),
+              assetsType: value,
+            });
+          },
+        });
+      },
     },
   ];
 
   const columnMutation = useMutation({
-    mutationFn: ({
-      id,
-      columnId,
-      value,
-    }: {
-      id: number;
-      columnId: keyof Artwork;
-      value: Artwork[keyof Artwork];
-    }) => {
-      return Promise.resolve({ id, columnId, value });
-    },
-    onSuccess: (data) => {
-      console.log('mutation success :>>', data);
+    mutationKey: ['updateArtwork'],
+    mutationFn: ({ id, data }: { id: number; data: Partial<ArtworkDetail> }) => patchArtwork(id, data),
+    onError: () => {
+      dataQuery.refetch();
     },
   });
 
@@ -508,10 +501,10 @@ function ArtworksList({ type }: ArtworksListProps) {
     manualPagination: true,
     onPaginationChange: setPagination,
     meta: {
-      updateColumnData: async function <TColumnId extends keyof Artwork>(
+      updateColumnData: function <TColumnId extends keyof ArtworkDetail>(
         rowIndex: number,
         columnId: TColumnId,
-        value: Artwork[TColumnId]
+        value: ArtworkDetail[TColumnId]
       ) {
         const currentRow = table.getRowModel().rows[rowIndex];
         const id = currentRow.original.id;
@@ -522,16 +515,17 @@ function ArtworksList({ type }: ArtworksListProps) {
               return {
                 ...row,
                 [columnId]: value,
-              };
+              } as ArtworkDetail;
             }
             return row;
           })
         );
 
-        await columnMutation.mutateAsync({
+        columnMutation.mutate({
           id,
-          columnId,
-          value,
+          data: {
+            [columnId]: value,
+          },
         });
       },
     },
@@ -560,9 +554,7 @@ function ArtworksList({ type }: ArtworksListProps) {
                   key={item.key}
                   placeholder={item.placeholder}
                   options={item.options}
-                  onSelectionChange={(option) =>
-                    addSelectedOptionBySelectItemKey(item.key, option.value)
-                  }
+                  onSelectionChange={(option) => addSelectedOptionBySelectItemKey(item.key, option.value)}
                 ></MyCombobox>
               ))}
             </div>
@@ -572,20 +564,12 @@ function ArtworksList({ type }: ArtworksListProps) {
             <label className="text-lg break-keep">已選條件：</label>
             <div className="flex-grow flex flex-wrap gap-2">
               {selectedOptions.map((option, i) => (
-                <span
-                  key={`selectedOption_${i}`}
-                  className="btn btn-outline btn-info pr-0 min-w-[6rem] justify-between"
-                >
+                <span key={`selectedOption_${i}`} className="btn btn-outline btn-info pr-0 min-w-[6rem] justify-between">
                   {option.label}
                   <XMarkIcon
                     className="w-5 h-5 mx-2"
                     id={i.toString()}
-                    onClick={() =>
-                      removeSelectedOptionBySelectItemKey(
-                        option.selectItemKey,
-                        option.value
-                      )
-                    }
+                    onClick={() => removeSelectedOptionBySelectItemKey(option.selectItemKey, option.value)}
                   />
                 </span>
               ))}
@@ -595,16 +579,10 @@ function ArtworksList({ type }: ArtworksListProps) {
 
         <div className="flex flex-col gap-2 justify-between">
           <div className="flex md:flex-col gap-2">
-            <button
-              aria-label="export excel file"
-              className="btn btn-accent flex-1 truncate"
-            >
+            <button aria-label="export excel file" className="btn btn-accent flex-1 truncate">
               Excel 匯出
             </button>
-            <button
-              aria-label="export pdf file"
-              className="btn btn-accent flex-1"
-            >
+            <button aria-label="export pdf file" className="btn btn-accent flex-1">
               表格匯出
             </button>
           </div>
@@ -629,17 +607,12 @@ function ArtworksList({ type }: ArtworksListProps) {
 
       <div className="flex items-center gap-2 py-2 mb-2">
         <span>已選擇 {selectedRowCount} 筆</span>
-        <button className="btn btn-error" disabled={selectedRowCount === 0}>
+        <button className="btn btn-error" onClick={onDelete} disabled={selectedRowCount === 0}>
           <TrashIcon className="h-5 w-5"></TrashIcon>
           刪除
         </button>
         <i className="flex-grow"></i>
-        <Link
-          className="btn btn-info"
-          to={
-            './add' + (searchParams.toString() && '?' + searchParams.toString())
-          }
-        >
+        <Link className="btn btn-info" to={'./add' + (searchParams.toString() && '?' + searchParams.toString())}>
           <PlusIcon className="h-5 w-5"></PlusIcon>
           新增
         </Link>
@@ -657,30 +630,12 @@ function ArtworksList({ type }: ArtworksListProps) {
                         key={header.id}
                         colSpan={header.colSpan}
                         className={classnames('p-2', {
-                          'min-w-[10rem]': ![
-                            'select',
-                            'storeTypeId',
-                            'salesStatusId',
-                            'assetsTypeId',
-                          ].includes(header.id),
-                          'min-w-[3rem]': [
-                            'storeTypeId',
-                            'salesStatusId',
-                            'assetsTypeId',
-                          ].includes(header.id),
-                          'text-center': ['mediumKey', 'assetsTypeId'].includes(
-                            header.id
-                          ),
+                          'min-w-[10rem]': !['select', 'storeTypeId', 'salesStatusId', 'assetsTypeId'].includes(header.id),
+                          'min-w-[3rem]': ['storeTypeId', 'salesStatusId', 'assetsTypeId'].includes(header.id),
+                          'text-center': ['mediumKey', 'assetsTypeId'].includes(header.id),
                         })}
                       >
-                        {header.isPlaceholder ? null : (
-                          <div>
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                          </div>
-                        )}
+                        {header.isPlaceholder ? null : <div>{flexRender(header.column.columnDef.header, header.getContext())}</div>}
                       </td>
                     );
                   })}
@@ -694,10 +649,7 @@ function ArtworksList({ type }: ArtworksListProps) {
                     {row.getVisibleCells().map((cell) => {
                       return (
                         <td key={cell.id} className="p-2">
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
                       );
                     })}
@@ -709,32 +661,19 @@ function ArtworksList({ type }: ArtworksListProps) {
         </div>
         <div className="divider mt-2" />
         <div className="join">
-          <button
-            className="join-item btn"
-            onClick={() => table.setPageIndex(pageIndex - 5)}
-            disabled={!table.getCanPreviousPage()}
-          >
+          <button className="join-item btn" onClick={() => table.setPageIndex(pageIndex - 5)} disabled={!table.getCanPreviousPage()}>
             {'<<'}
           </button>
-          <button
-            className="join-item btn"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
+          <button className="join-item btn" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
             {'<'}
           </button>
 
-          <button className="join-item btn btn-active block md:hidden">
-            第 {pageIndex + 1} 頁
-          </button>
+          <button className="join-item btn btn-active block md:hidden">第 {pageIndex + 1} 頁</button>
 
           {paginationRange?.map((pageNumber, key) => {
             if (pageNumber === DOTS) {
               return (
-                <button
-                  key={key}
-                  className="join-item btn btn-disabled hidden md:block"
-                >
+                <button key={key} className="join-item btn btn-disabled hidden md:block">
                   {DOTS}
                 </button>
               );
@@ -753,18 +692,10 @@ function ArtworksList({ type }: ArtworksListProps) {
             );
           })}
 
-          <button
-            className="join-item btn"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
+          <button className="join-item btn" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
             {'>'}
           </button>
-          <button
-            className="join-item btn"
-            onClick={() => table.setPageIndex(pageIndex + 5)}
-            disabled={!table.getCanNextPage()}
-          >
+          <button className="join-item btn" onClick={() => table.setPageIndex(pageIndex + 5)} disabled={!table.getCanNextPage()}>
             {'>>'}
           </button>
         </div>

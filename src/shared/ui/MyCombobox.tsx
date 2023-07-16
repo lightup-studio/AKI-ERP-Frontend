@@ -1,8 +1,7 @@
-import { useState, useRef, useCallback, Fragment } from 'react';
-import { Combobox, Transition } from '@headlessui/react';
+import React, { Fragment, useCallback, useRef, useState } from 'react';
 
-import React from 'react';
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
+import { Combobox, Transition } from '@headlessui/react';
+import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
 export interface Option {
   label: string;
@@ -15,11 +14,7 @@ interface MyComboboxProps {
   onSelectionChange?: (option: Option) => void;
 }
 
-export default function MyCombobox({
-  options = [],
-  placeholder,
-  onSelectionChange,
-}: MyComboboxProps) {
+export default function MyCombobox({ options = [], placeholder, onSelectionChange }: MyComboboxProps) {
   const [query, setQuery] = useState('');
   const comboboxButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -34,9 +29,7 @@ export default function MyCombobox({
     [onSelectionChange]
   );
 
-  const filteredOptions = options.filter((option) =>
-    option.label.toLowerCase().includes(query.toLowerCase())
-  );
+  const filteredOptions = options.filter((option) => option.label.toLowerCase().includes(query.toLowerCase()));
 
   return (
     <Combobox>
@@ -48,14 +41,8 @@ export default function MyCombobox({
             onChange={(event) => setQuery(event.target.value)}
             onClick={handleInputFocus}
           />
-          <Combobox.Button
-            className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
-            ref={comboboxButtonRef}
-          >
-            <ChevronUpDownIcon
-              className="h-5 w-5 text-gray-400"
-              aria-hidden="true"
-            />
+          <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none" ref={comboboxButtonRef}>
+            <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
           </Combobox.Button>
         </div>
         <Transition
@@ -67,36 +54,22 @@ export default function MyCombobox({
         >
           <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-base-100 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
             {filteredOptions.length === 0 && query !== '' ? (
-              <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
-                Nothing found.
-              </div>
+              <div className="relative cursor-default select-none py-2 px-4 text-gray-700">Nothing found.</div>
             ) : (
               filteredOptions.map((option) => (
                 <Combobox.Option
                   key={option.value}
                   className={({ active }) =>
-                    `relative cursor-default select-none py-2 px-4 ${
-                      active ? 'bg-teal-600 text-white' : 'text-base-content'
-                    }`
+                    `relative cursor-default select-none py-2 px-4 ${active ? 'bg-teal-600 text-white' : 'text-base-content'}`
                   }
                   value={option}
                   onClick={() => handleOptionSelect(option)}
                 >
                   {({ selected, active }) => (
                     <>
-                      <span
-                        className={`block truncate ${
-                          selected ? 'font-medium' : 'font-normal'
-                        }`}
-                      >
-                        {option.label}
-                      </span>
+                      <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>{option.label}</span>
                       {selected ? (
-                        <span
-                          className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                            active ? 'text-white' : 'text-teal-600'
-                          }`}
-                        >
+                        <span className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-white' : 'text-teal-600'}`}>
                           {/* <CheckIcon className="h-5 w-5" aria-hidden="true" /> */}
                         </span>
                       ) : null}
