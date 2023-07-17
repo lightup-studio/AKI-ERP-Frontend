@@ -1,13 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { fetchSelectOptions } from 'data-access/apis/artworks.api';
 import { useSearchParams } from 'react-router-dom';
 import MyCombobox, { Option as ComboboxOption } from 'shared/ui/MyCombobox';
 import { removeSingleValueForSearchParams } from 'utils/searchParamsUtil';
 
-import { useQuery } from '@tanstack/react-query';
-import { PaginationState } from '@tanstack/react-table';
 import { XMarkIcon } from '@heroicons/react/20/solid';
+import { useQuery } from '@tanstack/react-query';
 
 export type SelectItemKey = keyof Awaited<ReturnType<typeof fetchSelectOptions>>;
 
@@ -34,8 +33,13 @@ const SELECT_ITEMS: Pick<SelectItem, 'key' | 'placeholder'>[] = [
   { key: 'otherInfos', placeholder: '其他資訊' },
 ];
 
-export const useArtworkSearches = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+export const useArtworkSearches = ({
+  searchParams,
+  setSearchParams,
+}: {
+  searchParams: URLSearchParams;
+  setSearchParams: ReturnType<typeof useSearchParams>[1];
+}) => {
   const [keyword, setKeyword] = useState(searchParams.get('keyword'));
   const [selectedOptions, setSelectedOptions] = useState<SelectedOption[]>([]);
 
@@ -55,7 +59,6 @@ export const useArtworkSearches = () => {
 
   const handleSearch = (keyword?: string | null) => {
     setKeyword(keyword || '');
-    setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
   };
 
   const selectOptionsQuery = useQuery({
@@ -120,13 +123,11 @@ export const useArtworkSearches = () => {
       }
       // reset page index
       searchParams.delete('pageIndex');
-      setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
       return searchParams;
     });
   };
 
   const removeSelectedOptionBySelectItemKey = ({ selectItemKey, selectedOptionValue }: OnSelectionChangeValue) => {
-    setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
     setSearchParams((searchParams) => {
       const values = searchParams.getAll(selectItemKey);
       if (values.includes(selectedOptionValue)) {
@@ -134,33 +135,9 @@ export const useArtworkSearches = () => {
       }
       // reset page index
       searchParams.delete('pageIndex');
-      setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
       return searchParams;
     });
   };
-
-  const [{ pageIndex, pageSize }, setPagination] = React.useState<PaginationState>({
-    pageIndex: +(searchParams.get('pageIndex') || 0),
-    pageSize: +(searchParams.get('pageSize') || 50),
-  });
-  const pagination = useMemo(() => ({ pageIndex, pageSize }), [pageIndex, pageSize]);
-
-  useEffect(() => {
-    if (pageIndex === +(searchParams.get('pageIndex') || 0) && pageSize === +(searchParams.get('pageSize') || 50)) {
-      return;
-    }
-
-    setSearchParams(
-      (searchParams) => {
-        pageIndex > 0 ? searchParams.set('pageIndex', `${pageIndex}`) : searchParams.delete('pageIndex');
-        pageSize !== 50 ? searchParams.set('pageSize', `${pageSize}`) : searchParams.delete('pageSize');
-        return searchParams;
-      },
-      {
-        replace: true,
-      }
-    );
-  }, [pageIndex, pageSize, searchParams, setSearchParams]);
 
   type OnSelectionChangeValue = {
     selectItemKey: SelectItemKey;
@@ -169,10 +146,6 @@ export const useArtworkSearches = () => {
 
   return {
     searchParams,
-    pagination,
-    setPagination,
-    pageIndex,
-    pageSize,
     selectItems,
     onSelectionChange: (type: 'add' | 'remove', value: OnSelectionChangeValue) => {
       switch (type) {
@@ -182,9 +155,8 @@ export const useArtworkSearches = () => {
         case 'remove':
           removeSelectedOptionBySelectItemKey(value);
           break;
-
         default:
-          break;
+          throw new Error('Invalid type');
       }
     },
     selectedOptions,
@@ -216,19 +188,17 @@ export const useArtworkSelectedList = ({
 
   return {
     selectionBlock: (
-      <div className="flex-grow flex flex-col gap-3">
-        <div className="flex items-center flex-col md:flex-row min-h-[6rem]">
-          <label className="text-lg break-keep">篩選條件：</label>
-          <div className="flex-grow flex flex-wrap gap-2">
-            {selectItems?.map((item) => (
-              <MyCombobox
-                key={item.key}
-                placeholder={item.placeholder}
-                options={item.options}
-                onSelectionChange={(option) => addSelectedOptionBySelectItemKey(item.key, option.value)}
-              ></MyCombobox>
-            ))}
-          </div>
+      <div className="flex items-center flex-col md:flex-row min-h-[6rem]">
+        <label className="text-lg break-keep">篩選條件：</label>
+        <div className="flex-grow flex flex-wrap gap-2">
+          {selectItems?.map((item) => (
+            <MyCombobox
+              key={item.key}
+              placeholder={item.placeholder}
+              options={item.options}
+              onSelectionChange={(option) => addSelectedOptionBySelectItemKey(item.key, option.value)}
+            ></MyCombobox>
+          ))}
         </div>
       </div>
     ),

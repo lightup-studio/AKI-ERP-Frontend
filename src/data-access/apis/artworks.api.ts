@@ -117,8 +117,8 @@ export async function fetchArtworkList(searchParams: URLSearchParams) {
   return res.data;
 }
 
-export async function fetchArtworkList2(status: 'Enabled' | 'Disabled' | 'Draft' = 'Enabled', searchParams: URLSearchParams) {
-  const queryString = [...searchParams.entries()]
+export async function fetchArtworkList2(status: 'Enabled' | 'Disabled' | 'Draft' = 'Enabled', searchParams?: URLSearchParams) {
+  const queryString = (searchParams ? [...searchParams.entries()] : [])
     .map(([key, value]) => {
       if (key === 'nationalities') return `countryCode=${value}`;
       if (key === 'artists') return `artistName=${value}`;

@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 
-import { Row, Table } from '@tanstack/react-table';
+import { Row } from '@tanstack/react-table';
 
-export const useSelectionList = <T extends { id: string | number }>(table: Table<T>) => {
+export const useSelectionList = <T extends { id: string | number }>() => {
   const [rowSelection, setRowSelection] = useState<Record<string, T>>({});
 
   const selectedRowCount = useMemo(() => Object.keys(rowSelection).length, [rowSelection]);
@@ -38,7 +38,7 @@ export const useSelectionList = <T extends { id: string | number }>(table: Table
 
       return {
         get keys() {
-          return Object.keys(selectedRowCount);
+          return Object.keys(rowSelection);
         },
         rows: selectedRowCount,
       };
@@ -48,11 +48,11 @@ export const useSelectionList = <T extends { id: string | number }>(table: Table
   return {
     selectedRowCount,
     handleDelete,
-    getSelectAllProps: (totalCount?: number) => {
+    getSelectAllProps: (rows: Row<T>[], totalCount: number) => {
       return {
         checked: totalCount !== 0 && selectedRowCount === totalCount,
         indeterminate: selectedRowCount > 0,
-        onChange: () => handleAllRowSelectionChange(table.getRowModel().rows),
+        onChange: () => handleAllRowSelectionChange(rows),
       };
     },
     getSelectItemProps: (row: Row<T>) => {
