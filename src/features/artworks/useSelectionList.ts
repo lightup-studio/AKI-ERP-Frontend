@@ -5,6 +5,7 @@ import { Row } from '@tanstack/react-table';
 export const useSelectionList = <T extends { id: string | number }>() => {
   const [rowSelection, setRowSelection] = useState<Record<string, T>>({});
 
+  const selectedRows = useMemo(() => Object.values(rowSelection), [rowSelection]);
   const selectedRowCount = useMemo(() => Object.keys(rowSelection).length, [rowSelection]);
 
   const handleAllRowSelectionChange = (rows: Row<T>[]) => {
@@ -32,22 +33,9 @@ export const useSelectionList = <T extends { id: string | number }>() => {
     setRowSelection(structuredClone(rowSelection));
   };
 
-  const handleDelete = () => {
-    if (selectedRowCount > 0) {
-      setRowSelection({});
-
-      return {
-        get keys() {
-          return Object.keys(rowSelection);
-        },
-        rows: selectedRowCount,
-      };
-    }
-  };
-
   return {
+    selectedRows,
     selectedRowCount,
-    handleDelete,
     getSelectAllProps: (rows: Row<T>[], totalCount: number) => {
       return {
         checked: totalCount !== 0 && selectedRowCount === totalCount,
@@ -62,5 +50,6 @@ export const useSelectionList = <T extends { id: string | number }>() => {
         onChange: () => handleRowSelectionChange(row),
       };
     },
+    clearSelection: () => setRowSelection({}),
   };
 };

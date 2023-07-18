@@ -9,6 +9,7 @@ export const headerSlice = createSlice({
     newNotificationStatus: 1, // to check the notification type -  success/ error/ info
   },
   reducers: {
+    // TODO: re-define reducers for header state management
     setPageTitle: (state, action) => {
       state.pageTitle = action.payload.title;
     },

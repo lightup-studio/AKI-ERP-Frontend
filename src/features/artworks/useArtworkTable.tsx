@@ -5,13 +5,9 @@ import classnames from 'classnames';
 import { fetchArtworkList2, patchArtwork } from 'data-access/apis/artworks.api';
 import { ArtworkDetail } from 'data-access/models';
 import { cloneDeep } from 'lodash';
-import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
-import { Link, useSearchParams } from 'react-router-dom';
-import IndeterminateCheckbox from 'shared/ui/IndeterminateCheckbox';
+import { useSearchParams } from 'react-router-dom';
 import { Option as ComboboxOption } from 'shared/ui/MyCombobox';
-import { assetsTypeOptions, salesTypeOptions, storeTypeOptionMap } from 'src/constants/artwork.constant';
 
-import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { CellContext, ColumnDef, flexRender, getCoreRowModel, PaginationState, useReactTable } from '@tanstack/react-table';
 
@@ -73,10 +69,14 @@ export const selectColumn = (
 };
 
 export const useArtworkTable = ({
+  status,
+  columns,
   selectItems,
   searchParams,
   setSearchParams,
 }: {
+  status: ArtworkDetail['status'];
+  columns: ColumnDef<ArtworkDetail, any>[];
   selectItems?: SelectItem[];
   searchParams?: URLSearchParams;
   setSearchParams?: ReturnType<typeof useSearchParams>[1];
@@ -85,7 +85,7 @@ export const useArtworkTable = ({
 }) => {
   const dataQuery = useQuery({
     queryKey: ['data', searchParams?.toString()],
-    queryFn: () => fetchArtworkList2('Draft', searchParams),
+    queryFn: () => fetchArtworkList2(status, searchParams),
     enabled: !!selectItems,
     keepPreviousData: true,
   });
@@ -98,178 +98,6 @@ export const useArtworkTable = ({
       setTableData(tableData);
     }
   }, [dataQuery.isSuccess, dataQuery.data]);
-
-  const { getSelectAllProps, getSelectItemProps, selectedRowCount, handleDelete } = useSelectionList<ArtworkDetail>();
-
-  const columns: ColumnDef<ArtworkDetail, any>[] = [
-    {
-      id: 'select',
-      header: ({ table }) => (
-        <div className="px-1">
-          <IndeterminateCheckbox {...getSelectAllProps(table.getRowModel().rows, dataQuery.data?.totalCount || 0)} />
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className="px-1">
-          <IndeterminateCheckbox {...getSelectItemProps(row)} />
-        </div>
-      ),
-    },
-    {
-      header: '編號',
-      accessorKey: 'displayId',
-      cell: ({ cell }) => (
-        <Link
-          className="text-info flex items-center whitespace-nowrap"
-          to={cell.getValue() + (searchParams?.toString() && '?' + searchParams?.toString())}
-        >
-          {cell.getValue()}
-          <PencilSquareIcon className="h-4 w-4 ml-2 inline-block"></PencilSquareIcon>
-        </Link>
-      ),
-    },
-    {
-      header: '作品名稱',
-      accessorKey: 'enName',
-      cell: inputColumn,
-    },
-    {
-      header: '作品圖',
-      accessorKey: 'displayImageUrl',
-      cell: ({ cell }) => (
-        <div>
-          <DialogTrigger>
-            <Button>
-              <img src={cell.getValue()} alt="Artwork" loading="lazy" className="h-20" />
-            </Button>
-            <Popover placement="right">
-              <Dialog className="h-[80vh]">
-                <img src={cell.getValue()} alt="Artwork" className="w-full h-full object-contain" loading="lazy" />
-              </Dialog>
-            </Popover>
-          </DialogTrigger>
-        </div>
-      ),
-    },
-    {
-      header: '藝術家',
-      accessorKey: 'artists',
-      cell: ({ cell }) => (
-        <div>
-          {cell
-            .getValue<ArtworkDetail['artists']>()
-            ?.map((artist) => `${artist.zhName} ${artist.enName}`)
-            .join(',')}
-        </div>
-      ),
-    },
-    {
-      id: 'media',
-      header: '媒材',
-      accessorKey: 'metadata',
-      cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => cell.getValue()?.media ?? '無',
-    },
-    {
-      id: 'size',
-      header: '尺寸',
-      accessorKey: 'metadata',
-      cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
-        const { length, width, height } = cell.getValue<ArtworkDetail['metadata']>() || {};
-        const lengthText = length && `長 ${length}`;
-        const widthText = width && `寬 ${width}`;
-        const heightText = height && `高 ${height}`;
-        return lengthText && widthText && heightText
-          ? `${lengthText} x ${widthText} x ${heightText}`
-          : widthText && heightText
-          ? `${widthText} x ${heightText}`
-          : lengthText && widthText
-          ? `${lengthText} x ${widthText}`
-          : lengthText
-          ? `${lengthText}`
-          : widthText
-          ? `${widthText}`
-          : heightText
-          ? `${heightText}`
-          : '無';
-      },
-    },
-    {
-      id: 'year',
-      header: '年代',
-      cell: ({ row }) => {
-        const { yearRangeStart, yearRangeEnd } = row.original;
-        return yearRangeStart === yearRangeEnd
-          ? yearRangeStart && yearRangeStart !== 0
-            ? yearRangeEnd
-            : '無'
-          : `${yearRangeStart}~${yearRangeEnd}`;
-      },
-    },
-    {
-      id: 'otherInfo',
-      header: '其他資訊',
-      accessorKey: 'metadata',
-      cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
-        const { frame, frameDimensions, pedestal, pedestalDimensions, cardboardBox, woodenBox } = cell.getValue()?.otherInfo || {};
-        if (frame) return `表框${frameDimensions && `，尺寸 ${frameDimensions}`}`;
-        if (pedestal) return `台座${pedestalDimensions && `，尺寸 ${pedestalDimensions}`}`;
-        if (cardboardBox) return '紙箱';
-        if (woodenBox) return '木箱';
-        return '無';
-      },
-    },
-    {
-      id: 'storeType',
-      header: '庫存狀態',
-      accessorKey: 'metadata',
-      cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
-        const storeTypeId = cell.getValue()?.storeType ?? 'inStock';
-        return storeTypeOptionMap[storeTypeId].label;
-      },
-    },
-    {
-      id: 'salesType',
-      header: '銷售狀態',
-      accessorKey: 'metadata',
-      cell: (cellContext: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
-        const {
-          getValue,
-          row: { index },
-          table,
-        } = cellContext;
-        return selectColumn(cellContext, [...salesTypeOptions], {
-          getValue: () => getValue()?.salesType ?? 'unsold',
-          onChange: (value) => {
-            (table.options.meta as any)?.updateColumnData(index, 'metadata', {
-              ...(getValue() || {}),
-              salesType: value,
-            });
-          },
-        });
-      },
-    },
-    {
-      id: 'assetsType',
-      header: '資產類型',
-      accessorKey: 'metadata',
-      cell: (cellContext: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
-        const {
-          getValue,
-          row: { index },
-          table,
-        } = cellContext;
-        return selectColumn(cellContext, [...assetsTypeOptions], {
-          getValue: () => getValue()?.assetsType ?? 'A',
-          onChange: (value) => {
-            (table.options.meta as any)?.updateColumnData(index, 'metadata', {
-              ...(getValue() || {}),
-              assetsType: value,
-            });
-          },
-        });
-      },
-    },
-  ];
 
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: +(searchParams?.get('pageIndex') || 0),
@@ -345,8 +173,6 @@ export const useArtworkTable = ({
   return {
     dataQuery,
     table,
-    selectedRowCount,
-    handleDelete,
     tableBlock: (
       <div className="h-full w-full pb-6 bg-base-100 text-center">
         <div className="overflow-x-auto w-full">

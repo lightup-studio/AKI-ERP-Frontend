@@ -17,29 +17,15 @@ export async function fetchSelectOptions() {
     { label: '木箱', value: 'wooden_box' },
   ];
 
-  const [
-    countryList,
-    artistOptions,
-    serialNumberOptions,
-    yearOptions,
-    storeTypeOptions,
-    salesTypeOptions,
-    assetsTypeOptions,
-    mediaOptions,
-    agentGalleryOptions,
-    _artworkOtherInfoOptions,
-  ] = await Promise.all([
-    fetchCountryList(),
-    fetchArtistOptions(),
-    fetchSerialNumberOptions(),
-    fetchYearOptions(),
-    fetchStoreTypeOptions(),
-    fetchSalesTypeOptions(),
-    fetchAssetsTypeOptions(),
-    fetchMediaOptions(),
-    fetchAgentGalleryOptions(),
-    Promise.resolve(artworkOtherInfoOptions),
-  ]);
+  const [countryList, artistOptions, serialNumberOptions, yearOptions, mediaOptions, agentGalleryOptions] =
+    await Promise.all([
+      fetchCountryList(),
+      fetchArtistOptions(),
+      fetchSerialNumberOptions(),
+      fetchYearOptions(),
+      fetchMediaOptions(),
+      fetchAgentGalleryOptions(),
+    ]);
 
   const data = {
     nationalities: countryList.map<ComboboxOption>(({ alpha3Code, zhName }) => ({
@@ -49,12 +35,12 @@ export async function fetchSelectOptions() {
     artists: artistOptions,
     serialNumbers: serialNumberOptions,
     years: yearOptions,
+    mediums: mediaOptions,
+    agentGalleries: agentGalleryOptions,
     storeTypes: storeTypeOptions as unknown as ComboboxOption[],
     salesTypes: salesTypeOptions as unknown as ComboboxOption[],
     assetsTypes: assetsTypeOptions as unknown as ComboboxOption[],
-    mediums: mediaOptions,
-    agentGalleries: agentGalleryOptions,
-    otherInfos: _artworkOtherInfoOptions,
+    otherInfos: artworkOtherInfoOptions,
   } as const;
 
   return data;
@@ -73,18 +59,6 @@ export async function fetchSerialNumberOptions() {
 export function fetchYearOptions() {
   const options = rangeRight(new Date().getFullYear(), 1980).map((year) => ({ label: `${year}`, value: year }));
   return Promise.resolve(options);
-}
-
-export function fetchStoreTypeOptions() {
-  return Promise.resolve(storeTypeOptions);
-}
-
-export function fetchSalesTypeOptions() {
-  return Promise.resolve(salesTypeOptions);
-}
-
-export function fetchAssetsTypeOptions() {
-  return Promise.resolve(assetsTypeOptions);
 }
 
 export async function fetchMediaOptions() {
@@ -156,16 +130,20 @@ export async function createOrUpdateArtworkDetail(artwork: ArtworkDetail) {
   return res.data;
 }
 
+export async function patchArtworks(ids: number[], data: Partial<ArtworkDetail>) {
+  return Promise.all(ids.map((id) => patchArtwork(id, data)));
+}
+
 export async function patchArtwork(id: number, data: Partial<ArtworkDetail>) {
   const res = await axios.patch(`/api/Artworks/${id}`, data);
   return res.data;
 }
 
-export async function deleteArtworks(ids: string[]) {
+export async function deleteArtworks(ids: number[]) {
   return Promise.all(ids.map((id) => deleteArtwork(id)));
 }
 
-export async function deleteArtwork(id: string) {
+export async function deleteArtwork(id: number) {
   const res = await axios.delete(`/api/Artworks/${id}`);
   return res.data;
 }
