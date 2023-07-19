@@ -6,6 +6,10 @@ export const assetsTypeOptions = [
 
 export const storeTypeOptions = [
   {
+    label: '無',
+    value: 'none'
+  },
+  {
     label: '在庫',
     value: 'inStock',
   },

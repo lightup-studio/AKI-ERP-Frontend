@@ -21,13 +21,13 @@ function PurchaseRoutes() {
       element: <PurchaseReturnOrders />,
     },
     {
+      path: 'return-orders/add',
+      element: <AddPurchaseOrder />,
+    },
+    {
       path: '*',
       element: <Navigate to="./orders" replace />,
     },
-    // {
-    //   path: ':artworksId',
-    //   element: <ArtworksDetail />,
-    // },
   ]);
 }
 

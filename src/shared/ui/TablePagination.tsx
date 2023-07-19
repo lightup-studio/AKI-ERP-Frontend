@@ -3,14 +3,16 @@ import { DOTS, usePagination } from 'shared/hooks/usePagination';
 import { Table } from '@tanstack/react-table';
 
 function TablePagination<T>({
-  table, pageIndex, pageSize, totalCount,
+  table,
+  pageIndex,
+  pageSize,
+  totalCount,
 }: {
   table: Table<T>;
   pageIndex: number;
   pageSize: number;
   totalCount: number;
-})
-{
+}) {
   const paginationRange = usePagination({
     currentPage: pageIndex,
     totalCount,
@@ -29,8 +31,7 @@ function TablePagination<T>({
 
       <button className="join-item btn btn-active block md:hidden">第 {pageIndex + 1} 頁</button>
 
-      {paginationRange?.map((pageNumber, key) =>
-      {
+      {paginationRange?.map((pageNumber, key) => {
         if (pageNumber === DOTS) {
           return (
             <button key={key} className="join-item btn btn-disabled hidden md:block">

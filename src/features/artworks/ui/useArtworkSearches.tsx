@@ -44,18 +44,22 @@ export const useArtworkSearches = ({
   const [selectedOptions, setSelectedOptions] = useState<SelectedOption[]>([]);
 
   useEffect(() => {
+    if ((keyword || '').trim() === (searchParams.get('keyword') || '').trim()) return;
     setSearchParams(
       (searchParams) => {
+        console.log('keyword', keyword);
         keyword ? searchParams.set('keyword', keyword) : searchParams.delete('keyword');
         // reset page index
         searchParams.delete('pageIndex');
+
+        console.log('searchParams.toString()', searchParams.toString());
         return searchParams;
       },
       {
         replace: true,
       }
     );
-  }, [keyword, setSearchParams]);
+  }, [keyword, searchParams, setSearchParams]);
 
   const handleSearch = (keyword?: string | null) => {
     setKeyword(keyword || '');
@@ -207,14 +211,15 @@ export const useArtworkSelectedList = ({
         <label className="text-lg break-keep">已選條件：</label>
         <div className="flex-grow flex flex-wrap gap-2">
           {selectedOptions.map((option, i) => (
-            <span key={`selectedOption_${i}`} className="btn btn-outline btn-info pr-0 min-w-[6rem] justify-between">
+            <button
+              key={`selectedOption_${i}`}
+              type="button"
+              className="btn btn-outline btn-info pr-0 min-w-[6rem] justify-between"
+              onClick={() => removeSelectedOptionBySelectItemKey(option.selectItemKey, option.value)}
+            >
               {option.label}
-              <XMarkIcon
-                className="w-5 h-5 mx-2"
-                id={i.toString()}
-                onClick={() => removeSelectedOptionBySelectItemKey(option.selectItemKey, option.value)}
-              />
-            </span>
+              <XMarkIcon className="w-5 h-5 mx-2" id={i.toString()} />
+            </button>
           ))}
         </div>
       </div>

@@ -7,6 +7,7 @@ import { setPageTitle } from 'features/common/headerSlice';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
 import { useDispatch } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useMemorySearchParams } from 'shared/hooks';
 import IndeterminateCheckbox from 'shared/ui/IndeterminateCheckbox';
 import SearchInput from 'shared/ui/SearchInput';
 import { assetsTypeOptions, salesTypeOptions, storeTypeOptionMap } from 'src/constants/artwork.constant';
@@ -18,9 +19,9 @@ import { useMutation } from '@tanstack/react-query';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 
 import ArtworksTitle, { ArtworksTitleProps } from './ui/ArtworksTitle';
-import { useArtworkSearches, useArtworkSelectedList } from './useArtworkSearches';
-import { inputColumn, selectColumn, useArtworkTable } from './useArtworkTable';
-import { useSelectionList } from './useSelectionList';
+import { useArtworkSearches, useArtworkSelectedList } from './ui/useArtworkSearches';
+import { inputColumn, selectColumn, useArtworkTable } from './ui/useArtworkTable';
+import { useSelectionList } from './ui/useSelectionList';
 
 type ArtworksListProps = Pick<ArtworksTitleProps, 'type'>;
 
@@ -237,7 +238,7 @@ function ArtworksList({ type }: ArtworksListProps) {
 
   const enableMutation = useMutation({
     mutationKey: ['enableArtwork'],
-    mutationFn: (ids: number[]) => patchArtworks(ids, { status: 'Enabled' }),
+    mutationFn: (ids: number[]) => patchArtworks(ids, { status: 'Enabled', metadata: { storeType: 'inStock' } }),
     onSuccess: () => {
       clearSelection();
       dataQuery.refetch();
@@ -312,8 +313,7 @@ function ArtworksList({ type }: ArtworksListProps) {
           新增
         </Link>
       </div>
-
-      {tableBlock}
+      <div className="h-full w-full pb-6 bg-base-100 text-center">{tableBlock}</div>
     </div>
   );
 }

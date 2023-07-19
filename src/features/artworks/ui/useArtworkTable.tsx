@@ -11,7 +11,7 @@ import { Option as ComboboxOption } from 'shared/ui/MyCombobox';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { CellContext, ColumnDef, flexRender, getCoreRowModel, PaginationState, useReactTable } from '@tanstack/react-table';
 
-import TablePagination from './TablePagination';
+import TablePagination from '../../../shared/ui/TablePagination';
 import { SelectItem } from './useArtworkSearches';
 import { useSelectionList } from './useSelectionList';
 
@@ -174,7 +174,7 @@ export const useArtworkTable = ({
     dataQuery,
     table,
     tableBlock: (
-      <div className="h-full w-full pb-6 bg-base-100 text-center">
+      <>
         <div className="overflow-x-auto w-full">
           <table className="table w-full">
             <thead>
@@ -188,7 +188,7 @@ export const useArtworkTable = ({
                         className={classnames('p-2', {
                           'min-w-[10rem]': !['select', 'storeType', 'salesType', 'assetsType'].includes(header.id),
                           'min-w-[3rem]': ['storeType', 'salesType', 'assetsType'].includes(header.id),
-                          'text-center': ['media', 'assetsType'].includes(header.id),
+                          'text-center': ['assetsType'].includes(header.id),
                         })}
                       >
                         {header.isPlaceholder ? null : <div>{flexRender(header.column.columnDef.header, header.getContext())}</div>}
@@ -224,7 +224,7 @@ export const useArtworkTable = ({
             totalCount: dataQuery.data?.totalCount ?? 0,
           }}
         />
-      </div>
+      </>
     ),
   };
 };

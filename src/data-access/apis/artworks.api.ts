@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import axios from 'axios';
-import { Artwork, ArtworkDetail, Pagination } from 'data-access/models';
+import { Artwork, ArtworkDetail, ArtworkMetadata, Pagination } from 'data-access/models';
 import { chain, rangeRight } from 'lodash-es';
 import { Option as ComboboxOption } from 'shared/ui/MyCombobox';
 import { salesTypeOptions, storeTypeOptions } from 'src/constants/artwork.constant';
@@ -17,15 +17,14 @@ export async function fetchSelectOptions() {
     { label: '木箱', value: 'wooden_box' },
   ];
 
-  const [countryList, artistOptions, serialNumberOptions, yearOptions, mediaOptions, agentGalleryOptions] =
-    await Promise.all([
-      fetchCountryList(),
-      fetchArtistOptions(),
-      fetchSerialNumberOptions(),
-      fetchYearOptions(),
-      fetchMediaOptions(),
-      fetchAgentGalleryOptions(),
-    ]);
+  const [countryList, artistOptions, serialNumberOptions, yearOptions, mediaOptions, agentGalleryOptions] = await Promise.all([
+    fetchCountryList(),
+    fetchArtistOptions(),
+    fetchSerialNumberOptions(),
+    fetchYearOptions(),
+    fetchMediaOptions(),
+    fetchAgentGalleryOptions(),
+  ]);
 
   const data = {
     nationalities: countryList.map<ComboboxOption>(({ alpha3Code, zhName }) => ({
@@ -102,7 +101,7 @@ export async function fetchArtworkList2(status: 'Enabled' | 'Disabled' | 'Draft'
       if (key === 'serialNumbers') return `metadatas={"serialNumber":"${value}"}`;
       if (key === 'pageIndex') return `offset=${value}`;
       if (key === 'pageSize') return `take=${value}`;
-      return '';
+      return `${key}=${value}`;
     })
     .filter(Boolean)
     .join('&');
@@ -130,11 +129,11 @@ export async function createOrUpdateArtworkDetail(artwork: ArtworkDetail) {
   return res.data;
 }
 
-export async function patchArtworks(ids: number[], data: Partial<ArtworkDetail>) {
+export async function patchArtworks(ids: number[], data: Partial<ArtworkDetail<Partial<ArtworkMetadata>>>) {
   return Promise.all(ids.map((id) => patchArtwork(id, data)));
 }
 
-export async function patchArtwork(id: number, data: Partial<ArtworkDetail>) {
+export async function patchArtwork(id: number, data: Partial<ArtworkDetail<Partial<ArtworkMetadata>>>) {
   const res = await axios.patch(`/api/Artworks/${id}`, data);
   return res.data;
 }

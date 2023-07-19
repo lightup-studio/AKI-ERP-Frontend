@@ -30,8 +30,7 @@ function ArtworksTitle({ id, type, pageType = 'list' }: ArtworksTitleProps) {
 
   return (
     <>
-      藝術作品 / {ArtworksLink}{' '}
-      {pageType === 'detail' && (id ? `/ ${id}` : '/ 新增')}
+      藝術作品 / {ArtworksLink} {pageType === 'detail' && (id ? `/ ${id}` : '/ 新增')}
     </>
   );
 }

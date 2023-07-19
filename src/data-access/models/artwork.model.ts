@@ -26,7 +26,7 @@ export interface Artwork {
   displayImageUrl: string;
 }
 
-export interface ArtworkDetail {
+export interface ArtworkDetail<TMetadata = ArtworkMetadata> {
   id: number;
   displayId: string;
   warehouseId: number | null;
@@ -44,57 +44,58 @@ export interface ArtworkDetail {
   yearRangeStart?: number | null;
   /** 取代 endYear */
   yearRangeEnd?: number | null;
-  metadata?: {
-    /** 作品類型 */
-    artworkType: string | null;
-    /** 資產類別 */
-    assetsType: string | null;
-    /** 代理藝廊 */
-    agentGalleries: AgentGallery[];
-    /** 進貨單位 */
-    purchasingUnit: string;
-    /** 長 */
-    length: string;
-    /** 寬 */
-    width: string;
-    /** 高 */
-    height: string;
-    /** 自定義尺寸 */
-    customSize: string;
-    /** 號數 */
-    serialNumber: string;
-    /** 媒材 */
-    media: string;
-    /** 版次 ed. */
-    edition: string;
-
-    otherInfo: OtherInfo;
-
-    /** 自填庫存位置 */
-    warehouseLocation?: string;
-    /** 庫存狀態 */
-    storeType?: (typeof storeTypeOptions)[number]['value'];
-    /** 借展，單位 */
-    lendDepartment?: string;
-    /** 維修，單位 */
-    repairDepartment?: string;
-    /** 維修，狀態說明 */
-    repairNote?: string;
-    /** 已歸還，單位 */
-    returnRepairDepartment?: string;
-    /** 已退回，單位 */
-    returnedShippingDepartment?: string;
-
-    /** 銷售狀態 */
-    salesType?: 'sold' | 'unsold';
-    salesOrder?: SalesOrder;
-  };
+  metadata?: TMetadata
 }
 
 export interface Artist {
   zhName: string;
   enName: string;
 }
+
+export interface ArtworkMetadata {
+  /** 作品類型 */
+  artworkType: string | null;
+  /** 資產類別 */
+  assetsType: string | null;
+  /** 代理藝廊 */
+  agentGalleries: AgentGallery[];
+  /** 進貨單位 */
+  purchasingUnit: string;
+  /** 長 */
+  length: string;
+  /** 寬 */
+  width: string;
+  /** 高 */
+  height: string;
+  /** 自定義尺寸 */
+  customSize: string;
+  /** 號數 */
+  serialNumber: string;
+  /** 媒材 */
+  media: string;
+  /** 版次 ed. */
+  edition: string;
+
+  otherInfo: OtherInfo;
+
+  /** 自填庫存位置 */
+  warehouseLocation?: string;
+  /** 庫存狀態 */
+  storeType?: (typeof storeTypeOptions)[number]['value'];
+  /** 借展，單位 */
+  lendDepartment?: string;
+  /** 維修，單位 */
+  repairDepartment?: string;
+  /** 維修，狀態說明 */
+  repairNote?: string;
+  /** 已歸還，單位 */
+  returnRepairDepartment?: string;
+  /** 已退回，單位 */
+  returnedShippingDepartment?: string;
+  /** 銷售狀態 */
+  salesType?: 'sold' | 'unsold';
+  salesOrder?: SalesOrder;
+};
 
 interface AgentGallery {
   name: string;

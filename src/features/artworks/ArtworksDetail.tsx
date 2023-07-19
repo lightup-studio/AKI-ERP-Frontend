@@ -169,7 +169,7 @@ function ArtworksDetail({ type }: ArtworksDetailProps) {
           woodenBox: false,
         },
         warehouseLocation: '',
-        storeType: 'inStock',
+        storeType: 'none',
       },
     },
     resolver: yupResolver(schema),

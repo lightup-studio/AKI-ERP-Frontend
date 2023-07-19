@@ -7,7 +7,8 @@
   "files": [
     "./node_modules/@nrwl/react/typings/cssmodule.d.ts",
     "./node_modules/@nrwl/react/typings/image.d.ts",
-    "./typings/react-notifications.d.ts"
+    "./typings/react-notifications.d.ts",
+    "src/shared/hooks/useMemorySearchParams.tsx"
   ],
   "exclude": [
     "src/**/*.spec.ts",
