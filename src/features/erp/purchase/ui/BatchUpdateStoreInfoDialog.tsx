@@ -1,14 +1,18 @@
 import React, { useEffect } from 'react';
 
 import classnames from 'classnames';
-import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
+import { ArtworkDetail } from 'data-access/models';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
+
+import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 
 function UpdateRangeStoreInfoDialog({
   isOpen = false,
+  data,
   onClose,
 }: {
   isOpen: boolean;
+  data: ArtworkDetail[];
   onClose?: () => void;
 }) {
   useEffect(() => {
@@ -39,9 +43,7 @@ function UpdateRangeStoreInfoDialog({
           <div className="relative flex flex-col gap-2">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((orderNumber) => (
               <div key={orderNumber}>
-                <h4 className="font-bold text-xl sticky top-0 bg-base-content text-base-200 z-10 p-2 rounded-lg">
-                  進貨單 {orderNumber}
-                </h4>
+                <h4 className="font-bold text-xl sticky top-0 bg-base-content text-base-200 z-10 p-2 rounded-lg">進貨單 {orderNumber}</h4>
                 <div className="overflow-x-auto">
                   <table className="table">
                     <thead>
@@ -84,11 +86,7 @@ function UpdateRangeStoreInfoDialog({
                             <option>D</option>
                             <option>E</option>
                           </select>
-                          <input
-                            type="text"
-                            className="input input-bordered ml-2"
-                            placeholder="自填位置"
-                          ></input>
+                          <input type="text" className="input input-bordered ml-2" placeholder="自填位置"></input>
                         </td>
                       </tr>
                     </tbody>
@@ -103,11 +101,7 @@ function UpdateRangeStoreInfoDialog({
           <button className="btn btn-success">
             <CheckIcon className="w-4"></CheckIcon> 儲存
           </button>
-          <button
-            className="btn btn-error btn-base-200"
-            type="button"
-            onClick={() => onClose?.()}
-          >
+          <button className="btn btn-error btn-base-200" type="button" onClick={() => onClose?.()}>
             <XMarkIcon className="w-4"></XMarkIcon> 取消
           </button>
         </div>

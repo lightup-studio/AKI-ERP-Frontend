@@ -1,10 +1,14 @@
 export const assetsTypeOptions = [
-  { label: 'A', value: 'A'},
-  { label: 'B', value: 'B'},
-  { label: 'C', value: 'C'},
-]
+  { label: 'A', value: 'A' },
+  { label: 'B', value: 'B' },
+  { label: 'C', value: 'C' },
+];
 
 export const storeTypeOptions = [
+  {
+    label: '無',
+    value: 'none'
+  },
   {
     label: '在庫',
     value: 'inStock',
@@ -42,8 +46,14 @@ export const salesTypeOptions = [
   },
 ] as const;
 
+type assetsTypeOption = (typeof assetsTypeOptions)[number];
 type StoreTypeOption = (typeof storeTypeOptions)[number];
 type SalesTypeOption = (typeof salesTypeOptions)[number];
+
+export const assetsTypeOptionMap = assetsTypeOptions.reduce((acc, cur) => {
+  acc[cur.value] = cur;
+  return acc;
+}, {} as Record<assetsTypeOption['value'], assetsTypeOption>);
 
 export const storeTypeOptionMap = storeTypeOptions.reduce((acc, cur) => {
   acc[cur.value] = cur;

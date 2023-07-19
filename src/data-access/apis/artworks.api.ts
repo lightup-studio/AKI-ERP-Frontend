@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import axios from 'axios';
-import { Artwork, ArtworkDetail, Pagination } from 'data-access/models';
+import { Artwork, ArtworkDetail, ArtworkMetadata, Pagination } from 'data-access/models';
 import { chain, rangeRight } from 'lodash-es';
 import { Option as ComboboxOption } from 'shared/ui/MyCombobox';
 import { salesTypeOptions, storeTypeOptions } from 'src/constants/artwork.constant';
@@ -17,28 +17,13 @@ export async function fetchSelectOptions() {
     { label: '木箱', value: 'wooden_box' },
   ];
 
-  const [
-    countryList,
-    artistOptions,
-    serialNumberOptions,
-    yearOptions,
-    storeTypeOptions,
-    salesTypeOptions,
-    assetsTypeOptions,
-    mediaOptions,
-    agentGalleryOptions,
-    _artworkOtherInfoOptions,
-  ] = await Promise.all([
+  const [countryList, artistOptions, serialNumberOptions, yearOptions, mediaOptions, agentGalleryOptions] = await Promise.all([
     fetchCountryList(),
     fetchArtistOptions(),
     fetchSerialNumberOptions(),
     fetchYearOptions(),
-    fetchStoreTypeOptions(),
-    fetchSalesTypeOptions(),
-    fetchAssetsTypeOptions(),
     fetchMediaOptions(),
     fetchAgentGalleryOptions(),
-    Promise.resolve(artworkOtherInfoOptions),
   ]);
 
   const data = {
@@ -49,12 +34,12 @@ export async function fetchSelectOptions() {
     artists: artistOptions,
     serialNumbers: serialNumberOptions,
     years: yearOptions,
+    mediums: mediaOptions,
+    agentGalleries: agentGalleryOptions,
     storeTypes: storeTypeOptions as unknown as ComboboxOption[],
     salesTypes: salesTypeOptions as unknown as ComboboxOption[],
     assetsTypes: assetsTypeOptions as unknown as ComboboxOption[],
-    mediums: mediaOptions,
-    agentGalleries: agentGalleryOptions,
-    otherInfos: _artworkOtherInfoOptions,
+    otherInfos: artworkOtherInfoOptions,
   } as const;
 
   return data;
@@ -73,18 +58,6 @@ export async function fetchSerialNumberOptions() {
 export function fetchYearOptions() {
   const options = rangeRight(new Date().getFullYear(), 1980).map((year) => ({ label: `${year}`, value: year }));
   return Promise.resolve(options);
-}
-
-export function fetchStoreTypeOptions() {
-  return Promise.resolve(storeTypeOptions);
-}
-
-export function fetchSalesTypeOptions() {
-  return Promise.resolve(salesTypeOptions);
-}
-
-export function fetchAssetsTypeOptions() {
-  return Promise.resolve(assetsTypeOptions);
 }
 
 export async function fetchMediaOptions() {
@@ -117,8 +90,8 @@ export async function fetchArtworkList(searchParams: URLSearchParams) {
   return res.data;
 }
 
-export async function fetchArtworkList2(status: 'Enabled' | 'Disabled' | 'Draft' = 'Enabled', searchParams: URLSearchParams) {
-  const queryString = [...searchParams.entries()]
+export async function fetchArtworkList2(status: 'Enabled' | 'Disabled' | 'Draft' = 'Enabled', searchParams?: URLSearchParams) {
+  const queryString = (searchParams ? [...searchParams.entries()] : [])
     .map(([key, value]) => {
       if (key === 'nationalities') return `countryCode=${value}`;
       if (key === 'artists') return `artistName=${value}`;
@@ -128,7 +101,7 @@ export async function fetchArtworkList2(status: 'Enabled' | 'Disabled' | 'Draft'
       if (key === 'serialNumbers') return `metadatas={"serialNumber":"${value}"}`;
       if (key === 'pageIndex') return `offset=${value}`;
       if (key === 'pageSize') return `take=${value}`;
-      return '';
+      return `${key}=${value}`;
     })
     .filter(Boolean)
     .join('&');
@@ -156,16 +129,20 @@ export async function createOrUpdateArtworkDetail(artwork: ArtworkDetail) {
   return res.data;
 }
 
-export async function patchArtwork(id: number, data: Partial<ArtworkDetail>) {
+export async function patchArtworks(ids: number[], data: Partial<ArtworkDetail<Partial<ArtworkMetadata>>>) {
+  return Promise.all(ids.map((id) => patchArtwork(id, data)));
+}
+
+export async function patchArtwork(id: number, data: Partial<ArtworkDetail<Partial<ArtworkMetadata>>>) {
   const res = await axios.patch(`/api/Artworks/${id}`, data);
   return res.data;
 }
 
-export async function deleteArtworks(ids: string[]) {
+export async function deleteArtworks(ids: number[]) {
   return Promise.all(ids.map((id) => deleteArtwork(id)));
 }
 
-export async function deleteArtwork(id: string) {
+export async function deleteArtwork(id: number) {
   const res = await axios.delete(`/api/Artworks/${id}`);
   return res.data;
 }
