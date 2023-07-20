@@ -1,41 +1,30 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "npmScope": "aki-erp",
   "tasksRunnerOptions": {
     "default": {
-      "runner": "@nrwl/nx-cloud",
+      "runner": "nx-cloud",
       "options": {
         "cacheableOperations": [
           "build",
           "lint",
           "test",
-          "e2e"
+          "e2e",
+          "build-storybook"
         ],
-        "accessToken": "NTJlMTQyOWMtZTI0OC00MGIzLTg1MGItYTY3OGE4NWM1Zjg5fHJlYWQtd3JpdGU="
+        "accessToken": "MGI5YWNmMjUtYjFiOC00NTk4LWE1N2EtYWI4YmU4MzE0N2QzfHJlYWQtd3JpdGU="
       }
     }
   },
   "targetDefaults": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "production",
-        "^production"
-      ]
-    },
-    "e2e": {
-      "inputs": [
-        "default",
-        "^production"
-      ]
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     },
     "test": {
-      "inputs": [
-        "default",
-        "^production"
-      ]
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+    },
+    "e2e": {
+      "inputs": ["default", "^production"]
     },
     "lint": {
       "inputs": [
@@ -43,37 +32,45 @@
         "{workspaceRoot}/.eslintrc.json",
         "{workspaceRoot}/.eslintignore"
       ]
+    },
+    "build-storybook": {
+      "inputs": [
+        "default",
+        "^production",
+        "{projectRoot}/.storybook/**/*",
+        "{projectRoot}/tsconfig.storybook.json"
+      ]
     }
   },
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
-    ],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "production": [
       "default",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
       "!{projectRoot}/tsconfig.spec.json",
-      "!{projectRoot}/.eslintrc.json"
+      "!{projectRoot}/jest.config.[jt]s",
+      "!{projectRoot}/src/test-setup.[jt]s",
+      "!{projectRoot}/.eslintrc.json",
+      "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
+      "!{projectRoot}/.storybook/**/*",
+      "!{projectRoot}/tsconfig.storybook.json"
     ],
     "sharedGlobals": []
   },
   "generators": {
-    "@nrwl/react": {
+    "@nx/react": {
       "application": {
-        "style": "scss",
-        "linter": "eslint",
-        "bundler": "vite",
         "babel": true
       },
-      "component": {
-        "style": "scss"
-      },
       "library": {
+        "unitTestRunner": "vitest"
+      }
+    },
+    "@nx/next": {
+      "application": {
         "style": "scss",
         "linter": "eslint"
       }
     }
-  },
-  "defaultProject": "aki-erp"
+  }
 }
