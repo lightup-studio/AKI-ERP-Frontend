@@ -3,6 +3,10 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import Bars3Icon from '@heroicons/react/24/outline/Bars3Icon';
+import BellIcon from '@heroicons/react/24/outline/BellIcon';
+import UserCircleIcon from '@heroicons/react/24/outline/UserCircleIcon';
+
 const Navbar = () => {
   const router = useRouter();
 
@@ -16,7 +20,7 @@ const Navbar = () => {
       {/* Menu toggle for mobile view or small screen */}
       <div className="">
         <label htmlFor="left-sidebar-drawer" className="btn btn-primary drawer-button lg:hidden">
-          {/* <Bars3Icon className="h-5 inline-block w-5" /> */}
+          <Bars3Icon className="h-5 inline-block w-5" />
         </label>
         <h1 className="text-2xl font-semibold ml-2">Page Title</h1>
       </div>
@@ -36,21 +40,21 @@ const Navbar = () => {
         </select> */}
         {/* <ThemeToggleButton></ThemeToggleButton> */}
         {/* Notification icon */}
-        {/* <button className="btn btn-ghost ml-4  btn-circle" onClick={() => openNotification()}>
+        <button className="btn btn-ghost ml-4  btn-circle">
           <div className="indicator">
             <BellIcon className="h-6 w-6" />
-            {noOfNotifications > 0 ? (
+            {/* {noOfNotifications > 0 ? (
               <span className="indicator-item badge badge-secondary badge-sm">
                 {noOfNotifications}
               </span>
-            ) : null}
+            ) : null} */}
           </div>
-        </button> */}
+        </button>
         {/* Profile icon, opening menu on click */}
         <div className="dropdown dropdown-end ml-4">
           <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
             <div className="w-10 rounded-full">
-              {/* <img src="https://placeimg.com/80/80/people" alt="profile" /> */}
+              <UserCircleIcon />
             </div>
           </label>
           <ul
