@@ -11,15 +11,15 @@ const routes = [
     groupName: '藝術作品',
   },
   {
-    path: '/artworks/inventory',
+    path: '/inventory',
     name: '庫存',
   },
   {
-    path: '/artworks/not-inventory',
+    path: '/not-inventory',
     name: '非庫存',
   },
   {
-    path: '/artworks/draft',
+    path: '/draft',
     name: '草稿',
   },
   {
@@ -72,15 +72,15 @@ const routes = [
     groupName: '通用資訊',
   },
   {
-    path: '/partners/artists',
+    path: '/artists',
     name: '藝術家',
   },
   {
-    path: '/partners/collector',
+    path: '/collector',
     name: '藏家',
   },
   {
-    path: '/partners/company',
+    path: '/company',
     name: '廠商',
   },
   // {
