@@ -18,7 +18,7 @@ const Navbar = () => {
   return (
     <div className="navbar flex justify-between bg-base-100 z-10 shadow-md ">
       {/* Menu toggle for mobile view or small screen */}
-      <div className="">
+      <div>
         <label htmlFor="left-sidebar-drawer" className="btn btn-primary drawer-button lg:hidden">
           <Bars3Icon className="h-5 inline-block w-5" />
         </label>
