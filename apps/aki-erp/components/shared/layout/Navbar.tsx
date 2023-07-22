@@ -12,7 +12,7 @@ const Navbar = () => {
 
   const logoutUser = () => {
     localStorage.clear();
-    router.push('/');
+    router.push('/login');
   };
 
   return (

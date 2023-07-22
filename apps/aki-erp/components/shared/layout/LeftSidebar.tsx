@@ -191,7 +191,7 @@ const LeftSidebar = () => {
 
       <ul className="menu gap-2 pt-2 w-80 bg-base-100 text-base-content h-full flex-nowrap">
         <li className="py-2 font-semibold text-xl">
-          <Image src={`/images/dark/logo.svg`} alt="AKI ERP" width={177} height={30} />
+          <Image src="/images/dark/logo.svg" alt="AKI ERP" width={177} height={30} />
         </li>
 
         {routes.map((route, k) => (
