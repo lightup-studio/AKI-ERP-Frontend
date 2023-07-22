@@ -2,8 +2,8 @@
 
 import { ArtworksDetail } from '@components/artworks';
 
-const InventoryArtworksAdd = () => {
+const ArtworksInventoryAdd = () => {
   return <ArtworksDetail />;
 };
 
-export default InventoryArtworksAdd;
+export default ArtworksInventoryAdd;
