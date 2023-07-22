@@ -1,4 +1,4 @@
-import { storeTypeOptions } from 'src/constants/artwork.constant';
+import { storeTypeOptions } from '@constants/artwork.constant';
 
 /**
  * 藝術品物件
@@ -44,7 +44,7 @@ export interface ArtworkDetail<TMetadata = ArtworkMetadata> {
   yearRangeStart?: number | null;
   /** 取代 endYear */
   yearRangeEnd?: number | null;
-  metadata?: TMetadata
+  metadata?: TMetadata;
 }
 
 export interface Artist {
@@ -81,7 +81,7 @@ export interface ArtworkMetadata {
   /** 自填庫存位置 */
   warehouseLocation?: string;
   /** 庫存狀態 */
-  storeType?: (typeof storeTypeOptions)[number]['value'];
+  storeType?: typeof storeTypeOptions[number]['value'];
   /** 借展，單位 */
   lendDepartment?: string;
   /** 維修，單位 */
@@ -95,7 +95,7 @@ export interface ArtworkMetadata {
   /** 銷售狀態 */
   salesType?: 'sold' | 'unsold';
   salesOrder?: SalesOrder;
-};
+}
 
 interface AgentGallery {
   name: string;

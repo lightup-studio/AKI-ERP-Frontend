@@ -25,7 +25,7 @@ import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtw
 import { inputColumn, selectColumn, useArtworkTable } from '@utils/hooks/useArtworkTable';
 import useSelectionList from '@utils/hooks/useSelectionList';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import ArtworksTitle, { ArtworksTitleProps } from './ArtworksTitle';
 
 type ArtworksListProps = Pick<ArtworksTitleProps, 'type'>;
@@ -37,6 +37,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
     dispatch(setPageTitle({ title: <ArtworksTitle type={type} /> }));
   }, [dispatch, type]);
 
+  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const { getSearchInputProps, selectItems, selectedOptions, onSelectionChange } =
@@ -187,7 +188,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
       header: '庫存狀態',
       accessorKey: 'metadata',
       cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
-        const storeTypeId: 'inStock' = cell.getValue()?.storeType ?? 'inStock';
+        const storeTypeId = cell.getValue()?.storeType ?? 'inStock';
         return storeTypeOptionMap[storeTypeId].label;
       },
     },
@@ -330,7 +331,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
         <i className="flex-grow"></i>
         <Link
           className="btn btn-info"
-          href={'./add' + (searchParams.toString() && '?' + searchParams.toString())}
+          href={`${pathname}/add` + (searchParams.toString() && '?' + searchParams.toString())}
         >
           <PlusIcon className="h-5 w-5"></PlusIcon>
           新增
