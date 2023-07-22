@@ -19,7 +19,11 @@
     "types": ["jest", "node"],
     "baseUrl": ".",
     "paths": {
-      "@components/*": ["components/*"]
+      "@utils/*": ["utils/*"],
+      "@contexts/*": ["contexts/*"],
+      "@constants/*": ["constants/*"],
+      "@components/*": ["components/*"],
+      "@data-access/*": ["data-access/*"]
     }
   },
   "include": [

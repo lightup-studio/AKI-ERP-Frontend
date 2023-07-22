@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import classNames from 'classnames';
 import './SidebarSubmenu.scss';
 
 export interface SubMenuItem {
@@ -37,9 +38,9 @@ const SidebarSubmenu = ({ submenu, path, name, icon }: SidebarSubmenuProps) => {
   return (
     <details open={isExpanded}>
       <summary
-      // className={classNames('flex pl-0 py-0', {
-      //   'bg-base-200': location.pathname.startsWith(path || ''),
-      // })}
+        className={classNames('flex pl-0 py-0', {
+          'bg-base-200': location.pathname.startsWith(path || ''),
+        })}
       >
         <Link className="flex-grow pl-4 py-3 relative" href={path || ''}>
           {icon} {name}

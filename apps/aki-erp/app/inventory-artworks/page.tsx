@@ -1,7 +1,9 @@
 'use client';
 
+import { ArtworksList } from '@components/artworks';
+
 const InventoryArtworks = () => {
-  return <div>InventoryArtworks</div>;
+  return <ArtworksList />;
 };
 
 export default InventoryArtworks;
