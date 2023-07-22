@@ -59,7 +59,7 @@ const Login = () => {
     <div className="min-h-screen bg-base-200 flex items-center">
       <div className="card mx-auto w-full max-w-md shadow-xl">
         <div className="grid md:grid-cols-1 p-10 bg-base-100 rounded-xl">
-          <div className="relative mb-10 h-12">
+          <div className="relative mb-10 h-8">
             <Image src="/images/dark/logo.svg" alt="AKI" fill />
           </div>
           <h2 className="text-2xl font-semibold text-center">Login</h2>
