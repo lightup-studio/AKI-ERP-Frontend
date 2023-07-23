@@ -2,16 +2,19 @@
 
 import { Container } from '@components/shared/layout';
 import { useRouter } from 'next/navigation';
-
-const token = localStorage.getItem('token');
+import { useEffect, useState } from 'react';
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
-  if (!token) {
-    router.push('/login');
-    return <></>;
-  }
+  const [token, setToken] = useState<string | null>();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    token ? setToken(token) : router.push('/login');
+  }, []);
+
+  if (!token) return <></>;
 
   return <Container>{children}</Container>;
 };
