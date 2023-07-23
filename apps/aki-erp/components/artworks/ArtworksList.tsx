@@ -78,7 +78,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
       cell: ({ cell }) => (
         <Link
           className="text-info flex items-center whitespace-nowrap"
-          href={cell.getValue() + (searchParams?.toString() && '?' + searchParams?.toString())}
+          href={`${pathname}/${cell.getValue()}?${searchParams?.toString()}`}
         >
           {cell.getValue()}
           <PencilSquareIcon className="h-4 w-4 ml-2 inline-block"></PencilSquareIcon>

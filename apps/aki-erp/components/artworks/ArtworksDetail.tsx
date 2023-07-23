@@ -1,9 +1,8 @@
 'use client';
 
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 
 import { assetsTypeOptions } from '@constants/artwork.constant';
-import { setPageTitle } from '@contexts/headerSlice';
 import classNames from 'classnames';
 import {
   createOrUpdateArtworkDetail,
@@ -22,8 +21,8 @@ import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { useParams } from 'next/navigation';
-import ArtworksTitle, { ArtworksTitleProps } from './ArtworksTitle';
+import { useParams, useRouter } from 'next/navigation';
+import { ArtworksTitleProps } from './ArtworksTitle';
 
 const schema = yup.object().shape({
   warehouseId: yup.number().required('庫存位置為必填項目'),
@@ -96,36 +95,34 @@ const schema = yup.object().shape({
 type ArtworksDetailProps = Pick<ArtworksTitleProps, 'type'>;
 
 const ArtworksDetail = ({ type }: ArtworksDetailProps) => {
+  const router = useRouter();
   const params = useParams();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(
-      setPageTitle({
-        title: <ArtworksTitle id={params.artworksId} type={type} pageType="detail" />,
-      })
-    );
-  }, [dispatch, params.artworksId, type]);
+  // useEffect(() => {
+  //   dispatch(
+  //     setPageTitle({
+  //       title: <ArtworksTitle id={params.id} type={type} pageType="detail" />,
+  //     })
+  //   );
+  // }, [dispatch, params.id, type]);
 
   const { isLoading, isSuccess, data, isInitialLoading } = useQuery(
-    ['data', params.artworksId],
-    () => fetchArtworkDetailByDisplayId(params.artworksId || ''),
+    ['data', params.id],
+    () => fetchArtworkDetailByDisplayId(params.id || ''),
     {
-      enabled: !!params.artworksId, // only run the query if the id exists
+      enabled: !!params.id, // only run the query if the id exists
     }
   );
 
   const mutation = useMutation({
     mutationFn: (data: ArtworkDetail) => createOrUpdateArtworkDetail(data),
     onSuccess: async () => {
-      await showSuccess(params.artworksId ? '更新成功！' : '新增成功！');
-      // navigate({
-      //   pathname: '../',
-      //   search: searchParams.toString(),
-      // });
+      await showSuccess(params.id ? '更新成功！' : '新增成功！');
+      router.back();
     },
     onError: async () => {
-      await showError(params.artworksId ? '替新失敗！' : '新墥失敗！');
+      await showError(params.id ? '替新失敗！' : '新墥失敗！');
     },
   });
 
