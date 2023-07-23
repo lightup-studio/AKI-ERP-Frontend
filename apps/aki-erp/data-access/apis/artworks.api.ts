@@ -3,7 +3,7 @@ import { Option as ComboboxOption } from '@components/shared/MyCombobox';
 import { salesTypeOptions, storeTypeOptions } from '@constants/artwork.constant';
 import { Artwork, ArtworkDetail, ArtworkMetadata, Pagination } from '@data-access/models';
 import axios from 'axios';
-import { chain, rangeRight } from 'lodash-es';
+import { rangeRight } from 'lodash-es';
 
 import { assetsTypeOptions } from '@constants/artwork.constant';
 import { fetchCountryList } from './countries.api';
@@ -79,13 +79,11 @@ export async function fetchMediaOptions() {
 
 export async function fetchAgentGalleryOptions() {
   const res = await axios.get<string[]>('api/Artworks/autoComplete/metadata/agentGalleries');
-  const distinctAgentGalleries = chain(res.data)
-    .map<string[]>((items) => JSON.parse(items))
-    .filter((items) => items.length > 0)
-    .flatMap()
-    .map('name')
-    .uniq()
-    .value();
+  const distinctAgentGalleries = res.data
+    .map((item) => JSON.parse(item))
+    .filter((item) => item.length)
+    .flatMap((item) => item.flatMap((item: { name: string }) => item.name));
+
   return distinctAgentGalleries.map((agentGallery) => ({
     label: agentGallery,
     value: agentGallery,

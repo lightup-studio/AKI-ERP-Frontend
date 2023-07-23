@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import IndeterminateCheckbox from '@components/shared/field/IndeterminateCheckbox';
 import SearchField from '@components/shared/field/SearchField';
@@ -9,7 +9,6 @@ import {
   salesTypeOptions,
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
-import { setPageTitle } from '@contexts/headerSlice';
 import { deleteArtworks, patchArtworks } from '@data-access/apis/artworks.api';
 import { ArtworkDetail } from '@data-access/models';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
@@ -26,16 +25,16 @@ import { inputColumn, selectColumn, useArtworkTable } from '@utils/hooks/useArtw
 import useSelectionList from '@utils/hooks/useSelectionList';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import ArtworksTitle, { ArtworksTitleProps } from './ArtworksTitle';
+import { ArtworksTitleProps } from './ArtworksTitle';
 
 type ArtworksListProps = Pick<ArtworksTitleProps, 'type'>;
 
 const ArtworksList = ({ type }: ArtworksListProps) => {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(setPageTitle({ title: <ArtworksTitle type={type} /> }));
-  }, [dispatch, type]);
+  // useEffect(() => {
+  //   dispatch(setPageTitle({ title: <ArtworksTitle type={type} /> }));
+  // }, [dispatch, type]);
 
   const pathname = usePathname();
   const searchParams = useSearchParams();

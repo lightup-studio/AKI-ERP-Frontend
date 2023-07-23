@@ -5,6 +5,8 @@ import { fetchSelectOptions } from '@data-access/apis/artworks.api';
 
 import { XMarkIcon } from '@heroicons/react/20/solid';
 import { useQuery } from '@tanstack/react-query';
+import { removeSingleValueForSearchParams } from '@utils/searchParamsUtil';
+import { ReadonlyURLSearchParams, usePathname, useRouter } from 'next/navigation';
 
 export type SelectItemKey = keyof Awaited<ReturnType<typeof fetchSelectOptions>>;
 
@@ -31,26 +33,20 @@ const SELECT_ITEMS: Pick<SelectItem, 'key' | 'placeholder'>[] = [
   { key: 'otherInfos', placeholder: '其他資訊' },
 ];
 
-export const useArtworkSearches = ({ searchParams }: { searchParams: URLSearchParams }) => {
+export const useArtworkSearches = ({ searchParams }: { searchParams: ReadonlyURLSearchParams }) => {
   const [keyword, setKeyword] = useState(searchParams.get('keyword'));
   const [selectedOptions, setSelectedOptions] = useState<SelectedOption[]>([]);
 
+  const router = useRouter();
+  const pathname = usePathname();
+
   useEffect(() => {
     if ((keyword || '').trim() === (searchParams.get('keyword') || '').trim()) return;
-    // setSearchParams(
-    //   (searchParams) => {
-    //     console.log('keyword', keyword);
-    //     keyword ? searchParams.set('keyword', keyword) : searchParams.delete('keyword');
-    //     // reset page index
-    //     searchParams.delete('pageIndex');
 
-    //     console.log('searchParams.toString()', searchParams.toString());
-    //     return searchParams;
-    //   },
-    //   {
-    //     replace: true,
-    //   }
-    // );
+    const params = new URLSearchParams(searchParams);
+    keyword ? params.set('keyword', keyword) : params.delete('keyword');
+    params.delete('pageIndex');
+    router.push(`${pathname}?${params.toString()}`);
   }, [keyword, searchParams]);
 
   const handleSearch = (keyword?: string | null) => {
@@ -121,30 +117,26 @@ export const useArtworkSearches = ({ searchParams }: { searchParams: URLSearchPa
     selectItemKey,
     selectedOptionValue,
   }: OnSelectionChangeValue) => {
-    // setSearchParams((searchParams) => {
-    //   const values = searchParams.getAll(selectItemKey);
-    //   if (!values.includes(selectedOptionValue)) {
-    //     searchParams.append(selectItemKey, selectedOptionValue);
-    //   }
-    //   // reset page index
-    //   searchParams.delete('pageIndex');
-    //   return searchParams;
-    // });
+    const params = new URLSearchParams(searchParams);
+    const values = params.getAll(selectItemKey);
+    if (!values.includes(selectedOptionValue)) {
+      params.append(selectItemKey, selectedOptionValue);
+    }
+    params.delete('pageIndex');
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   const removeSelectedOptionBySelectItemKey = ({
     selectItemKey,
     selectedOptionValue,
   }: OnSelectionChangeValue) => {
-    // setSearchParams((searchParams) => {
-    //   const values = searchParams.getAll(selectItemKey);
-    //   if (values.includes(selectedOptionValue)) {
-    //     removeSingleValueForSearchParams(searchParams, selectItemKey, selectedOptionValue);
-    //   }
-    //   // reset page index
-    //   searchParams.delete('pageIndex');
-    //   return searchParams;
-    // });
+    const params = new URLSearchParams(searchParams);
+    const values = params.getAll(selectItemKey);
+    if (values.includes(selectedOptionValue)) {
+      removeSingleValueForSearchParams(params, selectItemKey, selectedOptionValue);
+    }
+    params.delete('pageIndex');
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   type OnSelectionChangeValue = {

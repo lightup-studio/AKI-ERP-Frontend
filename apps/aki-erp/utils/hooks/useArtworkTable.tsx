@@ -17,7 +17,7 @@ import {
 } from '@tanstack/react-table';
 
 import TablePagination from '@components/shared/TablePagination';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { SelectItem } from './useArtworkSearches';
 import useSelectionList from './useSelectionList';
 
@@ -101,9 +101,12 @@ export const useArtworkTable = ({
   getSelectAllProps?: ReturnType<typeof useSelectionList>['getSelectAllProps'];
   getSelectItemProps?: ReturnType<typeof useSelectionList>['getSelectItemProps'];
 }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const dataQuery = useQuery({
     queryKey: ['data', searchParams?.toString()],
-    queryFn: () => fetchArtworkList2(status, searchParams),
+    queryFn: () => fetchArtworkList2(status, new URLSearchParams(searchParams)),
     enabled: !!selectItems,
     keepPreviousData: true,
   });
@@ -130,20 +133,14 @@ export const useArtworkTable = ({
     ) {
       return;
     }
-    // setSearchParams?.(
-    //   (searchParams) => {
-    //     pageIndex > 0
-    //       ? searchParams.set('pageIndex', `${pageIndex}`)
-    //       : searchParams.delete('pageIndex');
-    //     pageSize !== 50
-    //       ? searchParams.set('pageSize', `${pageSize}`)
-    //       : searchParams.delete('pageSize');
-    //     return searchParams;
-    //   },
-    //   {
-    //     replace: true,
-    //   }
-    // );
+
+    pageIndex > 0
+      ? searchParams?.set('pageIndex', `${pageIndex}`)
+      : searchParams?.delete('pageIndex');
+    pageSize !== 50
+      ? searchParams?.set('pageSize', `${pageSize}`)
+      : searchParams?.delete('pageSize');
+    router.push(`${pathname}?${searchParams?.toString()}`);
   }, [pageIndex, pageSize, searchParams, setSearchParams]);
 
   const columnMutation = useMutation({
