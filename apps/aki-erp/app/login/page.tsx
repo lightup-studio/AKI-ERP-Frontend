@@ -7,6 +7,7 @@ import { authorizeWithPassword } from 'data-access/apis/authorizations.api';
 import { AuthorizeWithPasswordResponse } from 'data-access/models';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
 
 const INITIAL_LOGIN_DATA = {
@@ -15,6 +16,8 @@ const INITIAL_LOGIN_DATA = {
 };
 
 const Login = () => {
+  const router = useRouter();
+
   const [errorMessage, setErrorMessage] = useState('');
   const [loginObj, setLoginObj] = useState(INITIAL_LOGIN_DATA);
 
@@ -24,7 +27,7 @@ const Login = () => {
     onSuccess: (data) => {
       // Call API to check user credentials and save token in localStorage
       localStorage.setItem('token', data.accessToken);
-      window.location.href = '/app/welcome';
+      router.push('/');
     },
     onError: (error: AxiosError<AuthorizeWithPasswordResponse>) => {
       if (error.response?.data) {
