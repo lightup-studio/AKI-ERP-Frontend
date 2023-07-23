@@ -4,6 +4,9 @@ dependencies:
   '@nx/next':
     specifier: 16.5.3
     version: 16.5.3(@types/node@18.14.2)(eslint@8.15.0)(next@13.4.1)(nx@16.5.3)(typescript@5.1.3)
+  axios:
+    specifier: ^1.4.0
+    version: 1.4.0
   next:
     specifier: 13.4.1
     version: 13.4.1(react-dom@18.2.0)(react@18.2.0)(sass@1.62.1)
