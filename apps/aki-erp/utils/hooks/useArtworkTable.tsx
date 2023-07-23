@@ -17,7 +17,7 @@ import {
 } from '@tanstack/react-table';
 
 import TablePagination from '@components/shared/TablePagination';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { SelectItem } from './useArtworkSearches';
 import useSelectionList from './useSelectionList';
 
@@ -91,13 +91,11 @@ export const useArtworkTable = ({
   columns,
   selectItems,
   searchParams,
-  setSearchParams,
 }: {
   status: ArtworkDetail['status'];
   columns: ColumnDef<ArtworkDetail, any>[];
   selectItems?: SelectItem[];
   searchParams?: URLSearchParams;
-  setSearchParams?: ReturnType<typeof useSearchParams>;
   getSelectAllProps?: ReturnType<typeof useSelectionList>['getSelectAllProps'];
   getSelectItemProps?: ReturnType<typeof useSelectionList>['getSelectItemProps'];
 }) => {
@@ -141,7 +139,7 @@ export const useArtworkTable = ({
       ? searchParams?.set('pageSize', `${pageSize}`)
       : searchParams?.delete('pageSize');
     router.push(`${pathname}?${searchParams?.toString()}`);
-  }, [pageIndex, pageSize, searchParams, setSearchParams]);
+  }, [pageIndex, pageSize, searchParams]);
 
   const columnMutation = useMutation({
     mutationKey: ['updateArtwork'],

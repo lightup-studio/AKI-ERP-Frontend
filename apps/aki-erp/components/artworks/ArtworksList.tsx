@@ -239,7 +239,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
     status,
     columns,
     selectItems,
-    searchParams,
+    searchParams: new URLSearchParams(searchParams),
   });
 
   const deleteMutation = useMutation({
