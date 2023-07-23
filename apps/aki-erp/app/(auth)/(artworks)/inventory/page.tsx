@@ -1,5 +1,3 @@
-'use client';
-
 import { ArtworksList } from '@components/artworks';
 
 const ArtworksInventory = () => {

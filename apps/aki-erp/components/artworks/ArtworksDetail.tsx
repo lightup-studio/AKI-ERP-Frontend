@@ -1,3 +1,5 @@
+'use client';
+
 import React, { ChangeEvent, useEffect, useState } from 'react';
 
 import { assetsTypeOptions } from '@constants/artwork.constant';
