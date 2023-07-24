@@ -47,7 +47,7 @@ export const useArtworkSearches = ({ searchParams }: { searchParams: ReadonlyURL
     keyword ? params.set('keyword', keyword) : params.delete('keyword');
     params.delete('pageIndex');
     router.push(`${pathname}?${params.toString()}`);
-  }, [keyword, searchParams]);
+  }, [keyword]);
 
   const handleSearch = (keyword?: string | null) => {
     setKeyword(keyword || '');
