@@ -39,7 +39,7 @@ export interface ArtworkDetail<TMetadata = ArtworkMetadata> {
   createTime: string | Date;
   lastModifyTime: string | Date;
   status: 'Disabled' | 'Draft' | 'Enabled';
-  artists: Artist[];
+  artists: ArtworkArtist[];
   /** 取代 startYear */
   yearRangeStart?: number | null;
   /** 取代 endYear */
@@ -47,7 +47,7 @@ export interface ArtworkDetail<TMetadata = ArtworkMetadata> {
   metadata?: TMetadata;
 }
 
-export interface Artist {
+export interface ArtworkArtist {
   zhName: string;
   enName: string;
 }
