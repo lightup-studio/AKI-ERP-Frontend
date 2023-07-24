@@ -1,5 +1,7 @@
+import { ArtworksList } from '@components/artworks';
+
 const DisabledArtworks = () => {
-  return <div>DisabledArtworks</div>;
+  return <ArtworksList />;
 };
 
 export default DisabledArtworks;

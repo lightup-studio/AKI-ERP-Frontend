@@ -1,7 +1,7 @@
 import { ArtworksDetail } from '@components/artworks';
 
-const DisabledArtworksAdd = () => {
+const DisabledArtworksId = () => {
   return <ArtworksDetail />;
 };
 
-export default DisabledArtworksAdd;
+export default DisabledArtworksId;

@@ -1,5 +1,7 @@
+import { ArtworksList } from '@components/artworks';
+
 const DraftArtworks = () => {
-  return <div>DraftArtworks</div>;
+  return <ArtworksList type="draft" />;
 };
 
 export default DraftArtworks;
