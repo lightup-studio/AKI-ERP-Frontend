@@ -27,7 +27,7 @@ const Login = () => {
     onSuccess: (data) => {
       // Call API to check user credentials and save token in localStorage
       localStorage.setItem('token', data.accessToken);
-      router.push('/inventory');
+      router.push('/artworks');
     },
     onError: (error: AxiosError<AuthorizeWithPasswordResponse>) => {
       if (error.response?.data) {

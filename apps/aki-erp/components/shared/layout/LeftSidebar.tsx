@@ -11,15 +11,15 @@ const routes = [
     groupName: '藝術作品',
   },
   {
-    path: '/inventory',
+    path: '/artworks',
     name: '庫存',
   },
   {
-    path: '/not-inventory',
+    path: '/disabled-artworks',
     name: '非庫存',
   },
   {
-    path: '/draft',
+    path: '/draft-artworks',
     name: '草稿',
   },
   {
