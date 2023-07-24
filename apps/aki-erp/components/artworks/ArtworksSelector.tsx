@@ -1,40 +1,45 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect } from 'react';
 
 import IndeterminateCheckbox from '@components/shared/field/IndeterminateCheckbox';
-import SearchField from '@components/shared/field/SearchField';
+import SearchInput from '@components/shared/field/SearchField';
 import {
   assetsTypeOptions,
   salesTypeOptions,
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
-import { deleteArtworks, patchArtworks } from '@data-access/apis/artworks.api';
-import { ArtworkDetail } from '@data-access/models';
-import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
-import { useDispatch } from 'react-redux';
-
-import { PencilSquareIcon } from '@heroicons/react/20/solid';
-import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
-import { useMutation } from '@tanstack/react-query';
+import { CheckIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
-
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import { inputColumn, selectColumn, useArtworkTable } from '@utils/hooks/useArtworkTable';
 import useSelectionList from '@utils/hooks/useSelectionList';
+import classnames from 'classnames';
+import { ArtworkDetail } from 'data-access/models';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { ArtworksTitleProps } from './ArtworksTitle';
+import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
+import { showConfirm, showSuccess } from 'utils/swalUtil';
 
-type ArtworksListProps = Pick<ArtworksTitleProps, 'type'>;
+const ArtworksSelector = ({
+  isOpen = false,
+  onClose,
+}: {
+  isOpen?: boolean;
+  onClose?: (selectedRows?: ArtworkDetail[]) => void;
+}) => {
+  useEffect(() => {
+    const mainElement = document.querySelector('main');
+    if (!mainElement) {
+      return;
+    }
+    mainElement.scrollTo(0, 0);
+    mainElement.style.overflow = isOpen ? 'hidden' : 'auto';
 
-const ArtworksList = ({ type }: ArtworksListProps) => {
-  const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   dispatch(setPageTitle({ title: <ArtworksTitle type={type} /> }));
-  // }, [dispatch, type]);
+    return () => {
+      mainElement.style.overflow = 'auto';
+    };
+  }, [isOpen]);
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -51,11 +56,6 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
   const { getSelectAllProps, getSelectItemProps, selectedRowCount, selectedRows, clearSelection } =
     useSelectionList<ArtworkDetail>();
 
-  // temp defined status variable for api break change
-  const status = useMemo(
-    () => (type === 'inventory' ? 'Enabled' : type === 'draft' ? 'Draft' : 'Disabled'),
-    [type]
-  );
   const columns: ColumnDef<ArtworkDetail, any>[] = [
     {
       id: 'select',
@@ -236,106 +236,104 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
   ];
 
   const { dataQuery, table, tableBlock } = useArtworkTable({
-    status,
+    status: 'Enabled',
     columns,
     selectItems,
     searchParams: new URLSearchParams(searchParams),
   });
 
-  const deleteMutation = useMutation({
-    mutationKey: ['deleteArtworks'],
-    mutationFn: deleteArtworks,
-    onSuccess: () => {
-      clearSelection();
-      dataQuery.refetch();
-    },
-  });
+  const addPurchaseOrder = async () => {
+    const { isConfirmed } = await showConfirm({
+      title: `是否將這 ${selectedRowCount} 筆藝術品新增至進貨單？`,
+      icon: 'question',
+      html: `
+      <ul class="list-disc"> ${selectedRows
+        .map(
+          (row) =>
+            `<li><a class="text-info" href="/app/artworks/${row.displayId}" target="_blank" rel="noopener noreferrer" >${row.displayId}</a></li>`
+        )
+        .join('')} </ul>
+      `,
+    });
 
-  const enableMutation = useMutation({
-    mutationKey: ['enableArtwork'],
-    mutationFn: (ids: number[]) =>
-      patchArtworks(ids, { status: 'Enabled', metadata: { storeType: 'inStock' } }),
-    onSuccess: () => {
-      clearSelection();
-      dataQuery.refetch();
-    },
-  });
+    if (!isConfirmed) {
+      return;
+    }
 
-  const handleDelete = () => {
-    if (deleteMutation.isLoading || selectedRowCount === 0) return;
-    const deletedIds = selectedRows.map((artwork) => artwork.id);
-    deleteMutation.mutate(deletedIds);
-  };
-
-  const handleEnable = () => {
-    if (enableMutation.isLoading || selectedRowCount === 0) return;
-    const enabledIds = selectedRows.map((artwork) => artwork.id);
-    enableMutation.mutate(enabledIds);
+    await showSuccess('已成功新增藝術品至進貨單！');
+    onClose?.(selectedRows);
   };
 
   return (
-    <div className="card w-full p-6 bg-base-100 shadow-xl">
-      <div className="md:w-1/2 mb-3">
-        <SearchField {...getSearchInputProps()} />
-      </div>
+    <div
+      className={classnames('modal absolute z-10', {
+        'modal-open': isOpen,
+      })}
+    >
+      <div className="modal-box max-w-none overflow-hidden flex flex-col p-0">
+        <h3 className="font-bold m-4 pb-2 mb-0 text-2xl border-b-base-content border-b flex justify-between items-baseline">
+          新增藝術品
+          <span className="text-xl">已選擇 {selectedRowCount} 筆</span>
+        </h3>
 
-      <div className="flex gap-2 flex-col md:flex-row">
-        <div className="flex-grow flex flex-col gap-3">
-          {selectionBlock}
-          {selectedBlock}
-        </div>
-        <div className="flex flex-col gap-2 justify-between">
-          <div className="flex md:flex-col gap-2">
-            <button aria-label="export excel file" className="btn btn-accent flex-1 truncate">
-              Excel 匯出
-            </button>
-            <button aria-label="export pdf file" className="btn btn-accent flex-1">
-              表格匯出
-            </button>
+        <div className="my-3 mr-2 px-4 py-2 overflow-y-auto">
+          <div className="md:w-1/2 mb-3">
+            <SearchInput {...getSearchInputProps()} />
           </div>
-          <i className="flex-grow"></i>
-          <select
-            className="select select-bordered"
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => {
-              table.setPageSize(Number(e.target.value));
-            }}
-          >
-            {[10, 30, 50, 80, 100].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                {pageSize} 筆
-              </option>
-            ))}
-          </select>
+
+          <div className="flex gap-2 flex-col md:flex-row">
+            <div className="flex-grow flex flex-col gap-3">
+              {selectionBlock}
+              {selectedBlock}
+            </div>
+
+            <div className="flex flex-col gap-2 justify-between">
+              <i className="flex-grow"></i>
+              <select
+                className="select select-bordered"
+                value={table.getState().pagination.pageSize}
+                onChange={(e) => {
+                  table.setPageSize(Number(e.target.value));
+                }}
+              >
+                {[10, 30, 50, 80, 100].map((pageSize) => (
+                  <option key={pageSize} value={pageSize}>
+                    {pageSize} 筆
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="divider mt-2 mb-0"></div>
+
+          <div className="h-full w-full bg-base-100 text-center">
+            {tableBlock}
+
+            <div className="bg-base-100 mt-4 md:col-span-2 flex gap-2 justify-center">
+              <button
+                className="btn btn-success"
+                onClick={addPurchaseOrder}
+                disabled={selectedRowCount === 0}
+              >
+                <CheckIcon className="w-4"></CheckIcon> 儲存
+              </button>
+              <button
+                className="btn btn-error btn-base-200"
+                type="button"
+                onClick={() => onClose?.()}
+              >
+                <XMarkIcon className="w-4"></XMarkIcon> 取消
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div className="divider mt-2 mb-0"></div>
-
-      <div className="flex items-center gap-2 py-2 mb-2">
-        <span>已選擇 {selectedRowCount} 筆</span>
-        <button className="btn btn-error" onClick={handleDelete} disabled={selectedRowCount === 0}>
-          <TrashIcon className="h-5 w-5"></TrashIcon>
-          刪除
-        </button>
-        {status === 'Draft' && (
-          <button
-            className="btn btn-accent"
-            onClick={handleEnable}
-            disabled={selectedRowCount === 0}
-          >
-            加入庫存
-          </button>
-        )}
-        <i className="flex-grow"></i>
-        <Link className="btn btn-info" href={`${pathname}/add?${searchParams.toString()}`}>
-          <PlusIcon className="h-5 w-5"></PlusIcon>
-          新增
-        </Link>
-      </div>
-      <div className="h-full w-full pb-6 bg-base-100 text-center">{tableBlock}</div>
+      <label className="modal-backdrop" onClick={() => onClose?.()}>
+        Close
+      </label>
     </div>
   );
 };
 
-export default ArtworksList;
+export default ArtworksSelector;
