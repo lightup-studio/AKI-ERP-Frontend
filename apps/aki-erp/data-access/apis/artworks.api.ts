@@ -53,12 +53,12 @@ export async function fetchSelectOptions() {
 }
 
 export async function fetchArtistOptions() {
-  const res = await axios.get<string[]>('api/Artworks/autoComplete/artist');
+  const res = await axios.get<string[]>('/api/Artworks/autoComplete/artist');
   return res.data.filter(Boolean).map((artist) => ({ label: artist, value: artist }));
 }
 
 export async function fetchSerialNumberOptions() {
-  const res = await axios.get<string[]>('api/Artworks/autoComplete/metadata/serialNumber');
+  const res = await axios.get<string[]>('/api/Artworks/autoComplete/metadata/serialNumber');
   return res.data
     .filter(Boolean)
     .map((serialNumber) => ({ label: serialNumber, value: serialNumber }));
@@ -73,12 +73,12 @@ export function fetchYearOptions() {
 }
 
 export async function fetchMediaOptions() {
-  const res = await axios.get<string[]>('api/Artworks/autoComplete/metadata/media');
+  const res = await axios.get<string[]>('/api/Artworks/autoComplete/metadata/media');
   return res.data.map((media) => ({ label: media, value: media }));
 }
 
 export async function fetchAgentGalleryOptions() {
-  const res = await axios.get<string[]>('api/Artworks/autoComplete/metadata/agentGalleries');
+  const res = await axios.get<string[]>('/api/Artworks/autoComplete/metadata/agentGalleries');
   const distinctAgentGalleries = res.data
     .map((item) => JSON.parse(item))
     .filter((item) => item.length)
