@@ -11,7 +11,6 @@ import {
 import { uploadImageToS3 } from 'data-access/apis/files.api';
 import { ArtworkDetail } from 'data-access/models';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
 import { showError, showSuccess } from 'utils/swalUtil';
 import * as yup from 'yup';
 
@@ -97,15 +96,6 @@ type ArtworksDetailProps = Pick<ArtworksTitleProps, 'type'>;
 const ArtworksDetail = ({ type }: ArtworksDetailProps) => {
   const router = useRouter();
   const params = useParams();
-  const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   dispatch(
-  //     setPageTitle({
-  //       title: <ArtworksTitle id={params.id} type={type} pageType="detail" />,
-  //     })
-  //   );
-  // }, [dispatch, params.id, type]);
 
   const { isLoading, isSuccess, data, isInitialLoading } = useQuery(
     ['data', params.id],

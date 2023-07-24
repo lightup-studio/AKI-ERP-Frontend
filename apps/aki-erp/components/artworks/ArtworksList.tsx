@@ -12,7 +12,6 @@ import {
 import { deleteArtworks, patchArtworks } from '@data-access/apis/artworks.api';
 import { ArtworkDetail } from '@data-access/models';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
-import { useDispatch } from 'react-redux';
 
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
@@ -30,12 +29,6 @@ import { ArtworksTitleProps } from './ArtworksTitle';
 type ArtworksListProps = Pick<ArtworksTitleProps, 'type'>;
 
 const ArtworksList = ({ type }: ArtworksListProps) => {
-  const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   dispatch(setPageTitle({ title: <ArtworksTitle type={type} /> }));
-  // }, [dispatch, type]);
-
   const pathname = usePathname();
   const searchParams = useSearchParams();
 

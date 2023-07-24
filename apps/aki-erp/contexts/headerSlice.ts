@@ -10,10 +10,6 @@ export const headerSlice = createSlice({
   },
   reducers: {
     // TODO: re-define reducers for header state management
-    setPageTitle: (state, action) => {
-      state.pageTitle = action.payload.title;
-    },
-
     removeNotificationMessage: (state, action) => {
       state.newNotificationMessage = '';
     },
@@ -26,6 +22,6 @@ export const headerSlice = createSlice({
   },
 });
 
-export const { setPageTitle, removeNotificationMessage, showNotification } = headerSlice.actions;
+export const { removeNotificationMessage, showNotification } = headerSlice.actions;
 
 export default headerSlice.reducer;

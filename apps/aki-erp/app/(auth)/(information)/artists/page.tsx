@@ -6,7 +6,6 @@ import { UpdateArtistDialog } from '@components/artists';
 import IndeterminateCheckbox from '@components/shared/field/IndeterminateCheckbox';
 import SearchInput from '@components/shared/field/SearchField';
 import { formSchema } from '@constants/artists.formSchema';
-import { setPageTitle } from '@contexts/headerSlice';
 import { PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -24,15 +23,8 @@ import { createPartner, deletePartnerList, fetchPartnerList } from 'data-access/
 import { ArtistPartner } from 'data-access/models';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
 
 const Artists = () => {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(setPageTitle({ title: '通用資訊 / 藝術家' }));
-  }, [dispatch]);
-
   const [updateArtistDialogData, setUpdateArtistDialogData] = useState<{
     isOpen: boolean;
     data?: ArtistPartner;

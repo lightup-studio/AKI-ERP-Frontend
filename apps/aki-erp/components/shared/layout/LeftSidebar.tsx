@@ -28,7 +28,12 @@ const routes = [
   {
     path: '/purchase/orders',
     name: '進貨單',
-    submenu: [{ path: '/purchase/return-orders', name: '進貨退還單' }],
+    submenu: [
+      {
+        path: '/purchase/return-orders',
+        name: '進貨退還單',
+      },
+    ],
   },
   {
     path: '/transfer/orders',

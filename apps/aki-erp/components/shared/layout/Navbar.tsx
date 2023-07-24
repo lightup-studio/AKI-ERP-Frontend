@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Bars3Icon from '@heroicons/react/24/outline/Bars3Icon';
 import BellIcon from '@heroicons/react/24/outline/BellIcon';
 import UserCircleIcon from '@heroicons/react/24/outline/UserCircleIcon';
+import PageTitle from '../PageTitle';
 
 const Navbar = () => {
   const router = useRouter();
@@ -22,7 +23,7 @@ const Navbar = () => {
         <label htmlFor="left-sidebar-drawer" className="btn btn-primary drawer-button lg:hidden">
           <Bars3Icon className="h-5 inline-block w-5" />
         </label>
-        <h1 className="text-2xl font-semibold ml-2">Page Title</h1>
+        <PageTitle />
       </div>
 
       <div className="order-last">
