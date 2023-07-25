@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import classnames from 'classnames';
 import { cloneDeep } from 'lodash-es';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { Option as ComboboxOption } from '@components/shared/MyCombobox';
 import TablePagination from '@components/shared/TablePagination';
@@ -12,9 +12,9 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   CellContext,
   ColumnDef,
+  PaginationState,
   flexRender,
   getCoreRowModel,
-  PaginationState,
   useReactTable,
 } from '@tanstack/react-table';
 
@@ -90,21 +90,21 @@ export const useArtworkTable = ({
   status,
   columns,
   selectItems,
-  searchParams,
 }: {
   status: ArtworkDetail['status'];
   columns: ColumnDef<ArtworkDetail, any>[];
   selectItems?: SelectItem[];
-  searchParams?: URLSearchParams;
   getSelectAllProps?: ReturnType<typeof useSelectionList>['getSelectAllProps'];
   getSelectItemProps?: ReturnType<typeof useSelectionList>['getSelectItemProps'];
 }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const urlSearchParams = new URLSearchParams(searchParams);
 
   const dataQuery = useQuery({
-    queryKey: ['data', searchParams?.toString()],
-    queryFn: () => fetchArtworkList2(status, new URLSearchParams(searchParams)),
+    queryKey: ['data', urlSearchParams.toString()],
+    queryFn: () => fetchArtworkList2(status, urlSearchParams),
     enabled: !!selectItems,
     keepPreviousData: true,
   });
@@ -119,27 +119,28 @@ export const useArtworkTable = ({
   }, [dataQuery.isSuccess, dataQuery.data]);
 
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
-    pageIndex: +(searchParams?.get('pageIndex') || 0),
-    pageSize: +(searchParams?.get('pageSize') || 50),
+    pageIndex: +(urlSearchParams.get('pageIndex') || 0),
+    pageSize: +(urlSearchParams.get('pageSize') || 50),
   });
   const pagination = useMemo(() => ({ pageIndex, pageSize }), [pageIndex, pageSize]);
 
   useEffect(() => {
     if (
-      pageIndex === +(searchParams?.get('pageIndex') || 0) &&
-      pageSize === +(searchParams?.get('pageSize') || 50)
+      pageIndex === +(urlSearchParams.get('pageIndex') || 0) &&
+      pageSize === +(urlSearchParams.get('pageSize') || 50)
     ) {
       return;
     }
 
     pageIndex > 0
-      ? searchParams?.set('pageIndex', `${pageIndex}`)
-      : searchParams?.delete('pageIndex');
+      ? urlSearchParams.set('pageIndex', `${pageIndex}`)
+      : urlSearchParams.delete('pageIndex');
     pageSize !== 50
-      ? searchParams?.set('pageSize', `${pageSize}`)
-      : searchParams?.delete('pageSize');
-    router.push(`${pathname}?${searchParams?.toString()}`);
-  }, [pageIndex, pageSize, searchParams]);
+      ? urlSearchParams.set('pageSize', `${pageSize}`)
+      : urlSearchParams.delete('pageSize');
+
+    router.push(`${pathname}?${urlSearchParams.toString()}`);
+  }, [pageIndex, pageSize]);
 
   const columnMutation = useMutation({
     mutationKey: ['updateArtwork'],

@@ -45,7 +45,7 @@ const ArtworksSelector = ({
   const searchParams = useSearchParams();
 
   const { getSearchInputProps, selectItems, selectedOptions, onSelectionChange } =
-    useArtworkSearches({ searchParams });
+    useArtworkSearches();
 
   const { selectionBlock, selectedBlock } = useArtworkSelectedList({
     selectItems,
@@ -78,7 +78,7 @@ const ArtworksSelector = ({
       cell: ({ cell }) => (
         <Link
           className="text-info flex items-center whitespace-nowrap"
-          href={`${pathname}/${cell.getValue()}?${searchParams?.toString()}`}
+          href={`${pathname}/${cell.getValue()}?${searchParams.toString()}`}
         >
           {cell.getValue()}
           <PencilSquareIcon className="h-4 w-4 ml-2 inline-block"></PencilSquareIcon>
@@ -239,7 +239,6 @@ const ArtworksSelector = ({
     status: 'Enabled',
     columns,
     selectItems,
-    searchParams: new URLSearchParams(searchParams),
   });
 
   const addPurchaseOrder = async () => {

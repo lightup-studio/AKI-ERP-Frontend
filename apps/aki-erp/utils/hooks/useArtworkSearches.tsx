@@ -6,7 +6,7 @@ import { fetchSelectOptions } from '@data-access/apis/artworks.api';
 import { XMarkIcon } from '@heroicons/react/20/solid';
 import { useQuery } from '@tanstack/react-query';
 import { removeSingleValueForSearchParams } from '@utils/searchParamsUtil';
-import { ReadonlyURLSearchParams, usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export type SelectItemKey = keyof Awaited<ReturnType<typeof fetchSelectOptions>>;
 
@@ -33,12 +33,13 @@ const SELECT_ITEMS: Pick<SelectItem, 'key' | 'placeholder'>[] = [
   { key: 'otherInfos', placeholder: '其他資訊' },
 ];
 
-export const useArtworkSearches = ({ searchParams }: { searchParams: ReadonlyURLSearchParams }) => {
-  const [keyword, setKeyword] = useState(searchParams.get('keyword'));
-  const [selectedOptions, setSelectedOptions] = useState<SelectedOption[]>([]);
-
+export const useArtworkSearches = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [keyword, setKeyword] = useState(searchParams.get('keyword'));
+  const [selectedOptions, setSelectedOptions] = useState<SelectedOption[]>([]);
 
   useEffect(() => {
     if ((keyword || '').trim() === (searchParams.get('keyword') || '').trim()) return;
@@ -46,6 +47,7 @@ export const useArtworkSearches = ({ searchParams }: { searchParams: ReadonlyURL
     const params = new URLSearchParams(searchParams);
     keyword ? params.set('keyword', keyword) : params.delete('keyword');
     params.delete('pageIndex');
+
     router.push(`${pathname}?${params.toString()}`);
   }, [keyword]);
 
@@ -123,6 +125,7 @@ export const useArtworkSearches = ({ searchParams }: { searchParams: ReadonlyURL
       params.append(selectItemKey, selectedOptionValue);
     }
     params.delete('pageIndex');
+
     router.push(`${pathname}?${params.toString()}`);
   };
 
