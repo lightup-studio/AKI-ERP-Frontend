@@ -8,6 +8,15 @@
     "storybook-ui:serve": "nx run storybook-ui:storybook",
     "storybook-ui:build": "nx run storybook-ui:build-storybook"
   },
+  "pnpm": {
+    "packageExtensions": {
+      "posix": {
+        "optionalDependencies": {
+          "node-gyp": "*"
+        }
+      }
+    }
+  },
   "private": true,
   "dependencies": {
     "@nx/next": "16.5.3",
