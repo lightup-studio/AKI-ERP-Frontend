@@ -5,3 +5,4 @@ export * from './country.model';
 export * from './files.model';
 export * from './general.model';
 export * from './partner.model';
+export * from './purchase.order.model';
