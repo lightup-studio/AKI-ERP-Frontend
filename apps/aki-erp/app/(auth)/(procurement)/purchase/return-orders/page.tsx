@@ -45,14 +45,14 @@ const PurchaseReturnOrders = () => {
     {
       id: 'select',
       header: ({ table }) => (
-        <div className="px-1">
+        <div className="flex items-center">
           <IndeterminateCheckbox
             {...getSelectAllProps(table.getRowModel().rows, dataQuery.data?.totalCount || 0)}
           />
         </div>
       ),
       cell: ({ row }) => (
-        <div className="px-1">
+        <div className="flex items-center">
           <IndeterminateCheckbox {...getSelectItemProps(row)} />
         </div>
       ),

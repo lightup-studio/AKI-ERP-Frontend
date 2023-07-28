@@ -157,7 +157,7 @@ const Collector = () => {
     {
       id: 'select',
       header: ({ table }) => (
-        <div className="px-1 flex items-center">
+        <div className="flex items-center">
           <IndeterminateCheckbox
             {...{
               checked:
@@ -171,7 +171,7 @@ const Collector = () => {
         </div>
       ),
       cell: ({ row }) => (
-        <div className="px-1">
+        <div className="flex items-center">
           <IndeterminateCheckbox
             {...{
               checked: row.original.id in rowSelection,

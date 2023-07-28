@@ -72,17 +72,19 @@ const PurchaseOrderAdd = () => {
     {
       id: 'select',
       header: ({ table }) => (
-        <IndeterminateCheckbox
-          {...{
-            checked:
-              dataQuery.data?.totalCount !== 0 && selectedRowCount === dataQuery.data?.totalCount,
-            indeterminate: selectedRowCount > 0,
-            onChange: () => handleAllRowSelectionChange(table.getRowModel().rows),
-          }}
-        />
+        <div className="flex items-center">
+          <IndeterminateCheckbox
+            {...{
+              checked:
+                dataQuery.data?.totalCount !== 0 && selectedRowCount === dataQuery.data?.totalCount,
+              indeterminate: selectedRowCount > 0,
+              onChange: () => handleAllRowSelectionChange(table.getRowModel().rows),
+            }}
+          />
+        </div>
       ),
       cell: ({ row }) => (
-        <div className="px-1">
+        <div className="flex items-center">
           <IndeterminateCheckbox
             {...{
               checked: row.original.id in rowSelection,
