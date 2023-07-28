@@ -1,9 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import classnames from 'classnames';
-import { cloneDeep } from 'lodash-es';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-
 import { Option as ComboboxOption } from '@components/shared/MyCombobox';
 import TablePagination from '@components/shared/TablePagination';
 import { fetchArtworkList2, patchArtwork } from '@data-access/apis/artworks.api';
@@ -17,7 +13,9 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-
+import classnames from 'classnames';
+import { cloneDeep } from 'lodash-es';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { SelectItem } from './useArtworkSearches';
 import useSelectionList from './useSelectionList';
 
@@ -100,11 +98,12 @@ export const useArtworkTable = ({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const urlSearchParams = new URLSearchParams(searchParams);
+
+  const params = new URLSearchParams(searchParams);
 
   const dataQuery = useQuery({
-    queryKey: ['data', urlSearchParams.toString()],
-    queryFn: () => fetchArtworkList2(status, urlSearchParams),
+    queryKey: ['data', params.toString()],
+    queryFn: () => fetchArtworkList2(status, params),
     enabled: !!selectItems,
     keepPreviousData: true,
   });
@@ -119,27 +118,23 @@ export const useArtworkTable = ({
   }, [dataQuery.isSuccess, dataQuery.data]);
 
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
-    pageIndex: +(urlSearchParams.get('pageIndex') || 0),
-    pageSize: +(urlSearchParams.get('pageSize') || 50),
+    pageIndex: +(params.get('pageIndex') || 0),
+    pageSize: +(params.get('pageSize') || 50),
   });
   const pagination = useMemo(() => ({ pageIndex, pageSize }), [pageIndex, pageSize]);
 
   useEffect(() => {
     if (
-      pageIndex === +(urlSearchParams.get('pageIndex') || 0) &&
-      pageSize === +(urlSearchParams.get('pageSize') || 50)
+      pageIndex === +(params.get('pageIndex') || 0) &&
+      pageSize === +(params.get('pageSize') || 50)
     ) {
       return;
     }
 
-    pageIndex > 0
-      ? urlSearchParams.set('pageIndex', `${pageIndex}`)
-      : urlSearchParams.delete('pageIndex');
-    pageSize !== 50
-      ? urlSearchParams.set('pageSize', `${pageSize}`)
-      : urlSearchParams.delete('pageSize');
+    pageIndex > 0 ? params.set('pageIndex', `${pageIndex}`) : params.delete('pageIndex');
+    pageSize !== 50 ? params.set('pageSize', `${pageSize}`) : params.delete('pageSize');
 
-    router.push(`${pathname}?${urlSearchParams.toString()}`);
+    router.push(`${pathname}?${params.toString()}`);
   }, [pageIndex, pageSize]);
 
   const columnMutation = useMutation({

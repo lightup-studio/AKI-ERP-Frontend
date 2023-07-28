@@ -17,7 +17,6 @@ import useSelectionList from '@utils/hooks/useSelectionList';
 import classnames from 'classnames';
 import { ArtworkDetail } from 'data-access/models';
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
 import { showConfirm, showSuccess } from 'utils/swalUtil';
 
@@ -40,9 +39,6 @@ const ArtworksSelector = ({
       mainElement.style.overflow = 'auto';
     };
   }, [isOpen]);
-
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   const { getSearchInputProps, selectItems, selectedOptions, onSelectionChange } =
     useArtworkSearches();
@@ -78,7 +74,8 @@ const ArtworksSelector = ({
       cell: ({ cell }) => (
         <Link
           className="text-info flex items-center whitespace-nowrap"
-          href={`${pathname}/${cell.getValue()}?${searchParams.toString()}`}
+          target="_blank"
+          href={`/artworks/${cell.getValue()}`}
         >
           {cell.getValue()}
           <PencilSquareIcon className="h-4 w-4 ml-2 inline-block"></PencilSquareIcon>

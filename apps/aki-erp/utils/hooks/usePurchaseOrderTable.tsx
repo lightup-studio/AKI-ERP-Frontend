@@ -95,13 +95,14 @@ export const usePurchaseOrderTable = ({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const urlSearchParams = new URLSearchParams(searchParams);
+
+  const params = new URLSearchParams(searchParams);
 
   // const [tableData, setTableData] = useState<PurchaseOrder[] | null | undefined>([]);
 
   const dataQuery = useQuery({
-    queryKey: ['purchaseOrders', status, urlSearchParams.toString()],
-    queryFn: () => fetchPurchaseOrder(status, urlSearchParams.toString()),
+    queryKey: ['purchaseOrders', status, params.toString()],
+    queryFn: () => fetchPurchaseOrder(status, params.toString()),
     enabled: !!selectItems,
     keepPreviousData: true,
   });
@@ -114,28 +115,24 @@ export const usePurchaseOrderTable = ({
   // }, []);
 
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
-    pageIndex: +(urlSearchParams.get('pageIndex') || 0),
-    pageSize: +(urlSearchParams.get('pageSize') || 50),
+    pageIndex: +(params.get('pageIndex') || 0),
+    pageSize: +(params.get('pageSize') || 50),
   });
 
   const pagination = useMemo(() => ({ pageIndex, pageSize }), [pageIndex, pageSize]);
 
   useEffect(() => {
     if (
-      pageIndex === +(urlSearchParams.get('pageIndex') || 0) &&
-      pageSize === +(urlSearchParams.get('pageSize') || 50)
+      pageIndex === +(params.get('pageIndex') || 0) &&
+      pageSize === +(params.get('pageSize') || 50)
     ) {
       return;
     }
 
-    pageIndex > 0
-      ? urlSearchParams.set('pageIndex', `${pageIndex}`)
-      : urlSearchParams.delete('pageIndex');
-    pageSize !== 50
-      ? urlSearchParams.set('pageSize', `${pageSize}`)
-      : urlSearchParams.delete('pageSize');
+    pageIndex > 0 ? params.set('pageIndex', `${pageIndex}`) : params.delete('pageIndex');
+    pageSize !== 50 ? params.set('pageSize', `${pageSize}`) : params.delete('pageSize');
 
-    router.push(`${pathname}?${urlSearchParams.toString()}`);
+    router.push(`${pathname}?${params.toString()}`);
   }, [pageIndex, pageSize]);
 
   // const columnMutation = useMutation({

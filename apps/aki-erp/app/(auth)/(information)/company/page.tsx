@@ -35,6 +35,7 @@ const Company = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
   const params = new URLSearchParams(searchParams);
 
   const [keyword, setKeyword] = useState(searchParams.get('keyword'));

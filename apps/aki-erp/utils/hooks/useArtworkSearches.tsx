@@ -2,10 +2,8 @@ import { useEffect, useState } from 'react';
 
 import MyCombobox, { Option as ComboboxOption } from '@components/shared/MyCombobox';
 import { fetchSelectOptions } from '@data-access/apis/artworks.api';
-
 import { XMarkIcon } from '@heroicons/react/20/solid';
 import { useQuery } from '@tanstack/react-query';
-import { removeSingleValueForSearchParams } from '@utils/searchParamsUtil';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export type SelectItemKey = keyof Awaited<ReturnType<typeof fetchSelectOptions>>;
@@ -38,13 +36,14 @@ export const useArtworkSearches = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const params = new URLSearchParams(searchParams);
+
   const [keyword, setKeyword] = useState(searchParams.get('keyword'));
   const [selectedOptions, setSelectedOptions] = useState<SelectedOption[]>([]);
 
   useEffect(() => {
     if ((keyword || '').trim() === (searchParams.get('keyword') || '').trim()) return;
 
-    const params = new URLSearchParams(searchParams);
     keyword ? params.set('keyword', keyword) : params.delete('keyword');
     params.delete('pageIndex');
 
@@ -119,25 +118,13 @@ export const useArtworkSearches = () => {
     selectItemKey,
     selectedOptionValue,
   }: OnSelectionChangeValue) => {
-    const params = new URLSearchParams(searchParams);
-    const values = params.getAll(selectItemKey);
-    if (!values.includes(selectedOptionValue)) {
-      params.append(selectItemKey, selectedOptionValue);
-    }
+    params.append(selectItemKey, selectedOptionValue);
     params.delete('pageIndex');
-
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  const removeSelectedOptionBySelectItemKey = ({
-    selectItemKey,
-    selectedOptionValue,
-  }: OnSelectionChangeValue) => {
-    const params = new URLSearchParams(searchParams);
-    const values = params.getAll(selectItemKey);
-    if (values.includes(selectedOptionValue)) {
-      removeSingleValueForSearchParams(params, selectItemKey, selectedOptionValue);
-    }
+  const removeSelectedOptionBySelectItemKey = ({ selectItemKey }: OnSelectionChangeValue) => {
+    params.delete(selectItemKey);
     params.delete('pageIndex');
     router.push(`${pathname}?${params.toString()}`);
   };
