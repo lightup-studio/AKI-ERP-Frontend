@@ -100,7 +100,7 @@ export const usePurchaseOrderTable = ({
   // const [tableData, setTableData] = useState<PurchaseOrder[] | null | undefined>([]);
 
   const dataQuery = useQuery({
-    queryKey: ['purchaseOrders', urlSearchParams.toString()],
+    queryKey: ['purchaseOrders', status, urlSearchParams.toString()],
     queryFn: () => fetchPurchaseOrder(status, urlSearchParams.toString()),
     enabled: !!selectItems,
     keepPreviousData: true,
