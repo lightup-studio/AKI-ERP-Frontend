@@ -1,4 +1,4 @@
-import { Artwork } from './artwork.model';
+import { ArtworkDetail } from './artwork.model';
 
 /**
  *
@@ -22,31 +22,31 @@ export interface PurchaseOrderIPagging {
    * @type {Array<PurchaseOrder>}
    * @memberof PurchaseOrderIPagging
    */
-  data?: Array<PurchaseOrder> | null;
+  data: Array<PurchaseOrder> | null;
   /**
    *
    * @type {number}
    * @memberof PurchaseOrderIPagging
    */
-  offset?: number;
+  offset: number;
   /**
    *
    * @type {number}
    * @memberof PurchaseOrderIPagging
    */
-  take?: number;
+  take: number;
   /**
    *
    * @type {number}
    * @memberof PurchaseOrderIPagging
    */
-  totalCount?: number;
+  totalCount: number;
   /**
    *
    * @type {boolean}
    * @memberof PurchaseOrderIPagging
    */
-  hasNextPage?: boolean;
+  hasNextPage: boolean;
 }
 
 /**
@@ -60,67 +60,67 @@ export interface PurchaseOrder {
    * @type {number}
    * @memberof PurchaseOrder
    */
-  id?: number;
+  id: number;
   /**
    *
    * @type {string}
    * @memberof PurchaseOrder
    */
-  displayId?: string | null;
+  displayId: string | null;
   /**
    *
    * @type {Date}
    * @memberof PurchaseOrder
    */
-  purchaseTime?: Date;
+  purchaseTime: Date;
   /**
    *
    * @type {string}
    * @memberof PurchaseOrder
    */
-  salesCompany?: string | null;
+  salesCompany: string | null;
   /**
    *
    * @type {ContactInformation}
    * @memberof PurchaseOrder
    */
-  salesInformation?: ContactInformation;
+  salesInformation: ContactInformation;
   /**
    *
    * @type {ContactInformation}
    * @memberof PurchaseOrder
    */
-  receiverInformation?: ContactInformation;
+  receiverInformation: ContactInformation;
   /**
    *
-   * @type {Array<Artwork>}
+   * @type {Array<ArtworkDetail>}
    * @memberof PurchaseOrder
    */
-  artworks?: Array<Artwork> | null;
-  /**
-   *
-   * @type {Date}
-   * @memberof PurchaseOrder
-   */
-  createTime?: Date;
+  artworks: Array<ArtworkDetail> | null;
   /**
    *
    * @type {Date}
    * @memberof PurchaseOrder
    */
-  lastModifyTime?: Date;
+  createTime: Date;
+  /**
+   *
+   * @type {Date}
+   * @memberof PurchaseOrder
+   */
+  lastModifyTime: Date;
   /**
    *
    * @type {Status}
    * @memberof PurchaseOrder
    */
-  status?: Status;
+  status: Status;
   /**
    *
    * @type {{ [key: string]: any; }}
    * @memberof PurchaseOrder
    */
-  metadata?: { [key: string]: any } | null;
+  metadata: { [key: string]: any } | null;
 }
 
 /**
@@ -134,19 +134,19 @@ export interface ContactInformation {
    * @type {string}
    * @memberof ContactInformation
    */
-  name?: string | null;
+  name: string | null;
   /**
    *
    * @type {string}
    * @memberof ContactInformation
    */
-  phone?: string | null;
+  phone: string | null;
   /**
    *
    * @type {string}
    * @memberof ContactInformation
    */
-  address?: string | null;
+  address: string | null;
 }
 
 /**
@@ -160,53 +160,53 @@ export interface CreateOrUpdatePurchaseOrderRequest {
    * @type {number}
    * @memberof CreateOrUpdatePurchaseOrderRequest
    */
-  id?: number;
+  id: number;
   /**
    *
    * @type {string}
    * @memberof CreateOrUpdatePurchaseOrderRequest
    */
-  displayId?: string | null;
+  displayId: string | null;
   /**
    *
    * @type {Date}
    * @memberof CreateOrUpdatePurchaseOrderRequest
    */
-  purchaseTime?: Date;
+  purchaseTime: Date;
   /**
    *
    * @type {string}
    * @memberof CreateOrUpdatePurchaseOrderRequest
    */
-  salesCompany?: string | null;
+  salesCompany: string | null;
   /**
    *
    * @type {ContactInformation}
    * @memberof CreateOrUpdatePurchaseOrderRequest
    */
-  salesInformation?: ContactInformation;
+  salesInformation: ContactInformation;
   /**
    *
    * @type {ContactInformation}
    * @memberof CreateOrUpdatePurchaseOrderRequest
    */
-  receiverInformation?: ContactInformation;
+  receiverInformation: ContactInformation;
   /**
    *
    * @type {Array<number>}
    * @memberof CreateOrUpdatePurchaseOrderRequest
    */
-  artworkIdList?: Array<number> | null;
+  artworkIdList: Array<number> | null;
   /**
    *
    * @type {Status}
    * @memberof CreateOrUpdatePurchaseOrderRequest
    */
-  status?: Status;
+  status: Status;
   /**
    *
    * @type {{ [key: string]: any; }}
    * @memberof CreateOrUpdatePurchaseOrderRequest
    */
-  metadata?: { [key: string]: any } | null;
+  metadata: { [key: string]: any } | null;
 }

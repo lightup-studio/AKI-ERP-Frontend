@@ -3,9 +3,9 @@
 import { useEffect } from 'react';
 
 import classnames from 'classnames';
-import { ArtworkDetail } from 'data-access/models';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
 
+import { PurchaseOrder } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 
 const UpdateRangeStoreInfoDialog = ({
@@ -14,7 +14,7 @@ const UpdateRangeStoreInfoDialog = ({
   onClose,
 }: {
   isOpen: boolean;
-  data: ArtworkDetail[];
+  data: PurchaseOrder[];
   onClose?: () => void;
 }) => {
   useEffect(() => {
@@ -43,65 +43,67 @@ const UpdateRangeStoreInfoDialog = ({
 
         <div className="my-3 mr-2 px-4 min-h-[60vh] overflow-y-auto">
           <div className="relative flex flex-col gap-2">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((orderNumber) => (
-              <div key={orderNumber}>
-                <h4 className="font-bold text-xl sticky top-0 bg-base-content text-base-200 z-10 p-2 rounded-lg">
-                  進貨單 {orderNumber}
-                </h4>
-                <div className="overflow-x-auto">
-                  <table className="table">
-                    <thead>
-                      <tr className="text-sm">
-                        <th>作品名稱</th>
-                        <th>作品圖</th>
-                        <th>在庫位置</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="text-sm">
-                        <td>Cy Ganderton</td>
-                        <td>
-                          <DialogTrigger>
-                            <Button>
-                              <img
-                                src="https://cdn.galleryaki.com/shared_87a95945-8442-4e62-8444-c30b66744e8a"
-                                alt="Artwork"
-                                loading="lazy"
-                                className="h-20"
-                              />
-                            </Button>
-                            <Popover placement="right">
-                              <Dialog className="h-[80vh]">
+            {data
+              .filter((item) => item.artworks?.length)
+              .map((item) => (
+                <div key={item.id}>
+                  <h4 className="font-bold text-xl sticky top-0 bg-base-content text-base-200 z-10 p-2 rounded-lg">
+                    進貨單 {item.id}
+                  </h4>
+                  <div className="overflow-x-auto">
+                    <table className="table">
+                      <thead>
+                        <tr className="text-sm">
+                          <th>作品名稱</th>
+                          <th>作品圖</th>
+                          <th>在庫位置</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="text-sm">
+                          <td>{item.artworks?.[0].enName}</td>
+                          <td>
+                            <DialogTrigger>
+                              <Button>
                                 <img
-                                  src="https://cdn.galleryaki.com/shared_87a95945-8442-4e62-8444-c30b66744e8a"
+                                  src={item.artworks?.[0].imageUrl}
                                   alt="Artwork"
-                                  className="w-full h-full object-contain"
                                   loading="lazy"
+                                  className="h-20"
                                 />
-                              </Dialog>
-                            </Popover>
-                          </DialogTrigger>
-                        </td>
-                        <td>
-                          <select className="select select-bordered">
-                            <option>A</option>
-                            <option>B</option>
-                            <option>C</option>
-                            <option>D</option>
-                            <option>E</option>
-                          </select>
-                          <input
-                            type="text"
-                            className="input input-bordered ml-2"
-                            placeholder="自填位置"
-                          ></input>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                              </Button>
+                              <Popover placement="right">
+                                <Dialog className="h-[80vh]">
+                                  <img
+                                    src={item.artworks?.[0].imageUrl}
+                                    alt="Artwork"
+                                    className="w-full h-full object-contain"
+                                    loading="lazy"
+                                  />
+                                </Dialog>
+                              </Popover>
+                            </DialogTrigger>
+                          </td>
+                          <td>
+                            <select className="select select-bordered">
+                              <option>A</option>
+                              <option>B</option>
+                              <option>C</option>
+                              <option>D</option>
+                              <option>E</option>
+                            </select>
+                            <input
+                              type="text"
+                              className="input input-bordered ml-2"
+                              placeholder="自填位置"
+                            ></input>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
 

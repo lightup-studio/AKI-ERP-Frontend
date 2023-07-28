@@ -2,13 +2,18 @@ import {
   CreateOrUpdatePurchaseOrderRequest,
   PurchaseOrder,
   PurchaseOrderIPagging,
+  Status,
 } from '@data-access/models/purchase.order.model';
 import axios from 'axios';
 
-export const fetchPurchaseOrder = async (queryString: string): Promise<PurchaseOrderIPagging> => {
+export const fetchPurchaseOrder = async (
+  status: Status,
+  queryString?: string
+): Promise<PurchaseOrderIPagging> => {
   const params = new URLSearchParams(queryString);
   const paramsObject = Object.fromEntries(params.entries());
 
+  if (!paramsObject['status']) paramsObject['status'] = status;
   if (!paramsObject['pageSize']) paramsObject['take'] = '50';
   if (!paramsObject['pageIndex']) paramsObject['offset'] = '0';
 

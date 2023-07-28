@@ -14,9 +14,9 @@ import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
-import { useArtworkTable } from '@utils/hooks/useArtworkTable';
+import { usePurchaseOrderTable } from '@utils/hooks/usePurchaseOrderTable';
 import useSelectionList from '@utils/hooks/useSelectionList';
-import { ArtworkDetail } from 'data-access/models';
+import { ArtworkDetail, PurchaseOrder, Status } from 'data-access/models';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
@@ -37,9 +37,9 @@ const PurchaseOrders = () => {
   });
 
   const { getSelectAllProps, getSelectItemProps, selectedRowCount, selectedRows } =
-    useSelectionList<ArtworkDetail>();
+    useSelectionList<PurchaseOrder>();
 
-  const columns: ColumnDef<ArtworkDetail, any>[] = [
+  const columns: ColumnDef<PurchaseOrder, any>[] = [
     {
       id: 'select',
       header: ({ table }) => (
@@ -57,11 +57,11 @@ const PurchaseOrders = () => {
     },
     {
       header: '編號',
-      accessorKey: 'displayId',
+      accessorKey: 'artworks.0.displayId',
       cell: ({ cell }) => (
         <Link
           className="text-info flex items-center whitespace-nowrap"
-          href={`${pathname}/${cell.getValue()}?${searchParams.toString()}`}
+          href={`/artworks/${cell.getValue()}?${searchParams.toString()}`}
         >
           {cell.getValue()}
           <PencilSquareIcon className="h-4 w-4 ml-2 inline-block"></PencilSquareIcon>
@@ -70,11 +70,11 @@ const PurchaseOrders = () => {
     },
     {
       header: '作品名稱',
-      accessorKey: 'enName',
+      accessorKey: 'artworks.0.enName',
     },
     {
       header: '作品圖',
-      accessorKey: 'displayImageUrl',
+      accessorKey: 'artworks.0.displayImageUrl',
       cell: ({ cell }) => (
         <div>
           <DialogTrigger>
@@ -97,7 +97,7 @@ const PurchaseOrders = () => {
     },
     {
       header: '藝術家',
-      accessorKey: 'artists',
+      accessorKey: 'artworks.0.artists',
       cell: ({ cell }) => (
         <div>
           {cell
@@ -110,15 +110,15 @@ const PurchaseOrders = () => {
     {
       id: 'media',
       header: '媒材',
-      accessorKey: 'metadata',
-      cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) =>
+      accessorKey: 'artworks.0.metadata',
+      cell: ({ cell }: CellContext<PurchaseOrder, ArtworkDetail['metadata']>) =>
         cell.getValue()?.media ?? '無',
     },
     {
       id: 'size',
       header: '尺寸',
-      accessorKey: 'metadata',
-      cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
+      accessorKey: 'artworks.0.metadata',
+      cell: ({ cell }: CellContext<PurchaseOrder, ArtworkDetail['metadata']>) => {
         const { length, width, height } = cell.getValue<ArtworkDetail['metadata']>() || {};
         const lengthText = length && `長 ${length}`;
         const widthText = width && `寬 ${width}`;
@@ -142,7 +142,9 @@ const PurchaseOrders = () => {
       id: 'year',
       header: '年代',
       cell: ({ row }) => {
-        const { yearRangeStart, yearRangeEnd } = row.original;
+        if (!row.original.artworks?.length) return '無';
+
+        const { yearRangeStart, yearRangeEnd } = row.original.artworks[0];
         return yearRangeStart === yearRangeEnd
           ? yearRangeStart && yearRangeStart !== 0
             ? yearRangeEnd
@@ -153,8 +155,8 @@ const PurchaseOrders = () => {
     {
       id: 'otherInfo',
       header: '其他資訊',
-      accessorKey: 'metadata',
-      cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
+      accessorKey: 'artworks.0.metadata',
+      cell: ({ cell }: CellContext<PurchaseOrder, ArtworkDetail['metadata']>) => {
         const { frame, frameDimensions, pedestal, pedestalDimensions, cardboardBox, woodenBox } =
           cell.getValue()?.otherInfo || {};
         if (frame) return `表框${frameDimensions && `，尺寸 ${frameDimensions}`}`;
@@ -167,8 +169,8 @@ const PurchaseOrders = () => {
     {
       id: 'storeType',
       header: '庫存狀態',
-      accessorKey: 'metadata',
-      cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
+      accessorKey: 'artworks.0.metadata',
+      cell: ({ cell }: CellContext<PurchaseOrder, ArtworkDetail['metadata']>) => {
         const storeTypeId = cell.getValue()?.storeType ?? 'inStock';
         return storeTypeOptionMap[storeTypeId].label;
       },
@@ -176,8 +178,8 @@ const PurchaseOrders = () => {
     {
       id: 'salesType',
       header: '銷售狀態',
-      accessorKey: 'metadata',
-      cell: ({ getValue }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
+      accessorKey: 'artworks.0.metadata',
+      cell: ({ getValue }: CellContext<PurchaseOrder, ArtworkDetail['metadata']>) => {
         const salesTypeId = getValue()?.salesType ?? 'unsold';
         return salesTypeOptionMap[salesTypeId].label;
       },
@@ -185,16 +187,16 @@ const PurchaseOrders = () => {
     {
       id: 'assetsType',
       header: '資產類型',
-      accessorKey: 'metadata',
-      cell: ({ getValue }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
+      accessorKey: 'artworks.0.metadata',
+      cell: ({ getValue }: CellContext<PurchaseOrder, ArtworkDetail['metadata']>) => {
         const assetsTypeId = getValue()?.assetsType ?? 'A';
         return assetsTypeOptionMap[assetsTypeId].label;
       },
     },
   ];
 
-  const { dataQuery, table, tableBlock } = useArtworkTable({
-    status: 'Enabled',
+  const { dataQuery, table, tableBlock } = usePurchaseOrderTable({
+    status: Status.Enabled,
     columns,
     selectItems,
   });
