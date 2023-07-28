@@ -11,15 +11,21 @@ export const fetchPurchaseOrder = async (
   queryString?: string
 ): Promise<PurchaseOrderIPagging> => {
   const params = new URLSearchParams(queryString);
-  const paramsObject = Object.fromEntries(params.entries());
-
-  if (!paramsObject['status']) paramsObject['status'] = status;
-  if (!paramsObject['pageSize']) paramsObject['take'] = '50';
-  if (!paramsObject['pageIndex']) paramsObject['offset'] = '0';
 
   const url = '/api/Order/purchase';
   const query = new URLSearchParams();
-  Object.keys(paramsObject).map((key: string) => query.set(key, paramsObject[key]));
+
+  query.append('status', status);
+  [...params.entries()].forEach(([key, value]) => {
+    if (key === 'nationalities') query.append('countryCode', value);
+    if (key === 'artists') query.append('artistName', value);
+    if (key === 'storeTypes') query.append('metadatas', `{"storeType":"${value}"}`);
+    if (key === 'salesTypes') query.append('metadatas', `{"salesType":"${value}"}`);
+    if (key === 'assetsTypes') query.append('metadatas', `{"assetsType":"${value}"}`);
+    if (key === 'serialNumbers') query.append('metadatas', `{"serialNumber":"${value}"}`);
+    if (key === 'pageIndex') query.append('offset', value);
+    if (key === 'pageSize') query.append('take', value);
+  });
 
   const res = await axios.get<PurchaseOrderIPagging>(`${url}?${query.toString()}`);
   return res.data;

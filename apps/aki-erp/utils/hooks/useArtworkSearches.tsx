@@ -126,7 +126,7 @@ export const useArtworkSearches = () => {
 
     // reset page index
     params.delete('pageIndex');
-    router.push(`${pathname}?${params.toString()}`);
+    router.push(`${pathname}?${params.toString()}`, { forceOptimisticNavigation: true });
   };
 
   const removeSelectedOptionBySelectItemKey = ({
@@ -140,7 +140,7 @@ export const useArtworkSearches = () => {
 
     // reset page index
     params.delete('pageIndex');
-    router.push(`${pathname}?${params.toString()}`);
+    router.push(`${pathname}?${params.toString()}`, { forceOptimisticNavigation: true });
   };
 
   type OnSelectionChangeValue = {
