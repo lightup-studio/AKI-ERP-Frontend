@@ -4,6 +4,7 @@ import MyCombobox, { Option as ComboboxOption } from '@components/shared/MyCombo
 import { fetchSelectOptions } from '@data-access/apis/artworks.api';
 import { XMarkIcon } from '@heroicons/react/20/solid';
 import { useQuery } from '@tanstack/react-query';
+import { removeSingleValueForSearchParams } from '@utils/searchParamsUtil';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export type SelectItemKey = keyof Awaited<ReturnType<typeof fetchSelectOptions>>;
@@ -81,7 +82,7 @@ export const useArtworkSearches = () => {
       .filter(([key]) => key in selectOptionsQuery.data)
       .map<SelectedOption>(([key, value]) => ({
         selectItemKey: key,
-        label: selectOptionsQuery.data[key].find((x: any) => x.value === value)?.label || '',
+        label: selectOptionsQuery.data[key].find((x) => x.value === value)?.label || '',
         value,
       }));
 
@@ -118,13 +119,26 @@ export const useArtworkSearches = () => {
     selectItemKey,
     selectedOptionValue,
   }: OnSelectionChangeValue) => {
-    params.append(selectItemKey, selectedOptionValue);
+    const values = params.getAll(selectItemKey);
+    if (!values.includes(selectedOptionValue)) {
+      params.append(selectItemKey, selectedOptionValue);
+    }
+
+    // reset page index
     params.delete('pageIndex');
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  const removeSelectedOptionBySelectItemKey = ({ selectItemKey }: OnSelectionChangeValue) => {
-    params.delete(selectItemKey);
+  const removeSelectedOptionBySelectItemKey = ({
+    selectItemKey,
+    selectedOptionValue,
+  }: OnSelectionChangeValue) => {
+    const values = params.getAll(selectItemKey);
+    if (values.includes(selectedOptionValue)) {
+      removeSingleValueForSearchParams(params, selectItemKey, selectedOptionValue);
+    }
+
+    // reset page index
     params.delete('pageIndex');
     router.push(`${pathname}?${params.toString()}`);
   };

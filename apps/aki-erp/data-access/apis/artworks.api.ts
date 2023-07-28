@@ -67,8 +67,9 @@ export async function fetchSerialNumberOptions() {
 export function fetchYearOptions() {
   const options = rangeRight(new Date().getFullYear(), 1980).map((year) => ({
     label: `${year}`,
-    value: year,
+    value: year.toString(),
   }));
+
   return Promise.resolve(options);
 }
 
