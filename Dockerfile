@@ -21,6 +21,9 @@ RUN npm install -g pm2
 # Copy Next.js build from previous stage
 COPY --from=build /app/dist/apps/aki-erp /app/public
 
+WORKDIR /app/public
+RUN npm i
+
 # Expose the listening port
 EXPOSE 3000
 
