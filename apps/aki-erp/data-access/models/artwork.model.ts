@@ -1,4 +1,4 @@
-import { assetsTypeOptions, storeTypeOptions } from '@constants/artwork.constant';
+import { assetsTypeOptions, salesTypeOptions, storeTypeOptions } from '@constants/artwork.constant';
 
 /**
  * 藝術品物件
@@ -93,7 +93,7 @@ export interface ArtworkMetadata {
   /** 已退回，單位 */
   returnedShippingDepartment?: string;
   /** 銷售狀態 */
-  salesType?: 'sold' | 'unsold';
+  salesType?: typeof salesTypeOptions[number]['value'];
   salesOrder?: SalesOrder;
 }
 
