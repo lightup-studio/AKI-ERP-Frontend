@@ -35,7 +35,7 @@ const PageTitle = () => {
 
   return (
     <h1 className="text-2xl font-semibold ml-2">
-      🔥 {pathTitle} {pathId}
+      {pathTitle} {pathId}
     </h1>
   );
 };
