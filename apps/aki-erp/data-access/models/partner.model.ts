@@ -36,6 +36,10 @@ export interface ArtistMetadata {
   email: string;
 }
 
-export interface CustomerMetadata {}
+export interface CustomerMetadata {
+  email: string;
+}
 
-export interface CompanyMetadata {}
+export interface CompanyMetadata {
+  email: string;
+}
