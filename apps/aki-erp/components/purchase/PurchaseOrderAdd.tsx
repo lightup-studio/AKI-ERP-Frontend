@@ -244,7 +244,7 @@ const PurchaseOrderAdd = () => {
         phone: formData.receiverInformation.phone,
         address: formData.receiverInformation.address,
       },
-      artworkIdList: [],
+      artworkIdList: Object.values(rowSelection).map((row) => row.artistId),
       status: Status.Enabled,
     });
 
