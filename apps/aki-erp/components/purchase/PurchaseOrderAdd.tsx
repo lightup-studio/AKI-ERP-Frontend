@@ -2,30 +2,43 @@
 
 import { useMemo, useState } from 'react';
 
-import { ArtworksSelector } from '@components/artworks';
-import MyDatePicker from '@components/shared/MyDatePicker';
-import IndeterminateCheckbox from '@components/shared/field/IndeterminateCheckbox';
-import { createPurchaseOrder } from '@data-access/apis';
-import { CheckIcon, PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/react/20/solid';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import {
-  ColumnDef,
-  PaginationState,
-  Row,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-import usePagination, { DOTS } from '@utils/hooks/usePagination';
-import classnames from 'classnames';
-import { fetchArtworkList } from 'data-access/apis/artworks.api';
-import { Artwork, CreateOrUpdatePurchaseOrderRequest, Status } from 'data-access/models';
+import cx from 'classnames';
+import { ArtworkDetail, CreateOrUpdatePurchaseOrderRequest, Status } from 'data-access/models';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
 import { useForm } from 'react-hook-form';
 import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
 import * as yup from 'yup';
+
+import { ArtworksSelector } from '@components/artworks';
+import IndeterminateCheckbox from '@components/shared/field/IndeterminateCheckbox';
+import MyDatePicker from '@components/shared/MyDatePicker';
+import { createPurchaseOrder } from '@data-access/apis';
+import {
+  CheckIcon,
+  PencilSquareIcon,
+  PlusIcon,
+  TrashIcon,
+  XMarkIcon,
+} from '@heroicons/react/20/solid';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useMutation } from '@tanstack/react-query';
+import {
+  CellContext,
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  PaginationState,
+  Row,
+  useReactTable,
+} from '@tanstack/react-table';
+import usePagination, { DOTS } from '@utils/hooks/usePagination';
+import {
+  assetsTypeOptionMap,
+  salesTypeOptionMap,
+  storeTypeOptionMap,
+} from '@constants/artwork.constant';
 
 type FormData = {
   salesCompany: string;
@@ -65,9 +78,11 @@ const PurchaseOrderAdd = () => {
   });
   const pagination = useMemo(() => ({ pageIndex, pageSize }), [pageIndex, pageSize]);
 
-  const dataQuery = useQuery(['data', pagination], () => fetchArtworkList(searchParams), {
-    keepPreviousData: true,
-  });
+  // const dataQuery = useQuery(['data', pagination], () => fetchArtworkList(searchParams), {
+  //   keepPreviousData: true,
+  // });
+
+  const [artworks, setArtworks] = useState<ArtworkDetail[]>([]);
 
   const mutation = useMutation({
     mutationFn: (data: CreateOrUpdatePurchaseOrderRequest) => createPurchaseOrder(data),
@@ -80,11 +95,11 @@ const PurchaseOrderAdd = () => {
     },
   });
 
-  const [rowSelection, setRowSelection] = useState<Record<Artwork['id'], Artwork>>({});
+  const [rowSelection, setRowSelection] = useState<Record<ArtworkDetail['id'], ArtworkDetail>>({});
 
   const selectedRowCount = useMemo(() => Object.keys(rowSelection).length, [rowSelection]);
 
-  const handleAllRowSelectionChange = (rows: Row<Artwork>[]) => {
+  const handleAllRowSelectionChange = (rows: Row<ArtworkDetail>[]) => {
     const selectedRows = rows.filter((row) => row.original.id in rowSelection);
     const isAnyRowSelected = selectedRows.length > 0;
 
@@ -97,7 +112,7 @@ const PurchaseOrderAdd = () => {
     setRowSelection(structuredClone(rowSelection));
   };
 
-  const handleRowSelectionChange = (row: Row<Artwork>) => {
+  const handleRowSelectionChange = (row: Row<ArtworkDetail>) => {
     const { id } = row.original;
 
     if (id in rowSelection) {
@@ -109,15 +124,14 @@ const PurchaseOrderAdd = () => {
     setRowSelection(structuredClone(rowSelection));
   };
 
-  const columns: ColumnDef<Artwork, any>[] = [
+  const columns: ColumnDef<ArtworkDetail, any>[] = [
     {
       id: 'select',
       header: ({ table }) => (
         <div className="flex items-center">
           <IndeterminateCheckbox
             {...{
-              checked:
-                dataQuery.data?.totalCount !== 0 && selectedRowCount === dataQuery.data?.totalCount,
+              checked: selectedRowCount > 0 && selectedRowCount > artworks.length,
               indeterminate: selectedRowCount > 0,
               onChange: () => handleAllRowSelectionChange(table.getRowModel().rows),
             }}
@@ -138,11 +152,20 @@ const PurchaseOrderAdd = () => {
     },
     {
       header: '編號',
-      accessorKey: 'id',
+      accessorKey: 'displayId',
+      cell: ({ cell }) => (
+        <Link
+          className="text-info flex items-center whitespace-nowrap"
+          href={`/artworks/${cell.getValue()}`}
+        >
+          {cell.getValue()}
+          <PencilSquareIcon className="h-4 w-4 ml-2 inline-block"></PencilSquareIcon>
+        </Link>
+      ),
     },
     {
       header: '作品名稱',
-      accessorKey: 'name',
+      accessorKey: 'enName',
     },
     {
       header: '作品圖',
@@ -169,46 +192,115 @@ const PurchaseOrderAdd = () => {
     },
     {
       header: '藝術家',
-      accessorKey: 'artist',
+      accessorKey: 'artists',
+      cell: ({ cell }) => (
+        <div>
+          {cell
+            .getValue<ArtworkDetail['artists']>()
+            ?.map((artist) => `${artist.zhName} ${artist.enName}`)
+            .join(',')}
+        </div>
+      ),
     },
     {
+      id: 'media',
       header: '媒材',
-      accessorKey: 'materialInfo',
+      accessorKey: 'metadata',
+      cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) =>
+        cell.getValue()?.media ?? '無',
     },
     {
+      id: 'size',
       header: '尺寸',
-      accessorKey: 'sizeInfo',
+      accessorKey: 'metadata',
+      cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
+        const { length, width, height } = cell.getValue<ArtworkDetail['metadata']>() || {};
+        const lengthText = length && `長 ${length}`;
+        const widthText = width && `寬 ${width}`;
+        const heightText = height && `高 ${height}`;
+        return lengthText && widthText && heightText
+          ? `${lengthText} x ${widthText} x ${heightText}`
+          : widthText && heightText
+          ? `${widthText} x ${heightText}`
+          : lengthText && widthText
+          ? `${lengthText} x ${widthText}`
+          : lengthText
+          ? `${lengthText}`
+          : widthText
+          ? `${widthText}`
+          : heightText
+          ? `${heightText}`
+          : '無';
+      },
     },
     {
+      id: 'year',
       header: '年代',
-      accessorKey: 'yearsInfo',
+      cell: ({ row }) => {
+        const { yearRangeStart, yearRangeEnd } = row.original;
+        return yearRangeStart === yearRangeEnd
+          ? yearRangeStart && yearRangeStart !== 0
+            ? yearRangeEnd
+            : '無'
+          : `${yearRangeStart}~${yearRangeEnd}`;
+      },
     },
     {
+      id: 'otherInfo',
       header: '其他資訊',
-      accessorKey: 'otherInfo',
+      accessorKey: 'metadata',
+      cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
+        const { frame, frameDimensions, pedestal, pedestalDimensions, cardboardBox, woodenBox } =
+          cell.getValue()?.otherInfo || {};
+        if (frame) return `表框${frameDimensions && `，尺寸 ${frameDimensions}`}`;
+        if (pedestal) return `台座${pedestalDimensions && `，尺寸 ${pedestalDimensions}`}`;
+        if (cardboardBox) return '紙箱';
+        if (woodenBox) return '木箱';
+        return '無';
+      },
     },
     {
+      id: 'storeType',
       header: '庫存狀態',
-      accessorKey: 'storeInfo',
+      accessorKey: 'metadata',
+      cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
+        const storeTypeId = cell.getValue()?.storeType ?? 'inStock';
+        return storeTypeOptionMap[storeTypeId].label;
+      },
+    },
+    {
+      id: 'salesType',
+      header: '銷售狀態',
+      accessorKey: 'metadata',
+      cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
+        const salesTypeId = cell.getValue()?.salesType ?? 'unsold';
+        return salesTypeOptionMap[salesTypeId].label;
+      },
+    },
+    {
+      id: 'assetsType',
+      header: '資產類型',
+      accessorKey: 'metadata',
+      cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
+        const assetsTypeId = cell.getValue()?.assetsType ?? 'A';
+        return assetsTypeOptionMap[assetsTypeId].label;
+      },
     },
   ];
 
   const table = useReactTable({
-    data: dataQuery.data?.data ?? [],
+    data: artworks,
     columns,
-    pageCount: dataQuery.data?.pageCount ?? -1,
     state: {
       pagination,
     },
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
-    debugTable: true,
   });
 
   const paginationRange = usePagination({
     currentPage: pageIndex,
-    totalCount: dataQuery.data?.totalCount ?? 0,
+    totalCount: artworks.length,
     siblingCount: 1,
     pageSize: pageSize,
   });
@@ -244,7 +336,7 @@ const PurchaseOrderAdd = () => {
         phone: formData.receiverInformation.phone,
         address: formData.receiverInformation.address,
       },
-      artworkIdList: Object.values(rowSelection).map((row) => row.artistId),
+      artworkIdList: Object.values(rowSelection).map((row) => row.id),
       status: Status.Enabled,
     });
 
@@ -267,7 +359,9 @@ const PurchaseOrderAdd = () => {
                     進貨單位
                   </label>
                   <input
-                    className="input input-bordered"
+                    className={cx('input input-bordered', {
+                      'input-error': errors.salesCompany,
+                    })}
                     id="grid-first-name"
                     type="text"
                     {...register('salesCompany')}
@@ -289,7 +383,9 @@ const PurchaseOrderAdd = () => {
                     聯絡人
                   </label>
                   <input
-                    className="input input-bordered"
+                    className={cx('input input-bordered', {
+                      'input-error': errors.salesCompany,
+                    })}
                     id="grid-first-name"
                     type="text"
                     placeholder="Jane"
@@ -306,7 +402,9 @@ const PurchaseOrderAdd = () => {
                     聯絡人電話
                   </label>
                   <input
-                    className="input input-bordered"
+                    className={cx('input input-bordered', {
+                      'input-error': errors.salesCompany,
+                    })}
                     id="grid-first-name"
                     type="text"
                     placeholder="0912345678"
@@ -325,7 +423,9 @@ const PurchaseOrderAdd = () => {
                     收件人
                   </label>
                   <input
-                    className="input input-bordered"
+                    className={cx('input input-bordered', {
+                      'input-error': errors.salesCompany,
+                    })}
                     id="grid-first-name"
                     type="text"
                     placeholder="Jane"
@@ -342,7 +442,9 @@ const PurchaseOrderAdd = () => {
                     收件人電話
                   </label>
                   <input
-                    className="input input-bordered"
+                    className={cx('input input-bordered', {
+                      'input-error': errors.salesCompany,
+                    })}
                     id="grid-first-name"
                     type="text"
                     placeholder="0912345678"
@@ -364,7 +466,9 @@ const PurchaseOrderAdd = () => {
                     地址
                   </label>
                   <input
-                    className="input input-bordered w-full"
+                    className={cx('input input-bordered', {
+                      'input-error': errors.salesCompany,
+                    })}
                     id="grid-password"
                     {...register('receiverInformation.address')}
                   />
@@ -485,7 +589,7 @@ const PurchaseOrderAdd = () => {
               return (
                 <button
                   key={key}
-                  className={classnames('join-item btn w-14 hidden md:block', {
+                  className={cx('join-item btn w-14 hidden md:block', {
                     'btn-active': Number(pageNumber) - 1 === pageIndex,
                   })}
                   onClick={() => table.setPageIndex(Number(pageNumber) - 1)}
@@ -528,7 +632,10 @@ const PurchaseOrderAdd = () => {
 
       <ArtworksSelector
         isOpen={isOpenArtworksSelector}
-        onClose={() => {
+        onClose={(selectedArtworks) => {
+          if (selectedArtworks && selectedArtworks.length > 0) {
+            setArtworks((currentArtworks) => [...currentArtworks, ...selectedArtworks]);
+          }
           setIsOpenArtworksSelector(false);
         }}
       ></ArtworksSelector>

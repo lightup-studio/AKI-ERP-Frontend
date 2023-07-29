@@ -2,6 +2,11 @@
 
 import { useState } from 'react';
 
+import { ArtworkDetail, PurchaseOrder, Status } from 'data-access/models';
+import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
+
 import BatchUpdateStoreInfoDialog from '@components/shared/BatchUpdateStoreInfoDialog';
 import IndeterminateCheckbox from '@components/shared/field/IndeterminateCheckbox';
 import SearchInput from '@components/shared/field/SearchField';
@@ -12,14 +17,12 @@ import {
 } from '@constants/artwork.constant';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
+import { useMutation } from '@tanstack/react-query';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import { usePurchaseOrderTable } from '@utils/hooks/usePurchaseOrderTable';
 import useSelectionList from '@utils/hooks/useSelectionList';
-import { ArtworkDetail, PurchaseOrder, Status } from 'data-access/models';
-import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
+import { deleteOrderPurchaseId } from '@data-access/apis';
 
 const PurchaseOrders = () => {
   const [isOpenBatchUpdateStoreInfoDialog, setIsOpenBatchUpdateStoreInfoDialog] = useState(false);
@@ -36,7 +39,7 @@ const PurchaseOrders = () => {
     onSelectionChange,
   });
 
-  const { getSelectAllProps, getSelectItemProps, selectedRowCount, selectedRows } =
+  const { getSelectAllProps, getSelectItemProps, selectedRowCount, selectedRows, clearSelection } =
     useSelectionList<PurchaseOrder>();
 
   const columns: ColumnDef<PurchaseOrder, any>[] = [
@@ -57,11 +60,11 @@ const PurchaseOrders = () => {
     },
     {
       header: '編號',
-      accessorKey: 'artworks.0.displayId',
+      accessorKey: 'displayId',
       cell: ({ cell }) => (
         <Link
           className="text-info flex items-center whitespace-nowrap"
-          href={`/artworks/${cell.getValue()}?${searchParams.toString()}`}
+          href={`/purchase/orders/${cell.getValue()}?${searchParams.toString()}`}
         >
           {cell.getValue()}
           <PencilSquareIcon className="h-4 w-4 ml-2 inline-block"></PencilSquareIcon>
@@ -201,8 +204,23 @@ const PurchaseOrders = () => {
     selectItems,
   });
 
+  const deleteMutation = useMutation(
+    (ids: number[]) => Promise.all(ids.map((id) => deleteOrderPurchaseId(id))),
+    {
+      onSuccess: () => {
+        clearSelection();
+        dataQuery.refetch();
+      },
+    }
+  );
+
   const handleBatchUpdate = () => {
     setIsOpenBatchUpdateStoreInfoDialog(true);
+  };
+
+  const handleDelete = () => {
+    const ids = selectedRows.map((row) => row.id);
+    deleteMutation.mutate(ids);
   };
 
   return (
@@ -256,7 +274,11 @@ const PurchaseOrders = () => {
             <PencilIcon className="h-5 w-5"></PencilIcon>
             編輯
           </button>
-          <button className="btn btn-error" disabled={selectedRowCount === 0}>
+          <button
+            className="btn btn-error"
+            disabled={selectedRowCount === 0}
+            onClick={handleDelete}
+          >
             <TrashIcon className="h-5 w-5"></TrashIcon>
             刪除
           </button>

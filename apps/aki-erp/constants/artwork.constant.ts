@@ -2,7 +2,7 @@ export const assetsTypeOptions = [
   { label: 'A', value: 'A' },
   { label: 'B', value: 'B' },
   { label: 'C', value: 'C' },
-];
+] as const;
 
 export const storeTypeOptions = [
   {

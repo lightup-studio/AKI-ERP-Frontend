@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 
 import { Row } from '@tanstack/react-table';
 
-const useSelectionList = <T extends { id: string | number }>() => {
+const useSelectionList = <T extends { id: string | number } = any>() => {
   const [rowSelection, setRowSelection] = useState<Record<string, T>>({});
 
   const selectedRows = useMemo(() => Object.values(rowSelection), [rowSelection]);

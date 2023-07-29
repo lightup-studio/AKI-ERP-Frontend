@@ -140,7 +140,7 @@ const ArtworksDetail = ({ type }: ArtworksDetailProps) => {
       yearRangeEnd: null,
       metadata: {
         artworkType: '',
-        assetsType: '',
+        assetsType: 'A',
         agentGalleries: [],
         purchasingUnit: '',
         length: '',

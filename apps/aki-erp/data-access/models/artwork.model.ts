@@ -1,4 +1,4 @@
-import { storeTypeOptions } from '@constants/artwork.constant';
+import { assetsTypeOptions, storeTypeOptions } from '@constants/artwork.constant';
 
 /**
  * 藝術品物件
@@ -56,7 +56,7 @@ export interface ArtworkMetadata {
   /** 作品類型 */
   artworkType: string | null;
   /** 資產類別 */
-  assetsType: string | null;
+  assetsType?: typeof assetsTypeOptions[number]['value'];
   /** 代理藝廊 */
   agentGalleries: AgentGallery[];
   /** 進貨單位 */
