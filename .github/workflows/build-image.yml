@@ -48,4 +48,4 @@ jobs:
         script: |
           docker stop aki-erp 2> /dev/null
           docker rm aki-erp 2> /dev/null
-          docker run -d --name aki-erp -p 18888:80 ghcr.io/lightup-studio/aki-erp:${{ github.event.inputs.version || github.event.release.tag_name }}
+          docker run -d --name aki-erp -p 18888:3000 ghcr.io/lightup-studio/aki-erp:${{ github.event.inputs.version || github.event.release.tag_name }}
