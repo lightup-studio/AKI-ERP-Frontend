@@ -21,7 +21,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { useParams, useRouter } from 'next/navigation';
-import { ArtworksTitleProps } from './ArtworksTitle';
 
 const schema = yup.object().shape({
   warehouseId: yup.number().required('庫存位置為必填項目'),
@@ -90,8 +89,6 @@ const schema = yup.object().shape({
     }),
   }),
 });
-
-type ArtworksDetailProps = Pick<ArtworksTitleProps, 'type'>;
 
 const ArtworksDetail = () => {
   const router = useRouter();

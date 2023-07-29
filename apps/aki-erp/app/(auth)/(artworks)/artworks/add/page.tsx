@@ -1,7 +1,7 @@
 import { ArtworksDetail } from '@components/artworks';
 
 const ArtworksAdd = () => {
-  return <ArtworksDetail type="inventory" />;
+  return <ArtworksDetail />;
 };
 
 export default ArtworksAdd;
