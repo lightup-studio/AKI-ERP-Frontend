@@ -1,5 +1,5 @@
 # Stage 1: Build Next.js app
-FROM node:20-slim AS base
+FROM node:lts-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 ENV APP_BASE_URL="https://erp.galleryaki.com/"
@@ -13,7 +13,7 @@ RUN pnpm install --frozen-lockfile
 RUN pnpm build
 
 # Stage 2: Serve Next.js app with PM2 and NGINX
-FROM node:20-slim
+FROM node:lts-alpine
 
 # Install PM2
 RUN npm install -g pm2
