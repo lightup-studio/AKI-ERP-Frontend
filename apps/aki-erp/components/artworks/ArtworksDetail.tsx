@@ -93,7 +93,7 @@ const schema = yup.object().shape({
 
 type ArtworksDetailProps = Pick<ArtworksTitleProps, 'type'>;
 
-const ArtworksDetail = ({ type }: ArtworksDetailProps) => {
+const ArtworksDetail = () => {
   const router = useRouter();
   const params = useParams();
 
