@@ -85,18 +85,20 @@ const UpdateRangeStoreInfoDialog = ({
                             </DialogTrigger>
                           </td>
                           <td>
-                            <select className="select select-bordered">
-                              <option>A</option>
-                              <option>B</option>
-                              <option>C</option>
-                              <option>D</option>
-                              <option>E</option>
-                            </select>
-                            <input
-                              type="text"
-                              className="input input-bordered ml-2"
-                              placeholder="自填位置"
-                            ></input>
+                            <div className="flex items-center">
+                              <select className="select select-bordered">
+                                <option>A</option>
+                                <option>B</option>
+                                <option>C</option>
+                                <option>D</option>
+                                <option>E</option>
+                              </select>
+                              <input
+                                type="text"
+                                className="input input-bordered ml-2"
+                                placeholder="自填位置"
+                              ></input>
+                            </div>
                           </td>
                         </tr>
                       </tbody>

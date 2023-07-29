@@ -320,11 +320,8 @@ const PurchaseOrderAdd = () => {
       icon: 'question',
     });
 
-    if (!isConfirmed) {
-      return;
-    }
-
-    const data = await mutation.mutateAsync({
+    if (!isConfirmed) return;
+    await mutation.mutateAsync({
       salesCompany: formData.salesCompany,
       purchaseTime: new Date(),
       salesInformation: {
@@ -339,12 +336,6 @@ const PurchaseOrderAdd = () => {
       artworkIdList: Object.values(rowSelection).map((row) => row.id),
       status: Status.Enabled,
     });
-
-    if (data.id) {
-      await showSuccess('新增成功！');
-    } else {
-      await showError('新增失敗！');
-    }
   };
 
   return (
