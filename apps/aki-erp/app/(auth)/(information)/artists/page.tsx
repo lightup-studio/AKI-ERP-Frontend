@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { UpdateArtistDialog } from '@components/artists';
+import Table from '@components/shared/Table';
 import IndeterminateCheckbox from '@components/shared/field/IndeterminateCheckbox';
 import SearchInput from '@components/shared/field/SearchField';
 import { formSchema } from '@constants/artists.formSchema';
@@ -13,7 +14,6 @@ import {
   ColumnDef,
   PaginationState,
   Row,
-  flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
@@ -71,7 +71,7 @@ const Artists = () => {
   }, [pageIndex, pageSize, searchParams]);
 
   const dataQuery = useQuery(
-    ['data', searchParams.toString()],
+    ['artists', searchParams.toString()],
     () =>
       fetchPartnerList({
         type: 'Artist',
@@ -405,70 +405,10 @@ const Artists = () => {
           </div>
 
           <div className="h-full w-full pb-6 bg-base-100 text-center">
-            <div className="overflow-x-auto w-full">
-              <table className="table w-full">
-                <thead>
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <tr key={headerGroup.id} className="text-lg">
-                      {headerGroup.headers.map((header) => {
-                        return (
-                          <td
-                            key={header.id}
-                            colSpan={header.colSpan}
-                            className={cx('px-2', {
-                              'w-[1rem]': ['select'].includes(header.column.id),
-                            })}
-                          >
-                            {header.isPlaceholder ? null : (
-                              <div>
-                                {flexRender(header.column.columnDef.header, header.getContext())}
-                              </div>
-                            )}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </thead>
-                <tbody className="relative">
-                  {isLoading && (
-                    <tr className="absolute bg-base-200 flex h-full inset-0 items-center justify-center opacity-50 w-full">
-                      <td colSpan={6}>
-                        <span className="loading loading-bars loading-xs"></span>
-                      </td>
-                    </tr>
-                  )}
-                  {table.getRowModel().rows.length === 0 && (
-                    <tr className="bg-base-200 text-base-content">
-                      <td colSpan={6}>
-                        <div className="flex justify-center items-center min-h-[3rem]">
-                          {!isLoading && '沒有藝術家資料'}
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                  {table.getRowModel().rows.map((row) => {
-                    return (
-                      <tr key={row.id} className="text-[1rem]">
-                        {row.getVisibleCells().map((cell) => {
-                          return (
-                            <td
-                              key={cell.id}
-                              className={cx('p-2', {
-                                'w-[15rem]': ['id', 'telephone'].includes(cell.column.id),
-                              })}
-                            >
-                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+            <Table table={table} isLoading={isLoading} />
+
             <div className="divider mt-2" />
+
             <div className="join">
               <button
                 className="join-item btn"

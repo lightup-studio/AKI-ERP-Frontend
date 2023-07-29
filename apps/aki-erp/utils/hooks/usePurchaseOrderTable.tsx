@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { Option as ComboboxOption } from '@components/shared/MyCombobox';
+import Table from '@components/shared/Table';
 import TablePagination from '@components/shared/TablePagination';
 import { fetchPurchaseOrder } from '@data-access/apis';
 import { ArtworkDetail, PurchaseOrder, Status } from '@data-access/models';
@@ -9,11 +10,9 @@ import {
   CellContext,
   ColumnDef,
   PaginationState,
-  flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import classnames from 'classnames';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { SelectItem } from './useArtworkSearches';
 import useSelectionList from './useSelectionList';
@@ -158,58 +157,10 @@ export const usePurchaseOrderTable = ({
     table,
     tableBlock: (
       <>
-        <div className="overflow-x-auto w-full">
-          <table className="table w-full">
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id} className="text-sm">
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <td
-                        key={header.id}
-                        colSpan={header.colSpan}
-                        className={classnames('p-2', {
-                          'min-w-[10rem]': ![
-                            'select',
-                            'storeType',
-                            'salesType',
-                            'assetsType',
-                          ].includes(header.id),
-                          'min-w-[3rem]': ['storeType', 'salesType', 'assetsType'].includes(
-                            header.id
-                          ),
-                          'text-center': ['assetsType'].includes(header.id),
-                        })}
-                      >
-                        {header.isPlaceholder ? null : (
-                          <div>
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                          </div>
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.map((row) => {
-                return (
-                  <tr key={row.id} className="text-sm">
-                    {row.getVisibleCells().map((cell) => {
-                      return (
-                        <td key={cell.id} className="p-2">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <Table table={table} isLoading={dataQuery.isLoading} />
+
         <div className="divider mt-2" />
+
         <TablePagination
           {...{
             table,

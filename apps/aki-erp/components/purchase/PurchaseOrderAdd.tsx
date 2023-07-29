@@ -12,8 +12,14 @@ import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
 import * as yup from 'yup';
 
 import { ArtworksSelector } from '@components/artworks';
-import IndeterminateCheckbox from '@components/shared/field/IndeterminateCheckbox';
 import MyDatePicker from '@components/shared/MyDatePicker';
+import Table from '@components/shared/Table';
+import { IndeterminateCheckbox } from '@components/shared/field';
+import {
+  assetsTypeOptionMap,
+  salesTypeOptionMap,
+  storeTypeOptionMap,
+} from '@constants/artwork.constant';
 import { createPurchaseOrder } from '@data-access/apis';
 import {
   CheckIcon,
@@ -27,18 +33,12 @@ import { useMutation } from '@tanstack/react-query';
 import {
   CellContext,
   ColumnDef,
-  flexRender,
-  getCoreRowModel,
   PaginationState,
   Row,
+  getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
 import usePagination, { DOTS } from '@utils/hooks/usePagination';
-import {
-  assetsTypeOptionMap,
-  salesTypeOptionMap,
-  storeTypeOptionMap,
-} from '@constants/artwork.constant';
 
 type FormData = {
   salesCompany: string;
@@ -520,43 +520,10 @@ const PurchaseOrderAdd = () => {
         </div>
 
         <div className="h-full w-full bg-base-100 text-center">
-          <div className="overflow-x-auto w-full">
-            <table className="table w-full">
-              <thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => {
-                      return (
-                        <td key={header.id} colSpan={header.colSpan}>
-                          {header.isPlaceholder ? null : (
-                            <div>
-                              {flexRender(header.column.columnDef.header, header.getContext())}
-                            </div>
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </thead>
-              <tbody>
-                {table.getRowModel().rows.map((row) => {
-                  return (
-                    <tr key={row.id}>
-                      {row.getVisibleCells().map((cell) => {
-                        return (
-                          <td key={cell.id}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <Table table={table} />
+
           <div className="divider mt-2" />
+
           <div className="join">
             <button
               className="join-item btn"
