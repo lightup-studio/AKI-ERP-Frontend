@@ -841,7 +841,11 @@ const ArtworksDetail = ({ type }: ArtworksDetailProps) => {
               <button className="btn btn-success">
                 <CheckIcon className="w-4"></CheckIcon> 儲存
               </button>
-              <button className="btn btn-error btn-base-200" type="button">
+              <button
+                className="btn btn-error btn-base-200"
+                type="button"
+                onClick={() => router.back()}
+              >
                 <XMarkIcon className="w-4"></XMarkIcon> 取消
               </button>
             </div>
