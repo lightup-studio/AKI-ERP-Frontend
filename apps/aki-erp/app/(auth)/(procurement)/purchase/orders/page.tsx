@@ -15,6 +15,7 @@ import {
   salesTypeOptionMap,
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
+import { deleteOrderPurchaseId } from '@data-access/apis';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { useMutation } from '@tanstack/react-query';
@@ -22,7 +23,6 @@ import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import { usePurchaseOrderTable } from '@utils/hooks/usePurchaseOrderTable';
 import useSelectionList from '@utils/hooks/useSelectionList';
-import { deleteOrderPurchaseId } from '@data-access/apis';
 
 const PurchaseOrders = () => {
   const [isOpenBatchUpdateStoreInfoDialog, setIsOpenBatchUpdateStoreInfoDialog] = useState(false);
@@ -60,13 +60,12 @@ const PurchaseOrders = () => {
     },
     {
       header: '編號',
-      accessorKey: 'displayId',
-      cell: ({ cell }) => (
+      cell: ({ row }) => (
         <Link
           className="text-info flex items-center whitespace-nowrap"
-          href={`/purchase/orders/${cell.getValue()}?${searchParams.toString()}`}
+          href={`/purchase/orders/${row.original.id}?${searchParams.toString()}`}
         >
-          {cell.getValue()}
+          {row.original.displayId}
           <PencilSquareIcon className="h-4 w-4 ml-2 inline-block"></PencilSquareIcon>
         </Link>
       ),

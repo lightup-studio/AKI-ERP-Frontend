@@ -1,11 +1,11 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import cx from 'classnames';
 import { ArtworkDetail, CreateOrUpdatePurchaseOrderRequest, Status } from 'data-access/models';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
 import { useForm } from 'react-hook-form';
 import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
@@ -20,7 +20,7 @@ import {
   salesTypeOptionMap,
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
-import { createPurchaseOrder } from '@data-access/apis';
+import { createPurchaseOrder, fetchOrderPurchaseId } from '@data-access/apis';
 import {
   CheckIcon,
   PencilSquareIcon,
@@ -29,7 +29,7 @@ import {
   XMarkIcon,
 } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   CellContext,
   ColumnDef,
@@ -41,15 +41,15 @@ import {
 import usePagination, { DOTS } from '@utils/hooks/usePagination';
 
 type FormData = {
-  salesCompany: string;
+  salesCompany?: string;
   salesInformation: {
-    name: string;
-    phone: string;
+    name?: string;
+    phone?: string;
   };
   receiverInformation: {
-    name: string;
-    phone: string;
-    address: string;
+    name?: string;
+    phone?: string;
+    address?: string;
   };
 };
 
@@ -66,11 +66,15 @@ const schema = yup.object().shape({
   }),
 });
 
-const PurchaseOrderAdd = () => {
+interface PurchaseOrderDetailProps {
+  disabled?: boolean;
+}
+
+const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) => {
   const [isOpenArtworksSelector, setIsOpenArtworksSelector] = useState(false);
 
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const params = useParams();
 
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -78,9 +82,14 @@ const PurchaseOrderAdd = () => {
   });
   const pagination = useMemo(() => ({ pageIndex, pageSize }), [pageIndex, pageSize]);
 
-  // const dataQuery = useQuery(['data', pagination], () => fetchArtworkList(searchParams), {
-  //   keepPreviousData: true,
-  // });
+  const dataQuery = useQuery(
+    ['fetchOrderPurchaseId', params.id, pagination],
+    () => fetchOrderPurchaseId(+params.id),
+    {
+      enabled: !!disabled,
+      keepPreviousData: true,
+    }
+  );
 
   const [artworks, setArtworks] = useState<ArtworkDetail[]>([]);
 
@@ -129,24 +138,28 @@ const PurchaseOrderAdd = () => {
       id: 'select',
       header: ({ table }) => (
         <div className="flex items-center">
-          <IndeterminateCheckbox
-            {...{
-              checked: selectedRowCount > 0 && selectedRowCount > artworks.length,
-              indeterminate: selectedRowCount > 0,
-              onChange: () => handleAllRowSelectionChange(table.getRowModel().rows),
-            }}
-          />
+          {!disabled && (
+            <IndeterminateCheckbox
+              {...{
+                checked: selectedRowCount > 0 && selectedRowCount > artworks.length,
+                indeterminate: selectedRowCount > 0,
+                onChange: () => handleAllRowSelectionChange(table.getRowModel().rows),
+              }}
+            />
+          )}
         </div>
       ),
       cell: ({ row }) => (
         <div className="flex items-center">
-          <IndeterminateCheckbox
-            {...{
-              checked: row.original.id in rowSelection,
-              indeterminate: false,
-              onChange: () => handleRowSelectionChange(row),
-            }}
-          />
+          {!disabled && (
+            <IndeterminateCheckbox
+              {...{
+                checked: row.original.id in rowSelection,
+                indeterminate: false,
+                onChange: () => handleRowSelectionChange(row),
+              }}
+            />
+          )}
         </div>
       ),
     },
@@ -289,7 +302,7 @@ const PurchaseOrderAdd = () => {
   ];
 
   const table = useReactTable({
-    data: artworks,
+    data: disabled ? dataQuery.data?.artworks || [] : artworks,
     columns,
     state: {
       pagination,
@@ -313,6 +326,14 @@ const PurchaseOrderAdd = () => {
   } = useForm<FormData>({
     resolver: yupResolver<FormData>(schema),
   });
+
+  useEffect(() => {
+    if (!dataQuery.data) return;
+
+    setValue('salesCompany', dataQuery.data.salesCompany);
+    setValue('salesInformation', dataQuery.data.salesInformation);
+    setValue('receiverInformation', dataQuery.data.receiverInformation);
+  }, [dataQuery.data]);
 
   const onSubmit = async (formData: FormData) => {
     const { isConfirmed } = await showConfirm({
@@ -355,6 +376,7 @@ const PurchaseOrderAdd = () => {
                     })}
                     id="grid-first-name"
                     type="text"
+                    disabled={disabled}
                     {...register('salesCompany')}
                   />
                   {errors.salesCompany && (
@@ -365,7 +387,11 @@ const PurchaseOrderAdd = () => {
                   <label className="font-bold mb-2" htmlFor="grid-last-name">
                     進貨日期
                   </label>
-                  <MyDatePicker id="grid-last-name" className="border rounded-lg" />
+                  <MyDatePicker
+                    id="grid-last-name"
+                    className="border rounded-lg"
+                    isDisabled={disabled}
+                  />
                 </div>
               </div>
               <div className="flex flex-wrap -mx-3 mb-3">
@@ -379,6 +405,7 @@ const PurchaseOrderAdd = () => {
                     })}
                     id="grid-first-name"
                     type="text"
+                    disabled={disabled}
                     placeholder="Jane"
                     {...register('salesInformation.name')}
                   />
@@ -398,6 +425,7 @@ const PurchaseOrderAdd = () => {
                     })}
                     id="grid-first-name"
                     type="text"
+                    disabled={disabled}
                     placeholder="0912345678"
                     {...register('salesInformation.phone')}
                   />
@@ -419,6 +447,7 @@ const PurchaseOrderAdd = () => {
                     })}
                     id="grid-first-name"
                     type="text"
+                    disabled={disabled}
                     placeholder="Jane"
                     {...register('receiverInformation.name')}
                   />
@@ -438,6 +467,7 @@ const PurchaseOrderAdd = () => {
                     })}
                     id="grid-first-name"
                     type="text"
+                    disabled={disabled}
                     placeholder="0912345678"
                     {...register('receiverInformation.phone')}
                   />
@@ -461,6 +491,7 @@ const PurchaseOrderAdd = () => {
                       'input-error': errors.salesCompany,
                     })}
                     id="grid-password"
+                    disabled={disabled}
                     {...register('receiverInformation.address')}
                   />
                   {errors.receiverInformation?.address && (
@@ -497,21 +528,23 @@ const PurchaseOrderAdd = () => {
 
         <div className="divider mt-2 mb-0"></div>
 
-        <div className="flex items-center gap-2 py-2 mb-2">
-          <span>已選擇 {selectedRowCount} 筆</span>
-          <button className="btn btn-error" disabled={selectedRowCount === 0}>
-            <TrashIcon className="h-5 w-5"></TrashIcon>
-            刪除
-          </button>
-          <i className="flex-grow"></i>
-          <button className="btn btn-info" onClick={() => setIsOpenArtworksSelector(true)}>
-            <PlusIcon className="h-5 w-5"></PlusIcon>
-            新增藝術品
-          </button>
-        </div>
+        {!disabled && (
+          <div className="flex items-center gap-2 py-2 mb-2">
+            <span>已選擇 {selectedRowCount} 筆</span>
+            <button className="btn btn-error" disabled={selectedRowCount === 0}>
+              <TrashIcon className="h-5 w-5"></TrashIcon>
+              刪除
+            </button>
+            <i className="flex-grow"></i>
+            <button className="btn btn-info" onClick={() => setIsOpenArtworksSelector(true)}>
+              <PlusIcon className="h-5 w-5"></PlusIcon>
+              新增藝術品
+            </button>
+          </div>
+        )}
 
         <div className="h-full w-full bg-base-100 text-center">
-          <Table table={table} />
+          <Table table={table} isLoading={disabled ? dataQuery.isLoading : false} />
 
           <div className="divider mt-2" />
 
@@ -573,18 +606,20 @@ const PurchaseOrderAdd = () => {
             </button>
           </div>
 
-          <div className="bg-base-100 mt-4 md:col-span-2 flex gap-2 justify-center">
-            <button className="btn btn-success" onClick={handleSubmit(onSubmit)}>
-              <CheckIcon className="w-4"></CheckIcon> 儲存
-            </button>
-            <button
-              className="btn btn-error btn-base-200"
-              type="button"
-              onClick={() => router.back()}
-            >
-              <XMarkIcon className="w-4"></XMarkIcon> 取消
-            </button>
-          </div>
+          {!disabled && (
+            <div className="bg-base-100 mt-4 md:col-span-2 flex gap-2 justify-center">
+              <button className="btn btn-success" onClick={handleSubmit(onSubmit)}>
+                <CheckIcon className="w-4"></CheckIcon> 儲存
+              </button>
+              <button
+                className="btn btn-error btn-base-200"
+                type="button"
+                onClick={() => router.back()}
+              >
+                <XMarkIcon className="w-4"></XMarkIcon> 取消
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -601,4 +636,4 @@ const PurchaseOrderAdd = () => {
   );
 };
 
-export default PurchaseOrderAdd;
+export default PurchaseOrderDetail;

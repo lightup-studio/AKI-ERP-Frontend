@@ -56,14 +56,14 @@ export const deleteOrderPurchaseId = async (id: number): Promise<void> => {
   return res.data;
 };
 
-export const getOrderPurchaseId = async (id: number): Promise<PurchaseOrder> => {
+export const fetchOrderPurchaseId = async (id: number): Promise<PurchaseOrder> => {
   const url = '/api/Order/purchase';
 
   const res = await axios.get(`${url}/${id}`);
   return res.data;
 };
 
-export const getOrderPurchaseDIDdisplayId = async (displayId: string): Promise<PurchaseOrder> => {
+export const fetchOrderPurchaseDIDdisplayId = async (displayId: string): Promise<PurchaseOrder> => {
   const url = '/api/Order/purchase';
 
   const res = await axios.get(`${url}/DID:${displayId}`);

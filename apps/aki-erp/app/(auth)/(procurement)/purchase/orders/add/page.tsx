@@ -1,7 +1,7 @@
-import { PurchaseOrderAdd } from '@components/purchase';
+import { PurchaseOrderDetail } from '@components/purchase';
 
 const PurchaseOrdersAdd = () => {
-  return <PurchaseOrderAdd />;
+  return <PurchaseOrderDetail />;
 };
 
 export default PurchaseOrdersAdd;

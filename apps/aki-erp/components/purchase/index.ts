@@ -1,1 +1,1 @@
-export { default as PurchaseOrderAdd } from './PurchaseOrderAdd';
+export { default as PurchaseOrderDetail } from './PurchaseOrderDetail';

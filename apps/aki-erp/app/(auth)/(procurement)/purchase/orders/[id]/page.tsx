@@ -1,5 +1,7 @@
+import { PurchaseOrderDetail } from '@components/purchase';
+
 const PurchaseOrdersId = () => {
-  return <div>PurchaseOrdersId</div>;
+  return <PurchaseOrderDetail disabled />;
 };
 
 export default PurchaseOrdersId;
