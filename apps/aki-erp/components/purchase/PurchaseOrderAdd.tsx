@@ -5,8 +5,10 @@ import { useMemo, useState } from 'react';
 import { ArtworksSelector } from '@components/artworks';
 import MyDatePicker from '@components/shared/MyDatePicker';
 import IndeterminateCheckbox from '@components/shared/field/IndeterminateCheckbox';
+import { createPurchaseOrder } from '@data-access/apis';
 import { CheckIcon, PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/react/20/solid';
-import { useQuery } from '@tanstack/react-query';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   ColumnDef,
   PaginationState,
@@ -18,10 +20,38 @@ import {
 import usePagination, { DOTS } from '@utils/hooks/usePagination';
 import classnames from 'classnames';
 import { fetchArtworkList } from 'data-access/apis/artworks.api';
-import { Artwork } from 'data-access/models';
+import { Artwork, CreateOrUpdatePurchaseOrderRequest, Status } from 'data-access/models';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
+import { useForm } from 'react-hook-form';
 import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
+import * as yup from 'yup';
+
+type FormData = {
+  salesCompany: string;
+  salesInformation: {
+    name: string;
+    phone: string;
+  };
+  receiverInformation: {
+    name: string;
+    phone: string;
+    address: string;
+  };
+};
+
+const schema = yup.object().shape({
+  salesCompany: yup.string().required('必填項目'),
+  salesInformation: yup.object({
+    name: yup.string().required('必填項目'),
+    phone: yup.string().required('必填項目'),
+  }),
+  receiverInformation: yup.object({
+    name: yup.string().required('必填項目'),
+    phone: yup.string().required('必填項目'),
+    address: yup.string().required('必填項目'),
+  }),
+});
 
 const PurchaseOrderAdd = () => {
   const [isOpenArtworksSelector, setIsOpenArtworksSelector] = useState(false);
@@ -37,6 +67,17 @@ const PurchaseOrderAdd = () => {
 
   const dataQuery = useQuery(['data', pagination], () => fetchArtworkList(searchParams), {
     keepPreviousData: true,
+  });
+
+  const mutation = useMutation({
+    mutationFn: (data: CreateOrUpdatePurchaseOrderRequest) => createPurchaseOrder(data),
+    onSuccess: async () => {
+      await showSuccess('新增成功！');
+      router.back();
+    },
+    onError: async () => {
+      await showError('新增失敗！');
+    },
   });
 
   const [rowSelection, setRowSelection] = useState<Record<Artwork['id'], Artwork>>({});
@@ -172,7 +213,16 @@ const PurchaseOrderAdd = () => {
     pageSize: pageSize,
   });
 
-  const addPurchaseOrder = async () => {
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: yupResolver<FormData>(schema),
+  });
+
+  const onSubmit = async (formData: FormData) => {
     const { isConfirmed } = await showConfirm({
       title: '確定新增出貨單？',
       icon: 'question',
@@ -182,7 +232,27 @@ const PurchaseOrderAdd = () => {
       return;
     }
 
-    showSuccess('').then(() => showError(''));
+    const data = await mutation.mutateAsync({
+      salesCompany: formData.salesCompany,
+      purchaseTime: new Date(),
+      salesInformation: {
+        name: formData.salesInformation.name,
+        phone: formData.salesInformation.phone,
+      },
+      receiverInformation: {
+        name: formData.receiverInformation.name,
+        phone: formData.receiverInformation.phone,
+        address: formData.receiverInformation.address,
+      },
+      artworkIdList: [],
+      status: Status.Enabled,
+    });
+
+    if (data.id) {
+      await showSuccess('新增成功！');
+    } else {
+      await showError('新增失敗！');
+    }
   };
 
   return (
@@ -197,22 +267,20 @@ const PurchaseOrderAdd = () => {
                     進貨單位
                   </label>
                   <input
-                    className="input input-bordered border-error"
+                    className="input input-bordered"
                     id="grid-first-name"
                     type="text"
-                    placeholder=""
+                    {...register('salesCompany')}
                   />
-                  <p className="text-error text-xs italic">Please fill out this field.</p>
+                  {errors.salesCompany && (
+                    <p className="text-error text-xs italic">{errors.salesCompany.message}</p>
+                  )}
                 </div>
                 <div className="w-full md:w-1/2 px-3">
                   <label className="font-bold mb-2" htmlFor="grid-last-name">
                     進貨日期
                   </label>
-                  <MyDatePicker
-                    id="grid-last-name"
-                    className="border border-error rounded-lg"
-                  ></MyDatePicker>
-                  <p className="text-error text-xs italic">Please fill out this field.</p>
+                  <MyDatePicker id="grid-last-name" className="border rounded-lg" />
                 </div>
               </div>
               <div className="flex flex-wrap -mx-3 mb-3">
@@ -221,24 +289,34 @@ const PurchaseOrderAdd = () => {
                     聯絡人
                   </label>
                   <input
-                    className="input input-bordered border-error"
+                    className="input input-bordered"
                     id="grid-first-name"
                     type="text"
                     placeholder="Jane"
+                    {...register('salesInformation.name')}
                   />
-                  <p className="text-error text-xs italic">Please fill out this field.</p>
+                  {errors.salesInformation?.name && (
+                    <p className="text-error text-xs italic">
+                      {errors.salesInformation.name.message}
+                    </p>
+                  )}
                 </div>
                 <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                   <label className="font-bold mb-2" htmlFor="grid-first-name">
                     聯絡人電話
                   </label>
                   <input
-                    className="input input-bordered border-error"
+                    className="input input-bordered"
                     id="grid-first-name"
                     type="text"
                     placeholder="0912345678"
+                    {...register('salesInformation.phone')}
                   />
-                  <p className="text-error text-xs italic">Please fill out this field.</p>
+                  {errors.salesInformation?.phone && (
+                    <p className="text-error text-xs italic">
+                      {errors.salesInformation.phone.message}
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="flex flex-wrap -mx-3 mb-3">
@@ -247,24 +325,34 @@ const PurchaseOrderAdd = () => {
                     收件人
                   </label>
                   <input
-                    className="input input-bordered border-error"
+                    className="input input-bordered"
                     id="grid-first-name"
                     type="text"
                     placeholder="Jane"
+                    {...register('receiverInformation.name')}
                   />
-                  <p className="text-error text-xs italic">Please fill out this field.</p>
+                  {errors.receiverInformation?.name && (
+                    <p className="text-error text-xs italic">
+                      {errors.receiverInformation.name.message}
+                    </p>
+                  )}
                 </div>
                 <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                   <label className="font-bold mb-2" htmlFor="grid-first-name">
                     收件人電話
                   </label>
                   <input
-                    className="input input-bordered border-error"
+                    className="input input-bordered"
                     id="grid-first-name"
                     type="text"
                     placeholder="0912345678"
+                    {...register('receiverInformation.phone')}
                   />
-                  <p className="text-error text-xs italic">Please fill out this field.</p>
+                  {errors.receiverInformation?.phone && (
+                    <p className="text-error text-xs italic">
+                      {errors.receiverInformation.phone.message}
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="flex flex-wrap -mx-3 mb-6">
@@ -276,14 +364,15 @@ const PurchaseOrderAdd = () => {
                     地址
                   </label>
                   <input
-                    className="input input-bordered w-full border-error"
+                    className="input input-bordered w-full"
                     id="grid-password"
-                    type="password"
-                    placeholder="******************"
+                    {...register('receiverInformation.address')}
                   />
-                  <p className="text-error text-xs italic">
-                    Make it as long and as crazy as you'd like
-                  </p>
+                  {errors.receiverInformation?.address && (
+                    <p className="text-error text-xs italic">
+                      {errors.receiverInformation.address.message}
+                    </p>
+                  )}
                 </div>
               </div>
             </form>
@@ -423,7 +512,7 @@ const PurchaseOrderAdd = () => {
           </div>
 
           <div className="bg-base-100 mt-4 md:col-span-2 flex gap-2 justify-center">
-            <button className="btn btn-success" onClick={addPurchaseOrder}>
+            <button className="btn btn-success" onClick={handleSubmit(onSubmit)}>
               <CheckIcon className="w-4"></CheckIcon> 儲存
             </button>
             <button

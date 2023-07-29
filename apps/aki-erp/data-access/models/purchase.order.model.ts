@@ -22,7 +22,7 @@ export interface PurchaseOrderIPagging {
    * @type {Array<PurchaseOrder>}
    * @memberof PurchaseOrderIPagging
    */
-  data: Array<PurchaseOrder> | null;
+  data?: Array<PurchaseOrder> | null;
   /**
    *
    * @type {number}
@@ -66,7 +66,7 @@ export interface PurchaseOrder {
    * @type {string}
    * @memberof PurchaseOrder
    */
-  displayId: string | null;
+  displayId?: string | null;
   /**
    *
    * @type {Date}
@@ -78,7 +78,7 @@ export interface PurchaseOrder {
    * @type {string}
    * @memberof PurchaseOrder
    */
-  salesCompany: string | null;
+  salesCompany?: string | null;
   /**
    *
    * @type {ContactInformation}
@@ -96,7 +96,7 @@ export interface PurchaseOrder {
    * @type {Array<ArtworkDetail>}
    * @memberof PurchaseOrder
    */
-  artworks: Array<ArtworkDetail> | null;
+  artworks?: Array<ArtworkDetail> | null;
   /**
    *
    * @type {Date}
@@ -120,7 +120,7 @@ export interface PurchaseOrder {
    * @type {{ [key: string]: any; }}
    * @memberof PurchaseOrder
    */
-  metadata: { [key: string]: any } | null;
+  metadata?: { [key: string]: any } | null;
 }
 
 /**
@@ -134,19 +134,19 @@ export interface ContactInformation {
    * @type {string}
    * @memberof ContactInformation
    */
-  name: string | null;
+  name?: string | null;
   /**
    *
    * @type {string}
    * @memberof ContactInformation
    */
-  phone: string | null;
+  phone?: string | null;
   /**
    *
    * @type {string}
    * @memberof ContactInformation
    */
-  address: string | null;
+  address?: string | null;
 }
 
 /**
@@ -160,13 +160,13 @@ export interface CreateOrUpdatePurchaseOrderRequest {
    * @type {number}
    * @memberof CreateOrUpdatePurchaseOrderRequest
    */
-  id: number;
+  id?: number;
   /**
    *
    * @type {string}
    * @memberof CreateOrUpdatePurchaseOrderRequest
    */
-  displayId: string | null;
+  displayId?: string | null;
   /**
    *
    * @type {Date}
@@ -178,7 +178,7 @@ export interface CreateOrUpdatePurchaseOrderRequest {
    * @type {string}
    * @memberof CreateOrUpdatePurchaseOrderRequest
    */
-  salesCompany: string | null;
+  salesCompany?: string | null;
   /**
    *
    * @type {ContactInformation}
@@ -196,7 +196,7 @@ export interface CreateOrUpdatePurchaseOrderRequest {
    * @type {Array<number>}
    * @memberof CreateOrUpdatePurchaseOrderRequest
    */
-  artworkIdList: Array<number> | null;
+  artworkIdList?: Array<number> | null;
   /**
    *
    * @type {Status}
@@ -208,5 +208,5 @@ export interface CreateOrUpdatePurchaseOrderRequest {
    * @type {{ [key: string]: any; }}
    * @memberof CreateOrUpdatePurchaseOrderRequest
    */
-  metadata: { [key: string]: any } | null;
+  metadata?: { [key: string]: any } | null;
 }
