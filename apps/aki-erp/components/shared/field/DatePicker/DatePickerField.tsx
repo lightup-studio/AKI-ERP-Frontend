@@ -21,18 +21,20 @@ import { AnimatedCalendar } from './AnimatedCalendar';
 interface DatePickerFieldProps
   extends ControllerRenderProps,
     Omit<DatePickerProps<DateValue>, 'value' | 'onBlur' | 'onChange'> {
+  disabled?: boolean;
   errorMsg?: string;
 }
 
 const DatePickerField = React.forwardRef<HTMLDivElement, DatePickerFieldProps>(
   function DatePickerField(props, ref) {
-    const { name, value, errorMsg } = props;
+    const { name, value, disabled, errorMsg } = props;
     return (
       <DatePicker
         {...props}
         ref={ref}
         value={value || null}
         aria-label={name}
+        isDisabled={disabled}
         className={classNames({
           'border border-error rounded-lg': errorMsg,
         })}

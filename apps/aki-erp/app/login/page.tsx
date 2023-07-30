@@ -1,31 +1,54 @@
 'use client';
 
-import TextField, { TextFieldProps } from '@components/shared/field/TextField';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
+import useFieldForm, { FieldConfig } from '@utils/hooks/useFieldForm';
 import { AxiosError } from 'axios';
 import { authorizeWithPassword } from 'data-access/apis/authorizations.api';
 import { AuthorizeWithPasswordResponse } from 'data-access/models';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { FormEvent, useState } from 'react';
+import { useState } from 'react';
+import * as yup from 'yup';
 
-const INITIAL_LOGIN_DATA = {
-  username: '',
-  password: '',
+type FormData = {
+  username: string;
+  password: string;
 };
+
+const schema = yup.object().shape({
+  username: yup.string().required('請輸入帳號'),
+  password: yup.string().required('請輸入密碼'),
+});
+
+const configs: FieldConfig<FormData>[] = [
+  {
+    type: 'TEXT',
+    name: 'username',
+    label: 'username',
+  },
+  {
+    type: 'PASSWORD',
+    name: 'password',
+    label: 'password',
+  },
+];
 
 const Login = () => {
   const router = useRouter();
 
   const [errorMessage, setErrorMessage] = useState('');
-  const [loginObj, setLoginObj] = useState(INITIAL_LOGIN_DATA);
+
+  const { fieldForm, handleSubmit } = useFieldForm({
+    configs: configs,
+    resolver: yupResolver<FormData>(schema),
+  });
 
   const mutation = useMutation({
     mutationKey: ['authorizeWithPassword'],
-    mutationFn: () => authorizeWithPassword(loginObj.username, loginObj.password),
+    mutationFn: (formData: FormData) => authorizeWithPassword(formData.username, formData.password),
     onSuccess: (data) => {
-      // Call API to check user credentials and save token in localStorage
       localStorage.setItem('token', data.accessToken);
       router.push('/artworks');
     },
@@ -36,26 +59,8 @@ const Login = () => {
     },
   });
 
-  const submitForm = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrorMessage('');
-
-    if (loginObj.username.trim() === '') return setErrorMessage('請輸入帳號');
-    if (loginObj.password.trim() === '') return setErrorMessage('請輸入密碼');
-    else {
-      mutation.mutate();
-    }
-  };
-
-  const updateFormValue = ({
-    updateType,
-    value,
-  }: {
-    updateType: keyof typeof INITIAL_LOGIN_DATA;
-    value: string;
-  }) => {
-    setErrorMessage('');
-    setLoginObj({ ...loginObj, [updateType]: value });
+  const onSubmit = async (formData: FormData) => {
+    await mutation.mutateAsync(formData);
   };
 
   return (
@@ -66,26 +71,8 @@ const Login = () => {
             <Image src="/images/dark/logo.svg" alt="AKI" fill />
           </div>
           <h2 className="text-2xl font-semibold text-center">Login</h2>
-          <form onSubmit={(e) => submitForm(e)}>
-            <div className="mb-4">
-              <TextField
-                type="username"
-                defaultValue={loginObj.username}
-                updateType="username"
-                containerStyle="mt-4"
-                labelTitle="Username"
-                updateFormValue={updateFormValue as TextFieldProps['updateFormValue']}
-              />
-
-              <TextField
-                defaultValue={loginObj.password}
-                type="password"
-                updateType="password"
-                containerStyle="mt-4"
-                labelTitle="Password"
-                updateFormValue={updateFormValue as TextFieldProps['updateFormValue']}
-              />
-            </div>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {fieldForm}
 
             <div className="text-right text-primary">
               <Link href="/forgot-password">
@@ -96,11 +83,9 @@ const Login = () => {
             </div>
 
             <p className="text-center text-error mt-8">{errorMessage}</p>
-            <button
-              type="submit"
-              className={'btn mt-2 w-full btn-primary' + (mutation.isLoading ? ' loading' : '')}
-            >
-              Login
+
+            <button type="submit" className="btn mt-2 w-full btn-primary">
+              {mutation.isLoading ? <span className="loading loading-spinner"></span> : <>Login</>}
             </button>
           </form>
         </div>

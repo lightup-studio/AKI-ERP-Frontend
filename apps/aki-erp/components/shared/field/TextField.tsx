@@ -1,48 +1,40 @@
-import { useState } from 'react';
+import classNames from 'classnames';
+import React from 'react';
 
 interface TextFieldProps {
-  labelTitle?: string | React.ReactElement;
-  labelStyle?: string;
+  id?: string;
+  min?: number | string;
+  max?: number | string;
   type?: string;
-  containerStyle?: string;
-  defaultValue?: string;
+  name?: string;
+  value: string | number;
+  disabled?: boolean;
+  required?: boolean;
+  readOnly?: boolean;
+  errorMsg?: string;
+  autoFocus?: boolean;
+  minLength?: number;
+  maxLength?: number;
   placeholder?: string;
-  updateFormValue?: (options: Pick<TextFieldProps, 'updateType'> & { value?: string }) => void;
-  updateType?: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const TextField = ({
-  labelTitle,
-  labelStyle,
-  type,
-  containerStyle,
-  defaultValue,
-  placeholder,
-  updateFormValue,
-  updateType,
-}: TextFieldProps) => {
-  const [value, setValue] = useState(defaultValue);
-
-  const updateInputValue = (val: string) => {
-    setValue(val);
-    updateFormValue?.({ updateType, value: val });
-  };
+const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
+  { errorMsg, ...props },
+  ref
+) {
+  const { name, value } = props;
 
   return (
-    <div className={`form-control w-full ${containerStyle}`}>
-      <label className="label">
-        <span className={'label-text text-base-content ' + labelStyle}>{labelTitle}</span>
-      </label>
-      <input
-        type={type || 'text'}
-        value={value}
-        placeholder={placeholder || ''}
-        onChange={(e) => updateInputValue(e.target.value)}
-        className="input  input-bordered w-full "
-      />
-    </div>
+    <input
+      {...props}
+      id={name}
+      ref={ref}
+      value={value || ''}
+      className={classNames('input input-bordered w-full', { 'input-error': errorMsg })}
+    />
   );
-};
+});
 
 export type { TextFieldProps };
 

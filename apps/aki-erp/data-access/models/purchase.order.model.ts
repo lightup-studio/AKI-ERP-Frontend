@@ -72,7 +72,7 @@ export interface PurchaseOrder {
    * @type {Date}
    * @memberof PurchaseOrder
    */
-  purchaseTime: Date;
+  purchaseTime: string;
   /**
    *
    * @type {string}
@@ -172,7 +172,7 @@ export interface CreateOrUpdatePurchaseOrderRequest {
    * @type {Date}
    * @memberof CreateOrUpdatePurchaseOrderRequest
    */
-  purchaseTime: Date;
+  purchaseTime?: Date;
   /**
    *
    * @type {string}
