@@ -18,7 +18,7 @@ export interface CreateOrUpdateSalesOrderRequest {
    * @type {string}
    * @memberof CreateOrUpdateSalesOrderRequest
    */
-  displayId?: string | null;
+  displayId?: string;
   /**
    *
    * @type {Date}
@@ -30,7 +30,7 @@ export interface CreateOrUpdateSalesOrderRequest {
    * @type {string}
    * @memberof CreateOrUpdateSalesOrderRequest
    */
-  shippingDepartment?: string | null;
+  shippingDepartment?: string;
   /**
    *
    * @type {ContactInformation}
@@ -48,19 +48,19 @@ export interface CreateOrUpdateSalesOrderRequest {
    * @type {string}
    * @memberof CreateOrUpdateSalesOrderRequest
    */
-  address?: string | null;
+  address?: string;
   /**
    *
    * @type {string}
    * @memberof CreateOrUpdateSalesOrderRequest
    */
-  memo?: string | null;
+  memo?: string;
   /**
    *
    * @type {Array<number>}
    * @memberof CreateOrUpdateSalesOrderRequest
    */
-  artworkIdList?: Array<number> | null;
+  artworkIdList?: Array<number>;
   /**
    *
    * @type {Status}
@@ -72,7 +72,7 @@ export interface CreateOrUpdateSalesOrderRequest {
    * @type {{ [key: string]: any; }}
    * @memberof CreateOrUpdateSalesOrderRequest
    */
-  metadata?: { [key: string]: any } | null;
+  metadata?: { [key: string]: any };
 }
 
 /**
@@ -86,7 +86,7 @@ export interface SalesOrderIPagging {
    * @type {Array<SalesOrder>}
    * @memberof SalesOrderIPagging
    */
-  data?: Array<SalesOrder> | null;
+  data?: Array<SalesOrder>;
   /**
    *
    * @type {number}
@@ -130,7 +130,7 @@ export interface SalesOrder {
    * @type {string}
    * @memberof SalesOrder
    */
-  displayId?: string | null;
+  displayId?: string;
   /**
    *
    * @type {Date}
@@ -142,7 +142,7 @@ export interface SalesOrder {
    * @type {string}
    * @memberof SalesOrder
    */
-  shippingDepartment?: string | null;
+  shippingDepartment?: string;
   /**
    *
    * @type {ContactInformation}
@@ -160,19 +160,19 @@ export interface SalesOrder {
    * @type {string}
    * @memberof SalesOrder
    */
-  address?: string | null;
+  address?: string;
   /**
    *
    * @type {string}
    * @memberof SalesOrder
    */
-  memo?: string | null;
+  memo?: string;
   /**
    *
    * @type {Array<Artwork>}
    * @memberof SalesOrder
    */
-  artworks?: Array<ArtworkDetail<ArtworkMetadata>> | null;
+  artworks?: Array<ArtworkDetail<ArtworkMetadata>>;
   /**
    *
    * @type {Date}
@@ -196,5 +196,5 @@ export interface SalesOrder {
    * @type {{ [key: string]: any; }}
    * @memberof SalesOrder
    */
-  metadata?: { [key: string]: any } | null;
+  metadata?: { [key: string]: any };
 }

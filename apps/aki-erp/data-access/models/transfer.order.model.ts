@@ -18,7 +18,7 @@ export interface CreateOrUpdateTransferOrderRequest {
    * @type {string}
    * @memberof CreateOrUpdateTransferOrderRequest
    */
-  displayId?: string | null;
+  displayId?: string;
   /**
    *
    * @type {Date}
@@ -30,25 +30,25 @@ export interface CreateOrUpdateTransferOrderRequest {
    * @type {number}
    * @memberof CreateOrUpdateTransferOrderRequest
    */
-  transferTargetWarehouseId?: number | null;
+  transferTargetWarehouseId?: number;
   /**
    *
    * @type {string}
    * @memberof CreateOrUpdateTransferOrderRequest
    */
-  memo?: string | null;
+  memo?: string;
   /**
    *
    * @type {string}
    * @memberof CreateOrUpdateTransferOrderRequest
    */
-  transporter?: string | null;
+  transporter?: string;
   /**
    *
    * @type {Array<number>}
    * @memberof CreateOrUpdateTransferOrderRequest
    */
-  artworkIdList?: Array<number> | null;
+  artworkIdList?: Array<number>;
   /**
    *
    * @type {Status}
@@ -60,7 +60,7 @@ export interface CreateOrUpdateTransferOrderRequest {
    * @type {{ [key: string]: any; }}
    * @memberof CreateOrUpdateTransferOrderRequest
    */
-  metadata?: { [key: string]: any } | null;
+  metadata?: { [key: string]: any };
 }
 
 /**
@@ -80,7 +80,7 @@ export interface TransferOrder {
    * @type {string}
    * @memberof TransferOrder
    */
-  displayId?: string | null;
+  displayId?: string;
   /**
    *
    * @type {Date}
@@ -92,25 +92,25 @@ export interface TransferOrder {
    * @type {number}
    * @memberof TransferOrder
    */
-  transferTargetWarehouseId?: number | null;
+  transferTargetWarehouseId?: number;
   /**
    *
    * @type {string}
    * @memberof TransferOrder
    */
-  memo?: string | null;
+  memo?: string;
   /**
    *
    * @type {string}
    * @memberof TransferOrder
    */
-  transporter?: string | null;
+  transporter?: string;
   /**
    *
    * @type {Array<Artwork>}
    * @memberof TransferOrder
    */
-  artworks?: Array<ArtworkDetail<ArtworkMetadata>> | null;
+  artworks?: Array<ArtworkDetail<ArtworkMetadata>>;
   /**
    *
    * @type {Date}
@@ -134,7 +134,7 @@ export interface TransferOrder {
    * @type {{ [key: string]: any; }}
    * @memberof TransferOrder
    */
-  metadata?: { [key: string]: any } | null;
+  metadata?: { [key: string]: any };
 }
 
 /**
@@ -148,7 +148,7 @@ export interface TransferOrderIPagging {
    * @type {Array<TransferOrder>}
    * @memberof TransferOrderIPagging
    */
-  data?: Array<TransferOrder> | null;
+  data?: Array<TransferOrder>;
   /**
    *
    * @type {number}
