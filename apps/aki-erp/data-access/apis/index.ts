@@ -1,5 +1,6 @@
 export * from './artworks.api';
 export * from './lend.order.api';
+export * from './lend.return.order.api';
 export * from './purchase.order.api';
 export * from './purchase.return.order.api';
 export * from './repair.order.api';
