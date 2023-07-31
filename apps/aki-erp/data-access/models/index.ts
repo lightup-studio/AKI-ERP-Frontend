@@ -12,4 +12,5 @@ export * from './purchase.return.order.model';
 export * from './repair.order.model';
 export * from './repair.return.order.model';
 export * from './sales.order.model';
+export * from './sales.return.order.model';
 export * from './transfer.order.model';

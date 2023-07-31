@@ -6,4 +6,5 @@ export * from './purchase.return.order.api';
 export * from './repair.order.api';
 export * from './repair.return.order.api';
 export * from './sales.order.api';
+export * from './sales.return.order.api';
 export * from './transfer.order.api';
