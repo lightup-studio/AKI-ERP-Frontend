@@ -7,3 +7,4 @@ export * from './general.model';
 export * from './partner.model';
 export * from './purchase.order.model';
 export * from './sales.order.model';
+export * from './transfer.order.model';
