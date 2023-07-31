@@ -40,11 +40,11 @@ const routes = [
     name: '調撥單',
   },
   {
-    path: '/loan/orders',
+    path: '/lend/orders',
     name: '借出單',
     submenu: [
       {
-        path: '/loan/return-orders',
+        path: '/lend/return-orders',
         name: '借出歸還單',
       },
     ],
