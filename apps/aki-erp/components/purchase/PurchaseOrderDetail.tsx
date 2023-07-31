@@ -10,7 +10,7 @@ import {
   salesTypeOptionMap,
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
-import { createPurchaseOrder, fetchOrderPurchaseId } from '@data-access/apis';
+import { createPurchaseOrder, fetchPurchaseOrderId } from '@data-access/apis';
 import {
   CheckIcon,
   PencilSquareIcon,
@@ -142,8 +142,8 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
   const pagination = useMemo(() => ({ pageIndex, pageSize }), [pageIndex, pageSize]);
 
   const dataQuery = useQuery(
-    ['fetchOrderPurchaseId', params.id, pagination],
-    () => fetchOrderPurchaseId(+params.id),
+    ['fetchPurchaseOrderId', params.id, pagination],
+    () => fetchPurchaseOrderId(+params.id),
     {
       enabled: !!disabled,
       keepPreviousData: true,

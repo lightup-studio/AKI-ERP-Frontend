@@ -18,7 +18,7 @@ export interface CreateOrUpdatePurchaseReturnOrderRequest {
    * @type {string}
    * @memberof CreateOrUpdatePurchaseReturnOrderRequest
    */
-  displayId?: string | null;
+  displayId?: string;
   /**
    * 
    * @type {Date}
@@ -30,7 +30,7 @@ export interface CreateOrUpdatePurchaseReturnOrderRequest {
    * @type {string}
    * @memberof CreateOrUpdatePurchaseReturnOrderRequest
    */
-  returnCompany?: string | null;
+  returnCompany?: string;
   /**
    * 
    * @type {ContactInformation}
@@ -48,7 +48,7 @@ export interface CreateOrUpdatePurchaseReturnOrderRequest {
    * @type {Array<number>}
    * @memberof CreateOrUpdatePurchaseReturnOrderRequest
    */
-  artworkIdList?: Array<number> | null;
+  artworkIdList?: Array<number>;
   /**
    * 
    * @type {Status}
@@ -60,7 +60,7 @@ export interface CreateOrUpdatePurchaseReturnOrderRequest {
    * @type {{ [key: string]: any; }}
    * @memberof CreateOrUpdatePurchaseReturnOrderRequest
    */
-  metadata?: { [key: string]: any; } | null;
+  metadata?: { [key: string]: any; };
 }
 
 /**
@@ -80,7 +80,7 @@ export interface PurchaseReturnOrder {
    * @type {string}
    * @memberof PurchaseReturnOrder
    */
-  displayId?: string | null;
+  displayId?: string;
   /**
    * 
    * @type {Date}
@@ -92,7 +92,7 @@ export interface PurchaseReturnOrder {
    * @type {string}
    * @memberof PurchaseReturnOrder
    */
-  returnCompany?: string | null;
+  returnCompany?: string;
   /**
    * 
    * @type {ContactInformation}
@@ -110,7 +110,7 @@ export interface PurchaseReturnOrder {
    * @type {Array<Artwork>}
    * @memberof PurchaseReturnOrder
    */
-  artworks?: Array<ArtworkDetail> | null;
+  artworks?: Array<ArtworkDetail>;
   /**
    * 
    * @type {Date}
@@ -134,7 +134,7 @@ export interface PurchaseReturnOrder {
    * @type {{ [key: string]: any; }}
    * @memberof PurchaseReturnOrder
    */
-  metadata?: { [key: string]: any; } | null;
+  metadata?: { [key: string]: any; };
 }
 
 /**
@@ -148,7 +148,7 @@ export interface PurchaseReturnOrderIPagging {
    * @type {Array<PurchaseReturnOrder>}
    * @memberof PurchaseReturnOrderIPagging
    */
-  data?: Array<PurchaseReturnOrder> | null;
+  data?: Array<PurchaseReturnOrder>;
   /**
    * 
    * @type {number}

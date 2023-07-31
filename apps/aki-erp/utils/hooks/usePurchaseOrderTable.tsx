@@ -136,7 +136,7 @@ export const usePurchaseOrderTable = ({
 
   // const columnMutation = useMutation({
   //   mutationKey: ['updateArtwork'],
-  //   mutationFn: ({ data }: { data: Partial<PurchaseOrder> }) => updateOrderPurchase(data),
+  //   mutationFn: ({ data }: { data: Partial<PurchaseOrder> }) => updatePurchaseOrder(data),
   //   onError: () => {
   //     dataQuery.refetch();
   //   },

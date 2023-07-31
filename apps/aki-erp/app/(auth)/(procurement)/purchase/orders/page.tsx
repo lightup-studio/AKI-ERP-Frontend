@@ -15,8 +15,7 @@ import {
   salesTypeOptionMap,
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
-import { deleteOrderPurchaseId } from '@data-access/apis';
-import { patchArtworksBatchId } from '@data-access/apis/artworks.api';
+import { deletePurchaseOrderId, patchArtworksBatchId } from '@data-access/apis';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { useMutation } from '@tanstack/react-query';
@@ -209,7 +208,7 @@ const PurchaseOrders = () => {
     (purchaseOrders: PurchaseOrder[]) => {
       const artworkIds = purchaseOrders.flatMap((item) => item.artworks?.map((item) => item.id));
       return Promise.all([
-        ...purchaseOrders.map((item) => deleteOrderPurchaseId(item.id)),
+        ...purchaseOrders.map((item) => deletePurchaseOrderId(item.id)),
         patchArtworksBatchId({
           idList: artworkIds.filter((item) => typeof item === 'number') as number[],
           properties: {

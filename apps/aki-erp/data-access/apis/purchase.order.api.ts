@@ -3,7 +3,7 @@ import {
   PurchaseOrder,
   PurchaseOrderIPagging,
   Status,
-} from '@data-access/models/purchase.order.model';
+} from '@data-access/models';
 import axios from 'axios';
 
 export const fetchPurchaseOrder = async (
@@ -40,7 +40,7 @@ export const createPurchaseOrder = async (
   return res.data;
 };
 
-export const updateOrderPurchase = async (
+export const updatPurchaseeOrder = async (
   body?: CreateOrUpdatePurchaseOrderRequest
 ): Promise<PurchaseOrder> => {
   const url = '/api/Order/purchase';
@@ -49,28 +49,28 @@ export const updateOrderPurchase = async (
   return res.data;
 };
 
-export const deleteOrderPurchaseId = async (id: number): Promise<void> => {
+export const deletePurchaseOrderId = async (id: number): Promise<void> => {
   const url = '/api/Order/purchase';
 
   const res = await axios.delete(`${url}/${id}`);
   return res.data;
 };
 
-export const fetchOrderPurchaseId = async (id: number): Promise<PurchaseOrder> => {
+export const fetchPurchaseOrderId = async (id: number): Promise<PurchaseOrder> => {
   const url = '/api/Order/purchase';
 
   const res = await axios.get(`${url}/${id}`);
   return res.data;
 };
 
-export const fetchOrderPurchaseDIDdisplayId = async (displayId: string): Promise<PurchaseOrder> => {
+export const fetchPurchaseOrderDIDdisplayId = async (displayId: string): Promise<PurchaseOrder> => {
   const url = '/api/Order/purchase';
 
   const res = await axios.get(`${url}/DID:${displayId}`);
   return res.data;
 };
 
-export const deleteOrderPurchaseDIDdisplayId = async (displayId: string): Promise<void> => {
+export const deletePurchaseOrderDIDdisplayId = async (displayId: string): Promise<void> => {
   const url = '/api/Order/purchase';
 
   const res = await axios.delete(`${url}/DID:${displayId}`);
