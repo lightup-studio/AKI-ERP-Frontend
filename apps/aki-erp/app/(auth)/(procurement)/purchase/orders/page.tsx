@@ -16,6 +16,7 @@ import {
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
 import { deleteOrderPurchaseId } from '@data-access/apis';
+import { patchArtworksBatchId } from '@data-access/apis/artworks.api';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { useMutation } from '@tanstack/react-query';
@@ -23,6 +24,7 @@ import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import { usePurchaseOrderTable } from '@utils/hooks/usePurchaseOrderTable';
 import useSelectionList from '@utils/hooks/useSelectionList';
+import { showConfirm } from '@utils/swalUtil';
 
 const PurchaseOrders = () => {
   const [isOpenBatchUpdateStoreInfoDialog, setIsOpenBatchUpdateStoreInfoDialog] = useState(false);
@@ -204,7 +206,18 @@ const PurchaseOrders = () => {
   });
 
   const deleteMutation = useMutation(
-    (ids: number[]) => Promise.all(ids.map((id) => deleteOrderPurchaseId(id))),
+    (purchaseOrders: PurchaseOrder[]) => {
+      const artworkIds = purchaseOrders.flatMap((item) => item.artworks?.map((item) => item.id));
+      return Promise.all([
+        ...purchaseOrders.map((item) => deleteOrderPurchaseId(item.id)),
+        patchArtworksBatchId({
+          idList: artworkIds.filter((item) => typeof item === 'number') as number[],
+          properties: {
+            status: Status.Disabled,
+          },
+        }),
+      ]);
+    },
     {
       onSuccess: () => {
         clearSelection();
@@ -217,9 +230,14 @@ const PurchaseOrders = () => {
     setIsOpenBatchUpdateStoreInfoDialog(true);
   };
 
-  const handleDelete = () => {
-    const ids = selectedRows.map((row) => row.id);
-    deleteMutation.mutate(ids);
+  const handleDelete = async () => {
+    const { isConfirmed } = await showConfirm({
+      title: '確定刪除進貨單嗎？',
+      icon: 'warning',
+    });
+
+    if (!isConfirmed) return;
+    deleteMutation.mutate(selectedRows);
   };
 
   return (

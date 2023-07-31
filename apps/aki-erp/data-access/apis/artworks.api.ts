@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Option as ComboboxOption } from '@components/shared/MyCombobox';
 import { salesTypeOptions, storeTypeOptions } from '@constants/artwork.constant';
-import { Artwork, ArtworkDetail, ArtworkMetadata, Pagination } from '@data-access/models';
+import {
+  Artwork,
+  ArtworkDetail,
+  ArtworkMetadata,
+  CommonBatchPartialUpdateById,
+  Pagination,
+} from '@data-access/models';
 import axios from 'axios';
 import { rangeRight } from 'lodash-es';
 
@@ -169,5 +175,12 @@ export async function deleteArtworks(ids: number[]) {
 
 export async function deleteArtwork(id: number) {
   const res = await axios.delete(`/api/Artworks/${id}`);
+  return res.data;
+}
+
+export async function patchArtworksBatchId(
+  data?: CommonBatchPartialUpdateById
+): Promise<Array<ArtworkDetail>> {
+  const res = await axios.patch(`/api/Artworks/batch/id`, data);
   return res.data;
 }

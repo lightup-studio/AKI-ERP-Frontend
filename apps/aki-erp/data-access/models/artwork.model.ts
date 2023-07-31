@@ -148,3 +148,8 @@ export interface SalesType {
   sort: 0;
   status: string;
 }
+
+export interface CommonBatchPartialUpdateById {
+  idList?: Array<number>;
+  properties?: Partial<ArtworkDetail<ArtworkMetadata>>;
+}
