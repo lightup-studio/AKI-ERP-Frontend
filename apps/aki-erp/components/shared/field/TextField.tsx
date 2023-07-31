@@ -1,23 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
 
-interface TextFieldProps {
-  id?: string;
-  min?: number | string;
-  max?: number | string;
-  type?: string;
-  name?: string;
-  value?: string;
-  defaultValue?: string;
-  disabled?: boolean;
-  required?: boolean;
-  readOnly?: boolean;
+interface TextFieldProps extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
   errorMsg?: string;
-  autoFocus?: boolean;
-  minLength?: number;
-  maxLength?: number;
-  placeholder?: string;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
