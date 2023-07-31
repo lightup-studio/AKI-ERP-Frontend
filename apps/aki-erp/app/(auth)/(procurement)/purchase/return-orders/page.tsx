@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import BatchUpdateStoreInfoDialog from '@components/shared/BatchUpdateStoreInfoDialog';
+import PurchaseOrderBatchUpdateDialog from '@components/purchase/PurchaseOrderBatchUpdateDialog';
 import IndeterminateCheckbox from '@components/shared/field/IndeterminateCheckbox';
 import SearchInput from '@components/shared/field/SearchField';
 import {
@@ -24,7 +24,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
 
 const PurchaseReturnOrders = () => {
-  const [isOpenBatchUpdateStoreInfoDialog, setIsOpenBatchUpdateStoreInfoDialog] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -203,10 +203,6 @@ const PurchaseReturnOrders = () => {
     selectItems,
   });
 
-  const handleBatchUpdate = () => {
-    setIsOpenBatchUpdateStoreInfoDialog(true);
-  };
-
   return (
     <>
       <div className="card w-full p-6 bg-base-100 shadow-xl">
@@ -253,7 +249,7 @@ const PurchaseReturnOrders = () => {
           <button
             className="btn btn-success"
             disabled={selectedRowCount === 0}
-            onClick={handleBatchUpdate}
+            onClick={() => setIsOpen(true)}
           >
             <PencilIcon className="h-5 w-5"></PencilIcon>
             編輯
@@ -272,11 +268,11 @@ const PurchaseReturnOrders = () => {
         <div className="h-full w-full pb-6 bg-base-100 text-center">{tableBlock}</div>
       </div>
 
-      <BatchUpdateStoreInfoDialog
-        isOpen={isOpenBatchUpdateStoreInfoDialog}
+      <PurchaseOrderBatchUpdateDialog
+        isOpen={isOpen}
         data={selectedRows}
-        onClose={() => setIsOpenBatchUpdateStoreInfoDialog(false)}
-      ></BatchUpdateStoreInfoDialog>
+        onClose={() => setIsOpen(false)}
+      ></PurchaseOrderBatchUpdateDialog>
     </>
   );
 };

@@ -7,7 +7,8 @@ interface TextFieldProps {
   max?: number | string;
   type?: string;
   name?: string;
-  value: string | number;
+  value?: string;
+  defaultValue?: string;
   disabled?: boolean;
   required?: boolean;
   readOnly?: boolean;
@@ -16,7 +17,7 @@ interface TextFieldProps {
   minLength?: number;
   maxLength?: number;
   placeholder?: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(function TextField(

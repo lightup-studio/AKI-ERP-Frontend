@@ -29,7 +29,7 @@ export interface Artwork {
 export interface ArtworkDetail<TMetadata = ArtworkMetadata> {
   id: number;
   displayId: string;
-  warehouseId: number | null;
+  warehouseId?: number;
   zhName: string;
   enName: string;
   imageUrl: string;

@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
 
-import BatchUpdateStoreInfoDialog from '@components/shared/BatchUpdateStoreInfoDialog';
+import PurchaseOrderBatchUpdateDialog from '@components/purchase/PurchaseOrderBatchUpdateDialog';
 import IndeterminateCheckbox from '@components/shared/field/IndeterminateCheckbox';
 import SearchInput from '@components/shared/field/SearchField';
 import {
@@ -27,7 +27,7 @@ import useSelectionList from '@utils/hooks/useSelectionList';
 import { showConfirm } from '@utils/swalUtil';
 
 const PurchaseOrders = () => {
-  const [isOpenBatchUpdateStoreInfoDialog, setIsOpenBatchUpdateStoreInfoDialog] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -226,10 +226,6 @@ const PurchaseOrders = () => {
     }
   );
 
-  const handleBatchUpdate = () => {
-    setIsOpenBatchUpdateStoreInfoDialog(true);
-  };
-
   const handleDelete = async () => {
     const { isConfirmed } = await showConfirm({
       title: '確定刪除進貨單嗎？',
@@ -286,7 +282,7 @@ const PurchaseOrders = () => {
           <button
             className="btn btn-success"
             disabled={selectedRowCount === 0}
-            onClick={handleBatchUpdate}
+            onClick={() => setIsOpen(true)}
           >
             <PencilIcon className="h-5 w-5"></PencilIcon>
             編輯
@@ -309,11 +305,11 @@ const PurchaseOrders = () => {
         <div className="h-full w-full pb-6 bg-base-100 text-center">{tableBlock}</div>
       </div>
 
-      <BatchUpdateStoreInfoDialog
-        isOpen={isOpenBatchUpdateStoreInfoDialog}
+      <PurchaseOrderBatchUpdateDialog
+        isOpen={isOpen}
         data={selectedRows}
-        onClose={() => setIsOpenBatchUpdateStoreInfoDialog(false)}
-      ></BatchUpdateStoreInfoDialog>
+        onClose={() => setIsOpen(false)}
+      ></PurchaseOrderBatchUpdateDialog>
     </>
   );
 };
