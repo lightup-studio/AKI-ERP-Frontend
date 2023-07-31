@@ -9,5 +9,6 @@ export * from './partner.model';
 export * from './purchase.order.model';
 export * from './purchase.return.order.model';
 export * from './repair.order.model';
+export * from './repair.return.order.model';
 export * from './sales.order.model';
 export * from './transfer.order.model';
