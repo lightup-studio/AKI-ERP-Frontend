@@ -1,4 +1,4 @@
-import { ArtworkDetail, ArtworkMetadata } from './artwork.model';
+import { ArtworkDetail } from './artwork.model';
 import { ContactInformation, Status } from './purchase.order.model';
 
 /**
@@ -172,7 +172,7 @@ export interface SalesOrder {
    * @type {Array<Artwork>}
    * @memberof SalesOrder
    */
-  artworks?: Array<ArtworkDetail<ArtworkMetadata>>;
+  artworks?: Array<ArtworkDetail>;
   /**
    *
    * @type {Date}

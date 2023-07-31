@@ -4,6 +4,7 @@ export * from './authorizations.model';
 export * from './country.model';
 export * from './files.model';
 export * from './general.model';
+export * from './lend.order.model';
 export * from './partner.model';
 export * from './purchase.order.model';
 export * from './repair.order.model';

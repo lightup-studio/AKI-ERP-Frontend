@@ -1,18 +1,19 @@
 import {
-  CreateOrUpdateSalesOrderRequest,
-  SalesOrder,
-  SalesOrderIPagging,
+  CreateOrUpdateLendOrderRequest,
+  LendOrder,
+  LendOrderIPagging,
   Status,
 } from '@data-access/models';
+import { } from '@data-access/models/purchase.order.model';
 import axios from 'axios';
 
-export const fetchSalesOrder = async (
+export const fetchLendOrder = async (
   status: Status,
   queryString?: string
-): Promise<SalesOrderIPagging> => {
+): Promise<LendOrderIPagging> => {
   const params = new URLSearchParams(queryString);
 
-  const url = '/api/Order/sales';
+  const url = '/api/Order/lend';
   const query = new URLSearchParams();
 
   query.append('status', status);
@@ -27,51 +28,51 @@ export const fetchSalesOrder = async (
     if (key === 'pageSize') query.append('take', value);
   });
 
-  const res = await axios.get<SalesOrderIPagging>(`${url}?${query.toString()}`);
+  const res = await axios.get<LendOrderIPagging>(`${url}?${query.toString()}`);
   return res.data;
 };
 
-export const createSalesOrder = async (
-  body?: CreateOrUpdateSalesOrderRequest
-): Promise<SalesOrder> => {
-  const url = '/api/Order/sales';
+export const createLendOrder = async (
+  body?: CreateOrUpdateLendOrderRequest
+): Promise<LendOrder> => {
+  const url = '/api/Order/lend';
 
   const res = await axios.post(url, body);
   return res.data;
 };
 
-export const updateSalesOrder = async (
-  body?: CreateOrUpdateSalesOrderRequest
-): Promise<SalesOrder> => {
-  const url = '/api/Order/sales';
+export const updateLendOrder = async (
+  body?: CreateOrUpdateLendOrderRequest
+): Promise<LendOrder> => {
+  const url = '/api/Order/lend';
 
   const res = await axios.put(url, body, { params: { allowCreate: true } });
   return res.data;
 };
 
-export const deleteSalesOrderId = async (id: number): Promise<void> => {
-  const url = '/api/Order/sales';
+export const deleteLendOrderId = async (id: number): Promise<void> => {
+  const url = '/api/Order/lend';
 
   const res = await axios.delete(`${url}/${id}`);
   return res.data;
 };
 
-export const fetchSalesOrderId = async (id: number): Promise<SalesOrder> => {
-  const url = '/api/Order/sales';
+export const fetchLendOrderId = async (id: number): Promise<LendOrder> => {
+  const url = '/api/Order/lend';
 
   const res = await axios.get(`${url}/${id}`);
   return res.data;
 };
 
-export const fetchSalesOrderDIDdisplayId = async (displayId: string): Promise<SalesOrder> => {
-  const url = '/api/Order/sales';
+export const fetchLendOrderDIDdisplayId = async (displayId: string): Promise<LendOrder> => {
+  const url = '/api/Order/lend';
 
   const res = await axios.get(`${url}/DID:${displayId}`);
   return res.data;
 };
 
-export const deleteSalesOrderDIDdisplayId = async (displayId: string): Promise<void> => {
-  const url = '/api/Order/sales';
+export const deleteLendOrderDIDdisplayId = async (displayId: string): Promise<void> => {
+  const url = '/api/Order/lend';
 
   const res = await axios.delete(`${url}/DID:${displayId}`);
   return res.data;

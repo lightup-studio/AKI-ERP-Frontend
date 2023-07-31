@@ -1,4 +1,4 @@
-import { ArtworkDetail, ArtworkMetadata } from './artwork.model';
+import { ArtworkDetail } from './artwork.model';
 import { Status } from './purchase.order.model';
 
 /**
@@ -110,7 +110,7 @@ export interface TransferOrder {
    * @type {Array<Artwork>}
    * @memberof TransferOrder
    */
-  artworks?: Array<ArtworkDetail<ArtworkMetadata>>;
+  artworks?: Array<ArtworkDetail>;
   /**
    *
    * @type {Date}
