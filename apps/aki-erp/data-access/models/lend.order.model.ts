@@ -1,4 +1,4 @@
-import { ArtworkDetail } from './artwork.model';
+import { ArtworkDetail, ArtworkMetadata } from './artwork.model';
 import { Status } from './general.model';
 import { ContactInformation } from './purchase.order.model';
 
@@ -73,7 +73,7 @@ export interface CreateOrUpdateLendOrderRequest {
    * @type {{ [key: string]: any; }}
    * @memberof CreateOrUpdateLendOrderRequest
    */
-  metadata?: { [key: string]: any };
+  metadata?: Partial<ArtworkMetadata>;
 }
 
 /**

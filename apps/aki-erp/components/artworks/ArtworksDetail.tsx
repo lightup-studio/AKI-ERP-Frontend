@@ -2,7 +2,7 @@
 
 import React, { ChangeEvent, useState } from 'react';
 
-import { assetsTypeOptions } from '@constants/artwork.constant';
+import { StoreType, assetsTypeOptions } from '@constants/artwork.constant';
 import classNames from 'classnames';
 import {
   createOrUpdateArtworkDetail,
@@ -155,7 +155,7 @@ const ArtworksDetail = () => {
           woodenBox: false,
         },
         warehouseLocation: '',
-        storeType: 'none',
+        storeType: StoreType.NONE,
       },
     },
     resolver: yupResolver<any>(schema),

@@ -5,11 +5,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { ArtworksSelector } from '@components/artworks';
 import { IndeterminateCheckbox } from '@components/shared/field';
 import {
+  StoreType,
   assetsTypeOptionMap,
   salesTypeOptionMap,
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
-import { createTransferOrder, fetchTransferOrderId } from '@data-access/apis';
+import { createLendOrder, fetchLendOrderId } from '@data-access/apis';
 import {
   CheckIcon,
   PencilSquareIcon,
@@ -23,7 +24,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { CellContext, ColumnDef, Row } from '@tanstack/react-table';
 import { useTable } from '@utils/hooks';
 import useFieldForm, { FieldConfig } from '@utils/hooks/useFieldForm';
-import { ArtworkDetail, CreateOrUpdateTransferOrderRequest, Status } from 'data-access/models';
+import { ArtworkDetail, CreateOrUpdateLendOrderRequest, Status } from 'data-access/models';
 import dateFnsFormat from 'date-fns/format';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
@@ -32,46 +33,92 @@ import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
 import * as yup from 'yup';
 
 type FormData = {
-  transporter?: string;
-  transferTime?: Date;
+  lendDepartment?: string;
+  lendTime?: Date;
+  contactPersonInformation?: {
+    name?: string;
+    phone?: string;
+  };
+  receiverInformation?: {
+    name?: string;
+    phone?: string;
+    address?: string;
+  };
   memo?: string;
 };
 
 const schema = yup.object().shape({
-  transporter: yup.string().required('必填項目'),
-  transferTime: yup.date().required('必填項目'),
+  lendDepartment: yup.string().required('必填項目'),
+  lendTime: yup.date().required('必填項目'),
+  contactPersonInformation: yup.object({
+    name: yup.string().required('必填項目'),
+    phone: yup.string().required('必填項目'),
+  }),
+  receiverInformation: yup.object({
+    name: yup.string().required('必填項目'),
+    phone: yup.string().required('必填項目'),
+    address: yup.string().required('必填項目'),
+  }),
   memo: yup.string().required('必填項目'),
 });
 
-interface TransferOrderDetailProps {
+interface LendOrderDetailProps {
   disabled?: boolean;
 }
 
-const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) => {
+const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
   const router = useRouter();
   const { id } = useParams();
 
   const configs: FieldConfig<FormData>[] = [
     {
       type: 'TEXT',
-      name: 'transporter',
-      label: '運輸廠商',
+      name: 'lendDepartment',
+      label: '借展單位',
       disabled: disabled,
-      validated: yup.string().required('必填項目'),
     },
     {
       type: 'DATE',
-      name: 'transferTime',
-      label: '調撥日期',
+      name: 'lendTime',
+      label: '借展日期',
       disabled: disabled,
       validated: yup.date().required('必填項目'),
+    },
+    {
+      type: 'TEXT',
+      name: 'contactPersonInformation.name',
+      label: '聯絡人',
+      disabled: disabled,
+    },
+    {
+      type: 'TEXT',
+      name: 'contactPersonInformation.phone',
+      label: '聯絡人電話',
+      disabled: disabled,
+    },
+    {
+      type: 'TEXT',
+      name: 'receiverInformation.name',
+      label: '收件人',
+      disabled: disabled,
+    },
+    {
+      type: 'TEXT',
+      name: 'receiverInformation.phone',
+      label: '收件人電話',
+      disabled: disabled,
+    },
+    {
+      type: 'TEXT',
+      name: 'receiverInformation.address',
+      label: '地址',
+      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'memo',
       label: '備註',
       disabled: disabled,
-      validated: yup.string().required('必填項目'),
     },
   ];
 
@@ -83,24 +130,20 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
   const [artworks, setArtworks] = useState<ArtworkDetail[]>([]);
   const [isOpenArtworksSelector, setIsOpenArtworksSelector] = useState(false);
 
-  const { data, isLoading } = useQuery(
-    ['fetchTransferOrderId', id],
-    () => fetchTransferOrderId(+id),
-    {
-      enabled: !!disabled,
-      keepPreviousData: true,
-    }
-  );
+  const { data, isLoading } = useQuery(['fetchLendOrderId', id], () => fetchLendOrderId(+id), {
+    enabled: !!disabled,
+    keepPreviousData: true,
+  });
 
   useEffect(() => {
     if (!data) return;
 
-    const transferTime = data.transferTime
-      ? (parseDate(dateFnsFormat(new Date(data.transferTime), 'yyyy-MM-dd')) as unknown as Date)
+    const lendTime = data.lendTime
+      ? (parseDate(dateFnsFormat(new Date(data.lendTime), 'yyyy-MM-dd')) as unknown as Date)
       : undefined;
 
-    setValue('transporter', data.transporter);
-    setValue('transferTime', transferTime);
+    setValue('lendDepartment', data.lendDepartment);
+    setValue('lendTime', lendTime);
     setValue('memo', data.memo);
   }, [data]);
 
@@ -313,7 +356,7 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
   });
 
   const mutation = useMutation({
-    mutationFn: (data: CreateOrUpdateTransferOrderRequest) => createTransferOrder(data),
+    mutationFn: (data: CreateOrUpdateLendOrderRequest) => createLendOrder(data),
     onSuccess: async () => {
       await showSuccess('新增成功！');
       router.back();
@@ -331,11 +374,17 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
 
     if (!isConfirmed) return;
     await mutation.mutateAsync({
-      transporter: formData.transporter,
-      transferTime: formData.transferTime,
-      memo: formData.memo,
       artworkIdList: Object.values(rowSelection).map((row) => row.id),
       status: Status.Enabled,
+      lendTime: formData.lendTime,
+      lendDepartment: formData.lendDepartment,
+      receiverInformation: formData.receiverInformation,
+      contactPersonInformation: formData.contactPersonInformation,
+      memo: formData.memo,
+      metadata: {
+        storeType: StoreType.LEND,
+        lendDepartment: formData.lendDepartment,
+      },
     });
   };
 
@@ -343,7 +392,7 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
     <>
       <div className="card w-full p-6 bg-base-100 shadow-xl">
         <div className="flex gap-4 flex-col md:flex-row">
-          <form className="w-full grid gap-4">{fieldForm}</form>
+          <form className="w-full grid grid-cols-2 gap-4">{fieldForm}</form>
 
           <div className="flex flex-col gap-4 justify-between">
             <div className="flex md:flex-col gap-2">
@@ -419,4 +468,4 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
   );
 };
 
-export default TransferOrderDetail;
+export default LendOrderDetail;

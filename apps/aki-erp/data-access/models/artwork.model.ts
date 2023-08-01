@@ -152,5 +152,5 @@ export interface SalesType {
 
 export interface CommonBatchPartialUpdateById {
   idList?: Array<number>;
-  properties?: Partial<ArtworkDetail>;
+  properties?: Partial<ArtworkDetail<Partial<ArtworkMetadata>>>;
 }

@@ -1,3 +1,13 @@
+export enum StoreType {
+  NONE = 'none',
+  IN_STOCK = 'inStock',
+  LEND = 'lend',
+  REPAIR = 'repair',
+  RETURNED_LEND_OR_RETURNED_REPAIR = 'returnedLend_or_returnedRepair',
+  SHIPPING = 'shipping',
+  RETURNED_SHIPPING = 'returnedShipping',
+}
+
 export const assetsTypeOptions = [
   { label: 'A', value: 'A' },
   { label: 'B', value: 'B' },
@@ -7,31 +17,31 @@ export const assetsTypeOptions = [
 export const storeTypeOptions = [
   {
     label: '無',
-    value: 'none',
+    value: StoreType.NONE,
   },
   {
     label: '在庫',
-    value: 'inStock',
+    value: StoreType.IN_STOCK,
   },
   {
     label: '借展',
-    value: 'lend',
+    value: StoreType.LEND,
   },
   {
     label: '維修',
-    value: 'repair',
+    value: StoreType.REPAIR,
   },
   {
     label: '已歸還',
-    value: 'returnedLend_or_returnedRepair',
+    value: StoreType.RETURNED_LEND_OR_RETURNED_REPAIR,
   },
   {
     label: '已出貨',
-    value: 'shipping',
+    value: StoreType.SHIPPING,
   },
   {
     label: '已退回',
-    value: 'returnedShipping',
+    value: StoreType.RETURNED_SHIPPING,
   },
 ] as const;
 

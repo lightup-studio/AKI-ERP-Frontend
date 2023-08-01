@@ -139,9 +139,9 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
   useEffect(() => {
     if (!data) return;
 
-    const purchaseTime = parseDate(
-      dateFnsFormat(new Date(data.purchaseTime), 'yyyy-MM-dd')
-    ) as unknown as Date;
+    const purchaseTime = data.purchaseTime
+      ? (parseDate(dateFnsFormat(new Date(data.purchaseTime), 'yyyy-MM-dd')) as unknown as Date)
+      : undefined;
 
     setValue('purchaseTime', purchaseTime);
     setValue('salesCompany', data.salesCompany);

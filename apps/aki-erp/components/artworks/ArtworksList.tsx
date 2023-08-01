@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import IndeterminateCheckbox from '@components/shared/field/IndeterminateCheckbox';
 import SearchField from '@components/shared/field/SearchField';
 import {
+  StoreType,
   assetsTypeOptions,
   salesTypeOptions,
   storeTypeOptionMap,
@@ -250,7 +251,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
   const enableMutation = useMutation({
     mutationKey: ['enableArtwork'],
     mutationFn: (ids: number[]) =>
-      patchArtworks(ids, { status: Status.Enabled, metadata: { storeType: 'inStock' } }),
+      patchArtworks(ids, { status: Status.Enabled, metadata: { storeType: StoreType.IN_STOCK } }),
     onSuccess: () => {
       clearSelection();
       dataQuery.refetch();

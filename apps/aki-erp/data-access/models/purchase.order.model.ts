@@ -24,7 +24,7 @@ export interface PurchaseOrder {
    * @type {Date}
    * @memberof PurchaseOrder
    */
-  purchaseTime: string;
+  purchaseTime?: string;
   /**
    *
    * @type {string}
