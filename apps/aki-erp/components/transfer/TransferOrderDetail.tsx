@@ -309,7 +309,7 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
   const { table, tableBlock } = useTable({
     data: tableData,
     columns,
-    isLoading,
+    isLoading: disabled ? isLoading : false,
   });
 
   const mutation = useMutation({

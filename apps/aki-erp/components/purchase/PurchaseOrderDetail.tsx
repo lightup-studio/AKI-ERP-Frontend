@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { ArtworksSelector } from '@components/artworks';
-import Table from '@components/shared/Table';
 import { IndeterminateCheckbox } from '@components/shared/field';
 import {
   assetsTypeOptionMap,
@@ -21,17 +20,9 @@ import {
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import {
-  CellContext,
-  ColumnDef,
-  PaginationState,
-  Row,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+import { CellContext, ColumnDef, Row } from '@tanstack/react-table';
+import { useTable } from '@utils/hooks';
 import useFieldForm, { FieldConfig } from '@utils/hooks/useFieldForm';
-import usePagination, { DOTS } from '@utils/hooks/usePagination';
-import cx from 'classnames';
 import { ArtworkDetail, CreateOrUpdatePurchaseOrderRequest, Status } from 'data-access/models';
 import dateFnsFormat from 'date-fns/format';
 import Link from 'next/link';
@@ -73,10 +64,8 @@ interface PurchaseOrderDetailProps {
 }
 
 const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) => {
-  const [isOpenArtworksSelector, setIsOpenArtworksSelector] = useState(false);
-
   const router = useRouter();
-  const params = useParams();
+  const { id } = useParams();
 
   const configs: FieldConfig<FormData>[] = [
     {
@@ -135,33 +124,30 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
     resolver: yupResolver<FormData>(schema),
   });
 
-  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 50,
-  });
-  const pagination = useMemo(() => ({ pageIndex, pageSize }), [pageIndex, pageSize]);
+  const [artworks, setArtworks] = useState<ArtworkDetail[]>([]);
+  const [isOpenArtworksSelector, setIsOpenArtworksSelector] = useState(false);
 
-  const dataQuery = useQuery(
-    ['fetchPurchaseOrderId', params.id, pagination],
-    () => fetchPurchaseOrderId(+params.id),
+  const { data, isLoading } = useQuery(
+    ['fetchPurchaseOrderId', +id],
+    () => fetchPurchaseOrderId(+id),
     {
       enabled: !!disabled,
       keepPreviousData: true,
     }
   );
 
-  const [artworks, setArtworks] = useState<ArtworkDetail[]>([]);
+  useEffect(() => {
+    if (!data) return;
 
-  const mutation = useMutation({
-    mutationFn: (data: CreateOrUpdatePurchaseOrderRequest) => createPurchaseOrder(data),
-    onSuccess: async () => {
-      await showSuccess('新增成功！');
-      router.back();
-    },
-    onError: async () => {
-      await showError('新增失敗！');
-    },
-  });
+    const purchaseTime = parseDate(
+      dateFnsFormat(new Date(data.purchaseTime), 'yyyy-MM-dd')
+    ) as unknown as Date;
+
+    setValue('purchaseTime', purchaseTime);
+    setValue('salesCompany', data.salesCompany);
+    setValue('salesInformation', data.salesInformation);
+    setValue('receiverInformation', data.receiverInformation);
+  }, [data]);
 
   const [rowSelection, setRowSelection] = useState<Record<ArtworkDetail['id'], ArtworkDetail>>({});
 
@@ -360,35 +346,27 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
     },
   ];
 
-  const table = useReactTable({
-    data: disabled ? dataQuery.data?.artworks || [] : artworks,
+  const tableData = {
+    data: (disabled ? data?.artworks : artworks) || [],
+    totalCount: (disabled ? data?.artworks?.length : artworks.length) || 0,
+  };
+
+  const { table, tableBlock } = useTable({
+    data: tableData,
     columns,
-    state: {
-      pagination,
+    isLoading: disabled ? isLoading : false,
+  });
+
+  const mutation = useMutation({
+    mutationFn: (data: CreateOrUpdatePurchaseOrderRequest) => createPurchaseOrder(data),
+    onSuccess: async () => {
+      await showSuccess('新增成功！');
+      router.back();
     },
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
+    onError: async () => {
+      await showError('新增失敗！');
+    },
   });
-
-  const paginationRange = usePagination({
-    currentPage: pageIndex,
-    totalCount: artworks.length,
-    siblingCount: 1,
-    pageSize: pageSize,
-  });
-
-  useEffect(() => {
-    if (!dataQuery.data) return;
-
-    const purchaseTime = parseDate(
-      dateFnsFormat(new Date(dataQuery.data.purchaseTime), 'yyyy-MM-dd')
-    ) as unknown as Date;
-
-    setValue('purchaseTime', purchaseTime);
-    setValue('salesCompany', dataQuery.data.salesCompany);
-    setValue('salesInformation', dataQuery.data.salesInformation);
-    setValue('receiverInformation', dataQuery.data.receiverInformation);
-  }, [dataQuery.data]);
 
   const onSubmit = async (formData: FormData) => {
     const { isConfirmed } = await showConfirm({
@@ -460,67 +438,7 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
         )}
 
         <div className="h-full w-full bg-base-100 text-center">
-          <Table table={table} isLoading={disabled ? dataQuery.isLoading : false} />
-
-          <div className="divider mt-2" />
-
-          <div className="join">
-            <button
-              className="join-item btn"
-              onClick={() => table.setPageIndex(pageIndex - 5)}
-              disabled={!table.getCanPreviousPage()}
-            >
-              {'<<'}
-            </button>
-            <button
-              className="join-item btn"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              {'<'}
-            </button>
-
-            <button className="join-item btn btn-active block md:hidden">
-              第 {pageIndex + 1} 頁
-            </button>
-
-            {paginationRange?.map((pageNumber, key) => {
-              if (pageNumber === DOTS) {
-                return (
-                  <button key={key} className="join-item btn btn-disabled hidden md:block">
-                    {DOTS}
-                  </button>
-                );
-              }
-
-              return (
-                <button
-                  key={key}
-                  className={cx('join-item btn w-14 hidden md:block', {
-                    'btn-active': Number(pageNumber) - 1 === pageIndex,
-                  })}
-                  onClick={() => table.setPageIndex(Number(pageNumber) - 1)}
-                >
-                  {pageNumber}
-                </button>
-              );
-            })}
-
-            <button
-              className="join-item btn"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              {'>'}
-            </button>
-            <button
-              className="join-item btn"
-              onClick={() => table.setPageIndex(pageIndex + 5)}
-              disabled={!table.getCanNextPage()}
-            >
-              {'>>'}
-            </button>
-          </div>
+          {tableBlock}
 
           {!disabled && (
             <div className="bg-base-100 mt-4 md:col-span-2 flex gap-2 justify-center">
@@ -539,15 +457,17 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
         </div>
       </div>
 
-      <ArtworksSelector
-        isOpen={isOpenArtworksSelector}
-        onClose={(selectedArtworks) => {
-          if (selectedArtworks && selectedArtworks.length > 0) {
-            setArtworks((currentArtworks) => [...currentArtworks, ...selectedArtworks]);
-          }
-          setIsOpenArtworksSelector(false);
-        }}
-      ></ArtworksSelector>
+      {!disabled && (
+        <ArtworksSelector
+          isOpen={isOpenArtworksSelector}
+          onClose={(selectedArtworks) => {
+            if (selectedArtworks && selectedArtworks.length > 0) {
+              setArtworks((currentArtworks) => [...currentArtworks, ...selectedArtworks]);
+            }
+            setIsOpenArtworksSelector(false);
+          }}
+        ></ArtworksSelector>
+      )}
     </>
   );
 };
