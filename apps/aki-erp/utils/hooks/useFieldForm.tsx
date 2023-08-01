@@ -57,7 +57,7 @@ const useFieldForm = <TFieldValues extends FieldValues = FieldValues, TContext =
           {config.label}
         </label>
         {controller}
-        <p className="text-error text-xs italic">{errorMsg}</p>
+        {errorMsg && <p className="text-error text-xs italic">{errorMsg}</p>}
       </section>
     );
   });
