@@ -4,20 +4,20 @@ import classnames from 'classnames';
 
 function TablePagination<T>({
   table,
-  pageIndex,
   pageSize,
-  totalCount,
+  pageIndex,
+  totalCount = 0,
 }: {
   table: Table<T>;
-  pageIndex: number;
   pageSize: number;
+  pageIndex: number;
   totalCount: number;
 }) {
   const paginationRange = usePagination({
     currentPage: pageIndex,
+    pageSize,
     totalCount,
     siblingCount: 1,
-    pageSize: pageSize,
   });
 
   return (

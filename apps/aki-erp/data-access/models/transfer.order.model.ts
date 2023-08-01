@@ -86,7 +86,7 @@ export interface TransferOrder {
    * @type {Date}
    * @memberof TransferOrder
    */
-  transferTime?: Date;
+  transferTime: Date;
   /**
    *
    * @type {number}
