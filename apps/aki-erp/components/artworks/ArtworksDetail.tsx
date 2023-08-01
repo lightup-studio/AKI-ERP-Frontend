@@ -9,7 +9,7 @@ import {
   fetchArtworkDetailByDisplayId,
 } from 'data-access/apis/artworks.api';
 import { uploadImageToS3 } from 'data-access/apis/files.api';
-import { ArtworkDetail } from 'data-access/models';
+import { ArtworkDetail, Status } from 'data-access/models';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { showError, showSuccess } from 'utils/swalUtil';
 import * as yup from 'yup';
@@ -125,13 +125,12 @@ const ArtworksDetail = () => {
     watch,
   } = useForm<ArtworkDetail>({
     defaultValues: {
-      warehouseId: null,
       zhName: '',
       enName: '',
       imageUrl: '',
       thumbnailUrl: '',
       countryCode: '',
-      status: 'Draft',
+      status: Status.Draft,
       artists: [{ enName: '', zhName: '' }],
       yearRangeStart: null,
       yearRangeEnd: null,
@@ -678,7 +677,7 @@ const ArtworksDetail = () => {
                         onChange: (e) =>
                           setValue(
                             'warehouseId',
-                            e.target.value === '' ? null : parseInt(e.target.value, 10)
+                            e.target.value === '' ? undefined : parseInt(e.target.value, 10)
                           ),
                       })}
                     >

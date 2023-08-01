@@ -15,7 +15,7 @@ import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtw
 import { inputColumn, selectColumn, useArtworkTable } from '@utils/hooks/useArtworkTable';
 import useSelectionList from '@utils/hooks/useSelectionList';
 import classnames from 'classnames';
-import { ArtworkDetail } from 'data-access/models';
+import { ArtworkDetail, Status } from 'data-access/models';
 import Link from 'next/link';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
 import { showConfirm, showSuccess } from 'utils/swalUtil';
@@ -233,7 +233,7 @@ const ArtworksSelector = ({
   ];
 
   const { dataQuery, table, tableBlock } = useArtworkTable({
-    status: 'Enabled',
+    status: Status.Enabled,
     columns,
     selectItems,
   });
