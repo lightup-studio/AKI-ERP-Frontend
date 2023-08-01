@@ -10,7 +10,6 @@ export const fetchLendOrder = async (
   const url = '/api/Order/lend';
   const query = new URLSearchParams();
 
-  query.append('status', status);
   [...params.entries()].forEach(([key, value]) => {
     if (key === 'nationalities') return query.append('countryCode', value);
     if (key === 'artists') return query.append('artistName', value);
@@ -23,7 +22,10 @@ export const fetchLendOrder = async (
     query.append(key, value);
   });
 
-  const res = await axios.get<Pagination<LendOrder>>(`${url}?${query.toString()}`);
+  const res = await axios.get<Pagination<LendOrder>>(
+    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`
+  );
+
   return res.data;
 };
 

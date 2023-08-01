@@ -87,7 +87,7 @@ export interface RepairOrder {
    * @type {number}
    * @memberof RepairOrder
    */
-  id?: number;
+  id: number;
   /**
    *
    * @type {string}

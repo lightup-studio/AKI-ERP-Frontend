@@ -87,7 +87,7 @@ export interface LendReturnOrder {
    * @type {number}
    * @memberof LendReturnOrder
    */
-  id?: number;
+  id: number;
   /**
    *
    * @type {string}

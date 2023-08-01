@@ -87,7 +87,7 @@ export interface SalesOrder {
    * @type {number}
    * @memberof SalesOrder
    */
-  id?: number;
+  id: number;
   /**
    *
    * @type {string}

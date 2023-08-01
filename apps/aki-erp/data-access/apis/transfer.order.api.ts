@@ -15,7 +15,6 @@ export const fetchTransferOrder = async (
   const url = '/api/Order/transfer';
   const query = new URLSearchParams();
 
-  query.append('status', status);
   [...params.entries()].forEach(([key, value]) => {
     if (key === 'nationalities') return query.append('countryCode', value);
     if (key === 'artists') return query.append('artistName', value);
@@ -28,7 +27,10 @@ export const fetchTransferOrder = async (
     query.append(key, value);
   });
 
-  const res = await axios.get<Pagination<TransferOrder>>(`${url}?${query.toString()}`);
+  const res = await axios.get<Pagination<TransferOrder>>(
+    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`
+  );
+
   return res.data;
 };
 

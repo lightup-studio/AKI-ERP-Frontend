@@ -74,7 +74,7 @@ export interface TransferOrder {
    * @type {number}
    * @memberof TransferOrder
    */
-  id?: number;
+  id: number;
   /**
    *
    * @type {string}

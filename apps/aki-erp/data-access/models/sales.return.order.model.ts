@@ -87,7 +87,7 @@ export interface ReturnSalesOrder {
    * @type {number}
    * @memberof ReturnSalesOrder
    */
-  id?: number;
+  id: number;
   /**
    *
    * @type {string}

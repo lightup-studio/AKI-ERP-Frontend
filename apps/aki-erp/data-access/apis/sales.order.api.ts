@@ -15,7 +15,6 @@ export const fetchSalesOrder = async (
   const url = '/api/Order/sales';
   const query = new URLSearchParams();
 
-  query.append('status', status);
   [...params.entries()].forEach(([key, value]) => {
     if (key === 'nationalities') return query.append('countryCode', value);
     if (key === 'artists') return query.append('artistName', value);
@@ -28,7 +27,10 @@ export const fetchSalesOrder = async (
     query.append(key, value);
   });
 
-  const res = await axios.get<Pagination<SalesOrder>>(`${url}?${query.toString()}`);
+  const res = await axios.get<Pagination<SalesOrder>>(
+    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`
+  );
+
   return res.data;
 };
 
