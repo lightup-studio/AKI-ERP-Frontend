@@ -1,7 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
 
-interface TextFieldProps extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
+interface TextFieldProps
+  extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
   errorMsg?: string;
 }
 
