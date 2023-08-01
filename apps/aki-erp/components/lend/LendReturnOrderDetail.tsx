@@ -10,7 +10,7 @@ import {
   salesTypeOptionMap,
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
-import { createLendOrder, fetchLendOrderId } from '@data-access/apis';
+import { createLendReturnOrder, fetchLendReturnOrderId } from '@data-access/apis';
 import {
   CheckIcon,
   PencilSquareIcon,
@@ -24,7 +24,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { CellContext, ColumnDef, Row } from '@tanstack/react-table';
 import { useTable } from '@utils/hooks';
 import useFieldForm, { FieldConfig } from '@utils/hooks/useFieldForm';
-import { ArtworkDetail, CreateOrUpdateLendOrderRequest, Status } from 'data-access/models';
+import { ArtworkDetail, CreateOrUpdateLendReturnOrderRequest, Status } from 'data-access/models';
 import dateFnsFormat from 'date-fns/format';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
@@ -34,12 +34,12 @@ import * as yup from 'yup';
 
 type FormData = {
   lendDepartment?: string;
-  lendTime?: Date;
+  lendReturnTime?: Date;
   contactPersonInformation?: {
     name?: string;
     phone?: string;
   };
-  receiverInformation?: {
+  returnerInformation?: {
     name?: string;
     phone?: string;
     address?: string;
@@ -49,12 +49,12 @@ type FormData = {
 
 const schema = yup.object().shape({
   lendDepartment: yup.string().required('必填項目'),
-  lendTime: yup.date().required('必填項目'),
+  lendReturnTime: yup.date().required('必填項目'),
   contactPersonInformation: yup.object({
     name: yup.string().required('必填項目'),
     phone: yup.string().required('必填項目'),
   }),
-  receiverInformation: yup.object({
+  returnerInformation: yup.object({
     name: yup.string().required('必填項目'),
     phone: yup.string().required('必填項目'),
     address: yup.string().required('必填項目'),
@@ -62,11 +62,11 @@ const schema = yup.object().shape({
   memo: yup.string().required('必填項目'),
 });
 
-interface LendOrderDetailProps {
+interface LendReturnOrderDetailProps {
   disabled?: boolean;
 }
 
-const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
+const LendReturnOrderDetail: React.FC<LendReturnOrderDetailProps> = ({ disabled }) => {
   const router = useRouter();
   const { id } = useParams();
 
@@ -79,7 +79,7 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
     },
     {
       type: 'DATE',
-      name: 'lendTime',
+      name: 'lendReturnTime',
       label: '借展日期',
       disabled: disabled,
       validated: yup.date().required('必填項目'),
@@ -98,19 +98,19 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
     },
     {
       type: 'TEXT',
-      name: 'receiverInformation.name',
+      name: 'returnerInformation.name',
       label: '收件人',
       disabled: disabled,
     },
     {
       type: 'TEXT',
-      name: 'receiverInformation.phone',
+      name: 'returnerInformation.phone',
       label: '收件人電話',
       disabled: disabled,
     },
     {
       type: 'TEXT',
-      name: 'receiverInformation.address',
+      name: 'returnerInformation.address',
       label: '地址',
       disabled: disabled,
     },
@@ -130,20 +130,24 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
   const [artworks, setArtworks] = useState<ArtworkDetail[]>([]);
   const [isOpenArtworksSelector, setIsOpenArtworksSelector] = useState(false);
 
-  const { data, isLoading } = useQuery(['fetchLendOrderId', id], () => fetchLendOrderId(+id), {
-    enabled: !!disabled,
-    keepPreviousData: true,
-  });
+  const { data, isLoading } = useQuery(
+    ['fetchLendReturnOrderId', id],
+    () => fetchLendReturnOrderId(+id),
+    {
+      enabled: !!disabled,
+      keepPreviousData: true,
+    }
+  );
 
   useEffect(() => {
     if (!data) return;
 
-    const lendTime = data.lendTime
-      ? (parseDate(dateFnsFormat(new Date(data.lendTime), 'yyyy-MM-dd')) as unknown as Date)
+    const lendReturnTime = data.lendReturnTime
+      ? (parseDate(dateFnsFormat(new Date(data.lendReturnTime), 'yyyy-MM-dd')) as unknown as Date)
       : undefined;
 
     setValue('lendDepartment', data.lendDepartment);
-    setValue('lendTime', lendTime);
+    setValue('lendReturnTime', lendReturnTime);
     setValue('memo', data.memo);
   }, [data]);
 
@@ -356,7 +360,7 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
   });
 
   const mutation = useMutation({
-    mutationFn: (data: CreateOrUpdateLendOrderRequest) => createLendOrder(data),
+    mutationFn: (data: CreateOrUpdateLendReturnOrderRequest) => createLendReturnOrder(data),
     onSuccess: async () => {
       await showSuccess('新增成功！');
       router.back();
@@ -368,7 +372,7 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
 
   const onSubmit = async (formData: FormData) => {
     const { isConfirmed } = await showConfirm({
-      title: '確定新增借出單？',
+      title: '確定新增借出歸還單？',
       icon: 'question',
     });
 
@@ -376,13 +380,13 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
     await mutation.mutateAsync({
       artworkIdList: Object.values(rowSelection).map((row) => row.id),
       status: Status.Enabled,
-      lendTime: formData.lendTime,
+      lendReturnTime: formData.lendReturnTime,
       lendDepartment: formData.lendDepartment,
-      receiverInformation: formData.receiverInformation,
+      returnerInformation: formData.returnerInformation,
       contactPersonInformation: formData.contactPersonInformation,
       memo: formData.memo,
       metadata: {
-        storeType: StoreType.LEND,
+        storeType: StoreType.RETURNED_LEND_OR_RETURNED_REPAIR,
         lendDepartment: formData.lendDepartment,
       },
     });
@@ -468,4 +472,4 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
   );
 };
 
-export default LendOrderDetail;
+export default LendReturnOrderDetail;

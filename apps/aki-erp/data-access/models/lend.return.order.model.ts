@@ -25,7 +25,7 @@ export interface CreateOrUpdateLendReturnOrderRequest {
    * @type {Date}
    * @memberof CreateOrUpdateLendReturnOrderRequest
    */
-  lendTime?: Date;
+  lendReturnTime?: Date;
   /**
    *
    * @type {string}
@@ -43,7 +43,7 @@ export interface CreateOrUpdateLendReturnOrderRequest {
    * @type {ContactInformation}
    * @memberof CreateOrUpdateLendReturnOrderRequest
    */
-  receiverInformation?: ContactInformation;
+  returnerInformation?: ContactInformation;
   /**
    *
    * @type {string}
@@ -99,7 +99,7 @@ export interface LendReturnOrder {
    * @type {Date}
    * @memberof LendReturnOrder
    */
-  lendTime?: Date;
+  lendReturnTime?: Date;
   /**
    *
    * @type {string}
@@ -117,7 +117,7 @@ export interface LendReturnOrder {
    * @type {ContactInformation}
    * @memberof LendReturnOrder
    */
-  receiverInformation?: ContactInformation;
+  returnerInformation?: ContactInformation;
   /**
    *
    * @type {string}
