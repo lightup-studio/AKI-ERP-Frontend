@@ -1,7 +1,7 @@
 import {
   CreateOrUpdateReturnSalesOrderRequest,
+  Pagination,
   ReturnSalesOrder,
-  ReturnSalesOrderIPagging,
   Status,
 } from '@data-access/models';
 import axios from 'axios';
@@ -9,7 +9,7 @@ import axios from 'axios';
 export const fetchReturnSalesOrder = async (
   status: Status,
   queryString?: string
-): Promise<ReturnSalesOrderIPagging> => {
+): Promise<Pagination<ReturnSalesOrder>> => {
   const params = new URLSearchParams(queryString);
 
   const url = '/api/Order/salesReturn';
@@ -17,17 +17,18 @@ export const fetchReturnSalesOrder = async (
 
   query.append('status', status);
   [...params.entries()].forEach(([key, value]) => {
-    if (key === 'nationalities') query.append('countryCode', value);
-    if (key === 'artists') query.append('artistName', value);
-    if (key === 'storeTypes') query.append('metadatas', `{"storeType":"${value}"}`);
-    if (key === 'salesTypes') query.append('metadatas', `{"salesType":"${value}"}`);
-    if (key === 'assetsTypes') query.append('metadatas', `{"assetsType":"${value}"}`);
-    if (key === 'serialNumbers') query.append('metadatas', `{"serialNumber":"${value}"}`);
-    if (key === 'pageIndex') query.append('offset', value);
-    if (key === 'pageSize') query.append('take', value);
+    if (key === 'nationalities') return query.append('countryCode', value);
+    if (key === 'artists') return query.append('artistName', value);
+    if (key === 'storeTypes') return query.append('metadatas', `{"storeType":"${value}"}`);
+    if (key === 'salesTypes') return query.append('metadatas', `{"salesType":"${value}"}`);
+    if (key === 'assetsTypes') return query.append('metadatas', `{"assetsType":"${value}"}`);
+    if (key === 'serialNumbers') return query.append('metadatas', `{"serialNumber":"${value}"}`);
+    if (key === 'pageIndex') return query.append('offset', value);
+    if (key === 'pageSize') return query.append('take', value);
+    query.append(key, value);
   });
 
-  const res = await axios.get<ReturnSalesOrderIPagging>(`${url}?${query.toString()}`);
+  const res = await axios.get<Pagination<ReturnSalesOrder>>(`${url}?${query.toString()}`);
   return res.data;
 };
 
@@ -63,7 +64,9 @@ export const fetchReturnSalesOrderId = async (id: number): Promise<ReturnSalesOr
   return res.data;
 };
 
-export const fetchReturnSalesOrderDIDdisplayId = async (displayId: string): Promise<ReturnSalesOrder> => {
+export const fetchReturnSalesOrderDIDdisplayId = async (
+  displayId: string
+): Promise<ReturnSalesOrder> => {
   const url = '/api/Order/salesReturn';
 
   const res = await axios.get(`${url}/DID:${displayId}`);

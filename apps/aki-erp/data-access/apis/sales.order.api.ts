@@ -1,7 +1,7 @@
 import {
   CreateOrUpdateSalesOrderRequest,
+  Pagination,
   SalesOrder,
-  SalesOrderIPagging,
   Status,
 } from '@data-access/models';
 import axios from 'axios';
@@ -9,7 +9,7 @@ import axios from 'axios';
 export const fetchSalesOrder = async (
   status: Status,
   queryString?: string
-): Promise<SalesOrderIPagging> => {
+): Promise<Pagination<SalesOrder>> => {
   const params = new URLSearchParams(queryString);
 
   const url = '/api/Order/sales';
@@ -17,17 +17,18 @@ export const fetchSalesOrder = async (
 
   query.append('status', status);
   [...params.entries()].forEach(([key, value]) => {
-    if (key === 'nationalities') query.append('countryCode', value);
-    if (key === 'artists') query.append('artistName', value);
-    if (key === 'storeTypes') query.append('metadatas', `{"storeType":"${value}"}`);
-    if (key === 'salesTypes') query.append('metadatas', `{"salesType":"${value}"}`);
-    if (key === 'assetsTypes') query.append('metadatas', `{"assetsType":"${value}"}`);
-    if (key === 'serialNumbers') query.append('metadatas', `{"serialNumber":"${value}"}`);
-    if (key === 'pageIndex') query.append('offset', value);
-    if (key === 'pageSize') query.append('take', value);
+    if (key === 'nationalities') return query.append('countryCode', value);
+    if (key === 'artists') return query.append('artistName', value);
+    if (key === 'storeTypes') return query.append('metadatas', `{"storeType":"${value}"}`);
+    if (key === 'salesTypes') return query.append('metadatas', `{"salesType":"${value}"}`);
+    if (key === 'assetsTypes') return query.append('metadatas', `{"assetsType":"${value}"}`);
+    if (key === 'serialNumbers') return query.append('metadatas', `{"serialNumber":"${value}"}`);
+    if (key === 'pageIndex') return query.append('offset', value);
+    if (key === 'pageSize') return query.append('take', value);
+    query.append(key, value);
   });
 
-  const res = await axios.get<SalesOrderIPagging>(`${url}?${query.toString()}`);
+  const res = await axios.get<Pagination<SalesOrder>>(`${url}?${query.toString()}`);
   return res.data;
 };
 

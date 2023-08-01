@@ -78,44 +78,6 @@ export interface CreateOrUpdateReturnSalesOrderRequest {
 /**
  *
  * @export
- * @interface ReturnSalesOrderIPagging
- */
-export interface ReturnSalesOrderIPagging {
-  /**
-   *
-   * @type {Array<ReturnSalesOrder>}
-   * @memberof ReturnSalesOrderIPagging
-   */
-  data?: Array<ReturnSalesOrder>;
-  /**
-   *
-   * @type {number}
-   * @memberof ReturnSalesOrderIPagging
-   */
-  offset?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof ReturnSalesOrderIPagging
-   */
-  take?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof ReturnSalesOrderIPagging
-   */
-  totalCount?: number;
-  /**
-   *
-   * @type {boolean}
-   * @memberof ReturnSalesOrderIPagging
-   */
-  hasNextPage?: boolean;
-}
-
-/**
- *
- * @export
  * @interface ReturnSalesOrder
  */
 export interface ReturnSalesOrder {

@@ -78,44 +78,6 @@ export interface CreateOrUpdateSalesOrderRequest {
 /**
  *
  * @export
- * @interface SalesOrderIPagging
- */
-export interface SalesOrderIPagging {
-  /**
-   *
-   * @type {Array<SalesOrder>}
-   * @memberof SalesOrderIPagging
-   */
-  data?: Array<SalesOrder>;
-  /**
-   *
-   * @type {number}
-   * @memberof SalesOrderIPagging
-   */
-  offset?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof SalesOrderIPagging
-   */
-  take?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof SalesOrderIPagging
-   */
-  totalCount?: number;
-  /**
-   *
-   * @type {boolean}
-   * @memberof SalesOrderIPagging
-   */
-  hasNextPage?: boolean;
-}
-
-/**
- *
- * @export
  * @interface SalesOrder
  */
 export interface SalesOrder {

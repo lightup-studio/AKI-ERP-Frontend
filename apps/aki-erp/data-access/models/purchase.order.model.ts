@@ -14,44 +14,6 @@ export enum Status {
 /**
  *
  * @export
- * @interface PurchaseOrderIPagging
- */
-export interface PurchaseOrderIPagging {
-  /**
-   *
-   * @type {Array<PurchaseOrder>}
-   * @memberof PurchaseOrderIPagging
-   */
-  data?: Array<PurchaseOrder>;
-  /**
-   *
-   * @type {number}
-   * @memberof PurchaseOrderIPagging
-   */
-  offset: number;
-  /**
-   *
-   * @type {number}
-   * @memberof PurchaseOrderIPagging
-   */
-  take: number;
-  /**
-   *
-   * @type {number}
-   * @memberof PurchaseOrderIPagging
-   */
-  totalCount: number;
-  /**
-   *
-   * @type {boolean}
-   * @memberof PurchaseOrderIPagging
-   */
-  hasNextPage: boolean;
-}
-
-/**
- *
- * @export
  * @interface PurchaseOrder
  */
 export interface PurchaseOrder {
