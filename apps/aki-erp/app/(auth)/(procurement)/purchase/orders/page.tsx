@@ -2,28 +2,25 @@
 
 import { useState } from 'react';
 
-import { ArtworkDetail, PurchaseOrder, Status } from 'data-access/models';
-import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
-
-import PurchaseOrderBatchUpdateDialog from '@components/purchase/PurchaseOrderBatchUpdateDialog';
-import IndeterminateCheckbox from '@components/shared/field/IndeterminateCheckbox';
-import SearchInput from '@components/shared/field/SearchField';
+import { PurchaseOrderBatchUpdateDialog } from '@components/purchase';
+import { IndeterminateCheckbox, SearchField } from '@components/shared/field';
 import {
   assetsTypeOptionMap,
   salesTypeOptionMap,
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
-import { deletePurchaseOrderId, patchArtworksBatchId } from '@data-access/apis';
+import { deletePurchaseOrderId, fetchPurchaseOrder, patchArtworksBatchId } from '@data-access/apis';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
+import { useSelectionList, useTable } from '@utils/hooks';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
-import { usePurchaseOrderTable } from '@utils/hooks/usePurchaseOrderTable';
-import useSelectionList from '@utils/hooks/useSelectionList';
 import { showConfirm } from '@utils/swalUtil';
+import { ArtworkDetail, PurchaseOrder, Status } from 'data-access/models';
+import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
 
 const PurchaseOrders = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,7 +46,7 @@ const PurchaseOrders = () => {
       header: ({ table }) => (
         <div className="flex items-center">
           <IndeterminateCheckbox
-            {...getSelectAllProps(table.getRowModel().rows, dataQuery.data?.totalCount || 0)}
+            {...getSelectAllProps(table.getRowModel().rows, data?.totalCount || 0)}
           />
         </div>
       ),
@@ -198,10 +195,18 @@ const PurchaseOrders = () => {
     },
   ];
 
-  const { dataQuery, table, tableBlock } = usePurchaseOrderTable({
-    status: Status.Enabled,
+  const params = new URLSearchParams(searchParams);
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ['purchaseOrder', params.toString()],
+    queryFn: () => fetchPurchaseOrder(Status.Enabled, params.toString()),
+    enabled: !!selectItems,
+    keepPreviousData: true,
+  });
+
+  const { table, tableBlock } = useTable<PurchaseOrder>({
+    data,
     columns,
-    selectItems,
+    isLoading,
   });
 
   const deleteMutation = useMutation(
@@ -220,7 +225,7 @@ const PurchaseOrders = () => {
     {
       onSuccess: () => {
         clearSelection();
-        dataQuery.refetch();
+        refetch();
       },
     }
   );
@@ -239,7 +244,7 @@ const PurchaseOrders = () => {
     <>
       <div className="card w-full p-6 bg-base-100 shadow-xl">
         <div className="md:w-1/2 mb-3">
-          <SearchInput {...getSearchInputProps()} />
+          <SearchField {...getSearchInputProps()} />
         </div>
 
         <div className="flex gap-2 flex-col md:flex-row">
@@ -305,8 +310,8 @@ const PurchaseOrders = () => {
       </div>
 
       <PurchaseOrderBatchUpdateDialog
+        list={selectedRows}
         isOpen={isOpen}
-        data={selectedRows}
         onClose={() => setIsOpen(false)}
       ></PurchaseOrderBatchUpdateDialog>
     </>

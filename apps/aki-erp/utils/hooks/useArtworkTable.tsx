@@ -4,7 +4,7 @@ import { Option as ComboboxOption } from '@components/shared/MyCombobox';
 import Table from '@components/shared/Table';
 import TablePagination from '@components/shared/TablePagination';
 import { fetchArtworkList2, patchArtwork } from '@data-access/apis/artworks.api';
-import { ArtworkDetail } from '@data-access/models';
+import { ArtworkDetail, Status } from '@data-access/models';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   CellContext,
@@ -88,7 +88,7 @@ export const useArtworkTable = ({
   columns,
   selectItems,
 }: {
-  status: ArtworkDetail['status'];
+  status: Status;
   columns: ColumnDef<ArtworkDetail, any>[];
   selectItems?: SelectItem[];
   getSelectAllProps?: ReturnType<typeof useSelectionList>['getSelectAllProps'];

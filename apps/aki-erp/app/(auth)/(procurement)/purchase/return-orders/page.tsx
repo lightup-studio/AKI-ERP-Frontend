@@ -2,23 +2,23 @@
 
 import { useState } from 'react';
 
-import PurchaseOrderBatchUpdateDialog from '@components/purchase/PurchaseOrderBatchUpdateDialog';
-import IndeterminateCheckbox from '@components/shared/field/IndeterminateCheckbox';
-import SearchInput from '@components/shared/field/SearchField';
+import { PurchaseOrderBatchUpdateDialog } from '@components/purchase';
+import { IndeterminateCheckbox, SearchField } from '@components/shared/field';
 import {
   assetsTypeOptionMap,
   salesTypeOptionMap,
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
+import { fetchPurchaseReturnOrder } from '@data-access/apis';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
+import { useQuery } from '@tanstack/react-query';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
+import { useSelectionList, useTable } from '@utils/hooks';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
-import { usePurchaseOrderTable } from '@utils/hooks/usePurchaseOrderTable';
-import useSelectionList from '@utils/hooks/useSelectionList';
-import { ArtworkDetail, PurchaseOrder, Status } from 'data-access/models';
+import { ArtworkDetail, PurchaseReturnOrder, Status } from 'data-access/models';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
@@ -39,15 +39,15 @@ const PurchaseReturnOrders = () => {
   });
 
   const { getSelectAllProps, getSelectItemProps, selectedRowCount, selectedRows } =
-    useSelectionList<PurchaseOrder>();
+    useSelectionList<PurchaseReturnOrder>();
 
-  const columns: ColumnDef<PurchaseOrder, any>[] = [
+  const columns: ColumnDef<PurchaseReturnOrder, any>[] = [
     {
       id: 'select',
       header: ({ table }) => (
         <div className="flex items-center">
           <IndeterminateCheckbox
-            {...getSelectAllProps(table.getRowModel().rows, dataQuery.data?.totalCount || 0)}
+            {...getSelectAllProps(table.getRowModel().rows, data?.totalCount || 0)}
           />
         </div>
       ),
@@ -113,14 +113,14 @@ const PurchaseReturnOrders = () => {
       id: 'media',
       header: '媒材',
       accessorKey: 'artworks.0.metadata',
-      cell: ({ cell }: CellContext<PurchaseOrder, ArtworkDetail['metadata']>) =>
+      cell: ({ cell }: CellContext<PurchaseReturnOrder, ArtworkDetail['metadata']>) =>
         cell.getValue()?.media ?? '無',
     },
     {
       id: 'size',
       header: '尺寸',
       accessorKey: 'artworks.0.metadata',
-      cell: ({ cell }: CellContext<PurchaseOrder, ArtworkDetail['metadata']>) => {
+      cell: ({ cell }: CellContext<PurchaseReturnOrder, ArtworkDetail['metadata']>) => {
         const { length, width, height } = cell.getValue<ArtworkDetail['metadata']>() || {};
         const lengthText = length && `長 ${length}`;
         const widthText = width && `寬 ${width}`;
@@ -158,7 +158,7 @@ const PurchaseReturnOrders = () => {
       id: 'otherInfo',
       header: '其他資訊',
       accessorKey: 'artworks.0.metadata',
-      cell: ({ cell }: CellContext<PurchaseOrder, ArtworkDetail['metadata']>) => {
+      cell: ({ cell }: CellContext<PurchaseReturnOrder, ArtworkDetail['metadata']>) => {
         const { frame, frameDimensions, pedestal, pedestalDimensions, cardboardBox, woodenBox } =
           cell.getValue()?.otherInfo || {};
         if (frame) return `表框${frameDimensions && `，尺寸 ${frameDimensions}`}`;
@@ -172,7 +172,7 @@ const PurchaseReturnOrders = () => {
       id: 'storeType',
       header: '庫存狀態',
       accessorKey: 'artworks.0.metadata',
-      cell: ({ cell }: CellContext<PurchaseOrder, ArtworkDetail['metadata']>) => {
+      cell: ({ cell }: CellContext<PurchaseReturnOrder, ArtworkDetail['metadata']>) => {
         const storeTypeId = cell.getValue()?.storeType ?? 'inStock';
         return storeTypeOptionMap[storeTypeId].label;
       },
@@ -181,7 +181,7 @@ const PurchaseReturnOrders = () => {
       id: 'salesType',
       header: '銷售狀態',
       accessorKey: 'artworks.0.metadata',
-      cell: ({ getValue }: CellContext<PurchaseOrder, ArtworkDetail['metadata']>) => {
+      cell: ({ getValue }: CellContext<PurchaseReturnOrder, ArtworkDetail['metadata']>) => {
         const salesTypeId = getValue()?.salesType ?? 'unsold';
         return salesTypeOptionMap[salesTypeId].label;
       },
@@ -190,24 +190,32 @@ const PurchaseReturnOrders = () => {
       id: 'assetsType',
       header: '資產類型',
       accessorKey: 'artworks.0.metadata',
-      cell: ({ getValue }: CellContext<PurchaseOrder, ArtworkDetail['metadata']>) => {
+      cell: ({ getValue }: CellContext<PurchaseReturnOrder, ArtworkDetail['metadata']>) => {
         const assetsTypeId = getValue()?.assetsType ?? 'A';
         return assetsTypeOptionMap[assetsTypeId].label;
       },
     },
   ];
 
-  const { dataQuery, table, tableBlock } = usePurchaseOrderTable({
-    status: Status.Disabled,
+  const params = new URLSearchParams(searchParams);
+  const { data, isLoading } = useQuery({
+    queryKey: ['PurchaseReturnOrder', params.toString()],
+    queryFn: () => fetchPurchaseReturnOrder(Status.Enabled, params.toString()),
+    enabled: !!selectItems,
+    keepPreviousData: true,
+  });
+
+  const { table, tableBlock } = useTable<PurchaseReturnOrder>({
+    data,
     columns,
-    selectItems,
+    isLoading,
   });
 
   return (
     <>
       <div className="card w-full p-6 bg-base-100 shadow-xl">
         <div className="md:w-1/2 mb-3">
-          <SearchInput {...getSearchInputProps()} />
+          <SearchField {...getSearchInputProps()} />
         </div>
 
         <div className="flex gap-2 flex-col md:flex-row">
@@ -269,8 +277,8 @@ const PurchaseReturnOrders = () => {
       </div>
 
       <PurchaseOrderBatchUpdateDialog
+        list={selectedRows}
         isOpen={isOpen}
-        data={selectedRows}
         onClose={() => setIsOpen(false)}
       ></PurchaseOrderBatchUpdateDialog>
     </>

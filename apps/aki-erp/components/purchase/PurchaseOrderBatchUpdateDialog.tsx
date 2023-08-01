@@ -2,26 +2,30 @@
 
 import { useEffect } from 'react';
 
-import classnames from 'classnames';
-
-import { PurchaseOrder } from '@data-access/models';
+import { ArtworkDetail } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
+import classnames from 'classnames';
 import PurchaseOrderArtworkTable from './PurchaseOrderArtworkTable';
 
-const PurchaseOrderBatchUpdateDialog = ({
-  isOpen = false,
-  data,
-  onClose,
-}: {
+interface PurchaseOrderList {
+  id: number;
+  artworks?: ArtworkDetail[];
+}
+
+interface PurchaseOrderBatchUpdateDialogProsp {
+  list: PurchaseOrderList[];
   isOpen: boolean;
-  data: PurchaseOrder[];
   onClose?: () => void;
+}
+
+const PurchaseOrderBatchUpdateDialog: React.FC<PurchaseOrderBatchUpdateDialogProsp> = ({
+  list,
+  isOpen = false,
+  onClose,
 }) => {
   useEffect(() => {
     const mainElement = document.querySelector('main');
-    if (!mainElement) {
-      return;
-    }
+    if (!mainElement) return;
     mainElement.scrollTo(0, 0);
     mainElement.style.overflow = isOpen ? 'hidden' : 'auto';
 
@@ -43,7 +47,7 @@ const PurchaseOrderBatchUpdateDialog = ({
 
         <div className="my-3 mr-2 px-4 min-h-[60vh] overflow-y-auto">
           <div className="relative flex flex-col gap-2">
-            {data
+            {list
               .filter((item) => item.artworks?.length)
               .map((item) => (
                 <div key={item.id}>
@@ -62,13 +66,13 @@ const PurchaseOrderBatchUpdateDialog = ({
           <button className="btn btn-success">
             <CheckIcon className="w-4"></CheckIcon> 儲存
           </button>
-          <button className="btn btn-error btn-base-200" type="button" onClick={() => onClose?.()}>
+          <button className="btn btn-error btn-base-200" type="button" onClick={onClose}>
             <XMarkIcon className="w-4"></XMarkIcon> 取消
           </button>
         </div>
       </div>
 
-      <label className="modal-backdrop" onClick={() => onClose?.()}>
+      <label className="modal-backdrop" onClick={onClose}>
         Close
       </label>
     </div>
