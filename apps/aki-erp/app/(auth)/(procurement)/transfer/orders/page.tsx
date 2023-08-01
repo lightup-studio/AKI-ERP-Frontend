@@ -1,7 +1,7 @@
 'use client';
 
+import { ArtworksBatchUpdateDialog } from '@components/artworks';
 import { IndeterminateCheckbox, SearchField } from '@components/shared/field';
-import { TransferOrderBatchUpdateDialog } from '@components/transfer';
 import {
   assetsTypeOptionMap,
   salesTypeOptionMap,
@@ -308,11 +308,11 @@ const TransferOrders = () => {
         <div className="h-full w-full pb-6 bg-base-100 text-center">{tableBlock}</div>
       </div>
 
-      <TransferOrderBatchUpdateDialog
+      <ArtworksBatchUpdateDialog
         list={selectedRows}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-      ></TransferOrderBatchUpdateDialog>
+      ></ArtworksBatchUpdateDialog>
     </>
   );
 };

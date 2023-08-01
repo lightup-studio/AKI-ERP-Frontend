@@ -1,3 +1,4 @@
+export { default as ArtworksBatchUpdateDialog } from './ArtworksBatchUpdateDialog';
 export { default as ArtworksDetail } from './ArtworksDetail';
 export { default as ArtworksList } from './ArtworksList';
 export { default as ArtworksSelector } from './ArtworksSelector';

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { PurchaseOrderBatchUpdateDialog } from '@components/purchase';
+import { ArtworksBatchUpdateDialog } from '@components/artworks';
 import { IndeterminateCheckbox, SearchField } from '@components/shared/field';
 import {
   assetsTypeOptionMap,
@@ -276,11 +276,11 @@ const PurchaseReturnOrders = () => {
         <div className="h-full w-full pb-6 bg-base-100 text-center">{tableBlock}</div>
       </div>
 
-      <PurchaseOrderBatchUpdateDialog
+      <ArtworksBatchUpdateDialog
         list={selectedRows}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-      ></PurchaseOrderBatchUpdateDialog>
+      ></ArtworksBatchUpdateDialog>
     </>
   );
 };

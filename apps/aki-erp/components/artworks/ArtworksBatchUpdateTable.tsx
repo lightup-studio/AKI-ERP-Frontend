@@ -4,12 +4,12 @@ import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
 import { UseFormRegister } from 'react-hook-form';
 
-interface TransferOrderArtworkTableProps {
+interface ArtworksBatchUpdateTableProps {
   data?: ArtworkDetail<ArtworkMetadata>[];
   register: UseFormRegister<any>;
 }
 
-const TransferOrderArtworkTable: React.FC<TransferOrderArtworkTableProps> = ({
+const ArtworksBatchUpdateTable: React.FC<ArtworksBatchUpdateTableProps> = ({
   data = [],
   register,
 }) => {
@@ -84,4 +84,4 @@ const TransferOrderArtworkTable: React.FC<TransferOrderArtworkTableProps> = ({
   return <Table table={table} />;
 };
 
-export default TransferOrderArtworkTable;
+export default ArtworksBatchUpdateTable;
