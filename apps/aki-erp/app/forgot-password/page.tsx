@@ -1,37 +1,40 @@
 'use client';
 
-import InputText from '@components/shared/field/TextField';
 import CheckCircleIcon from '@heroicons/react/24/solid/CheckCircleIcon';
+import { yupResolver } from '@hookform/resolvers/yup';
+import useFieldForm, { FieldConfig } from '@utils/hooks/useFieldForm';
 import Link from 'next/link';
-import { FormEvent, useState } from 'react';
+import { useState } from 'react';
+import * as yup from 'yup';
+
+type FormData = {
+  emailId: string;
+};
+
+const schema = yup.object().shape({
+  emailId: yup.string().required('Email Id is required! (use any value)'),
+});
+
+const configs: FieldConfig<FormData>[] = [
+  {
+    type: 'TEXT',
+    name: 'emailId',
+    label: 'Email Id',
+  },
+];
 
 const ForgotPassword = () => {
-  const INITIAL_USER_OBJ = {
-    emailId: '',
-  };
-
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
   const [linkSent, setLinkSent] = useState(false);
-  const [userObj, setUserObj] = useState(INITIAL_USER_OBJ);
 
-  const submitForm = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrorMessage('');
+  const { fieldForm, handleSubmit } = useFieldForm({
+    configs: configs,
+    resolver: yupResolver(schema),
+  });
 
-    if (userObj.emailId.trim() === '')
-      return setErrorMessage('Email Id is required! (use any value)');
-    else {
-      setLoading(true);
-      // Call API to send password reset link
-      setLoading(false);
-      setLinkSent(true);
-    }
-  };
-
-  const updateFormValue = ({ updateType, value }: any) => {
-    setErrorMessage('');
-    setUserObj({ ...userObj, [updateType]: value });
+  const onSubmit = (formData: FormData) => {
+    console.log(formData);
+    setLinkSent(true);
   };
 
   return (
@@ -62,19 +65,9 @@ const ForgotPassword = () => {
               <p className="my-8 font-semibold text-center">
                 We will send password reset link on your email Id
               </p>
-              <form onSubmit={(e) => submitForm(e)}>
-                <div className="mb-4">
-                  <InputText
-                    type="emailId"
-                    defaultValue={userObj.emailId}
-                    updateType="emailId"
-                    containerStyle="mt-4"
-                    labelTitle="Email Id"
-                    updateFormValue={updateFormValue}
-                  />
-                </div>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="mb-4">{fieldForm}</div>
 
-                <p className="text-center text-error mt-12">{errorMessage}</p>
                 <button
                   type="submit"
                   className={'btn mt-2 w-full btn-primary' + (loading ? ' loading' : '')}
@@ -85,7 +78,7 @@ const ForgotPassword = () => {
                 <div className="text-center mt-4">
                   Don't have an account yet?{' '}
                   <Link href="/register">
-                    <button className="  inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200">
+                    <button className="inline-block hover:text-primary hover:underline hover:cursor-pointer transition duration-200">
                       Register
                     </button>
                   </Link>

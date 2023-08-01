@@ -42,7 +42,7 @@ const Login = () => {
 
   const { fieldForm, handleSubmit } = useFieldForm({
     configs: configs,
-    resolver: yupResolver<FormData>(schema),
+    resolver: yupResolver(schema),
   });
 
   const mutation = useMutation({
