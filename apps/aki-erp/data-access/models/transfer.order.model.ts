@@ -1,5 +1,5 @@
 import { ArtworkDetail } from './artwork.model';
-import { Status } from './purchase.order.model';
+import { Status } from './general.model';
 
 /**
  *

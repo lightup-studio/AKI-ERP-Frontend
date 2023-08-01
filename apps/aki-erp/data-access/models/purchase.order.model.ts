@@ -1,15 +1,5 @@
 import { ArtworkDetail } from './artwork.model';
-
-/**
- *
- * @export
- * @enum {string}
- */
-export enum Status {
-  Disabled = 'Disabled',
-  Draft = 'Draft',
-  Enabled = 'Enabled',
-}
+import { Status } from './general.model';
 
 /**
  *

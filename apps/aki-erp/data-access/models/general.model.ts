@@ -11,3 +11,9 @@ export interface Pagination<T> {
   pageCount: number;
   totalCount: number;
 }
+
+export enum Status {
+  Disabled = 'Disabled',
+  Draft = 'Draft',
+  Enabled = 'Enabled',
+}

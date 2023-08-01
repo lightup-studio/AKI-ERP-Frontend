@@ -1,5 +1,6 @@
 import { ArtworkDetail } from './artwork.model';
-import { ContactInformation, Status } from './purchase.order.model';
+import { Status } from './general.model';
+import { ContactInformation } from './purchase.order.model';
 
 /**
  *

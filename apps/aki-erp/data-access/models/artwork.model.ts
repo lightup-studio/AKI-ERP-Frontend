@@ -1,4 +1,5 @@
 import { assetsTypeOptions, salesTypeOptions, storeTypeOptions } from '@constants/artwork.constant';
+import { Status } from './general.model';
 
 /**
  * 藝術品物件
@@ -38,7 +39,7 @@ export interface ArtworkDetail<TMetadata = ArtworkMetadata> {
   countryCode: string | null;
   createTime: string | Date;
   lastModifyTime: string | Date;
-  status: 'Disabled' | 'Draft' | 'Enabled';
+  status: Status;
   artists: ArtworkArtist[];
   /** 取代 startYear */
   yearRangeStart?: number | null;

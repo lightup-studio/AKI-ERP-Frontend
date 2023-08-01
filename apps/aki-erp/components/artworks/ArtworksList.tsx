@@ -10,7 +10,7 @@ import {
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
 import { deleteArtworks, patchArtworks } from '@data-access/apis/artworks.api';
-import { ArtworkDetail } from '@data-access/models';
+import { ArtworkDetail, Status } from '@data-access/models';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
 
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
@@ -45,10 +45,14 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
     useSelectionList<ArtworkDetail>();
 
   // temp defined status variable for api break change
-  const status = useMemo(
-    () => (type === 'inventory' ? 'Enabled' : type === 'draft' ? 'Draft' : 'Disabled'),
-    [type]
-  );
+  const status = useMemo<Status>(() => {
+    return type === 'inventory'
+      ? Status.Enabled
+      : type === 'draft'
+      ? Status.Draft
+      : Status.Disabled;
+  }, [type]);
+
   const columns: ColumnDef<ArtworkDetail, any>[] = [
     {
       id: 'select',
@@ -246,7 +250,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
   const enableMutation = useMutation({
     mutationKey: ['enableArtwork'],
     mutationFn: (ids: number[]) =>
-      patchArtworks(ids, { status: 'Enabled', metadata: { storeType: 'inStock' } }),
+      patchArtworks(ids, { status: Status.Enabled, metadata: { storeType: 'inStock' } }),
     onSuccess: () => {
       clearSelection();
       dataQuery.refetch();
