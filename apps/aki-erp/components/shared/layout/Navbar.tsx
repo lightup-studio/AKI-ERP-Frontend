@@ -23,7 +23,9 @@ const Navbar = () => {
         <label htmlFor="left-sidebar-drawer" className="btn btn-primary drawer-button lg:hidden">
           <Bars3Icon className="h-5 inline-block w-5" />
         </label>
-        <PageTitle />
+        <h1 className="text-2xl font-semibold ml-2">
+          <PageTitle />
+        </h1>
       </div>
 
       <div className="order-last">

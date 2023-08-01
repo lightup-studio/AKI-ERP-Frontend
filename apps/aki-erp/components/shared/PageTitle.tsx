@@ -35,9 +35,9 @@ const PageTitle = () => {
   const pathTitle = data[pathId ? pathname.slice(0, lastIndex) : pathname];
 
   return (
-    <h1 className="text-2xl font-semibold ml-2">
+    <>
       {pathTitle} {pathId}
-    </h1>
+    </>
   );
 };
 
