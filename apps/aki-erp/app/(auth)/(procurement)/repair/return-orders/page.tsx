@@ -227,6 +227,7 @@ const RepairReturnOrders = () => {
             metadata: {
               storeType: StoreType.NONE,
               repairDepartment: undefined,
+              returnRepairDepartment: undefined,
             },
           },
         }),

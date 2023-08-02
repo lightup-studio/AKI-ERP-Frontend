@@ -376,6 +376,7 @@ const RepairOrderDetail: React.FC<RepairOrderDetailProps> = ({ disabled }) => {
             metadata: {
               storeType: StoreType.REPAIR,
               repairDepartment: formData.repairDepartment,
+              returnRepairDepartment: undefined,
             },
           },
         }),
