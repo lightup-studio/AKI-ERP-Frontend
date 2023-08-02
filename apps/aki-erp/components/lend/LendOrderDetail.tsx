@@ -143,6 +143,8 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
       : undefined;
 
     setValue('lendDepartment', data.lendDepartment);
+    setValue('receiverInformation', data.receiverInformation);
+    setValue('contactPersonInformation', data.contactPersonInformation);
     setValue('lendTime', lendTime);
     setValue('memo', data.memo);
   }, [data]);

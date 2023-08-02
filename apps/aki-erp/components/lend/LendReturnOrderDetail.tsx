@@ -146,8 +146,10 @@ const LendReturnOrderDetail: React.FC<LendReturnOrderDetailProps> = ({ disabled 
       ? (parseDate(dateFnsFormat(new Date(data.lendReturnTime), 'yyyy-MM-dd')) as unknown as Date)
       : undefined;
 
-    setValue('lendDepartment', data.lendDepartment);
     setValue('lendReturnTime', lendReturnTime);
+    setValue('lendDepartment', data.lendDepartment);
+    setValue('returnerInformation', data.returnerInformation);
+    setValue('contactPersonInformation', data.contactPersonInformation);
     setValue('memo', data.memo);
   }, [data]);
 
