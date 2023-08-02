@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import { ArtworksBatchUpdateDialog } from '@components/artworks';
-import { IndeterminateCheckbox, SearchField } from '@components/shared/field';
+import { SearchField } from '@components/shared/field';
 import {
   assetsTypeOptionMap,
   salesTypeOptionMap,
@@ -16,7 +16,7 @@ import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
 import { useQuery } from '@tanstack/react-query';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
-import { useSelectionList, useTable } from '@utils/hooks';
+import { useTable } from '@utils/hooks';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import { ArtworkDetail, PurchaseReturnOrder, Status } from 'data-access/models';
 import Link from 'next/link';
@@ -38,25 +38,7 @@ const PurchaseReturnOrders = () => {
     onSelectionChange,
   });
 
-  const { getSelectAllProps, getSelectItemProps, selectedRowCount, selectedRows } =
-    useSelectionList<PurchaseReturnOrder>();
-
   const columns: ColumnDef<PurchaseReturnOrder, any>[] = [
-    {
-      id: 'select',
-      header: ({ table }) => (
-        <div className="flex items-center">
-          <IndeterminateCheckbox
-            {...getSelectAllProps(table.getRowModel().rows, data?.totalCount || 0)}
-          />
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className="flex items-center">
-          <IndeterminateCheckbox {...getSelectItemProps(row)} />
-        </div>
-      ),
-    },
     {
       header: '編號',
       accessorKey: 'artworks.0.displayId',
@@ -205,11 +187,12 @@ const PurchaseReturnOrders = () => {
     keepPreviousData: true,
   });
 
-  const { table, tableBlock } = useTable<PurchaseReturnOrder>({
-    data,
-    columns,
-    isLoading,
-  });
+  const { table, tableBlock, selectedRows, selectedRowsCount, clearRowSelection } =
+    useTable<PurchaseReturnOrder>({
+      data,
+      columns,
+      isLoading,
+    });
 
   return (
     <>
@@ -253,16 +236,16 @@ const PurchaseReturnOrders = () => {
         <div className="divider mt-2 mb-0"></div>
 
         <div className="flex items-center gap-2 py-2 mb-2">
-          <span>已選擇 {selectedRowCount} 筆</span>
+          <span>已選擇 {selectedRowsCount} 筆</span>
           <button
             className="btn btn-success"
-            disabled={selectedRowCount === 0}
+            disabled={selectedRowsCount === 0}
             onClick={() => setIsOpen(true)}
           >
             <PencilIcon className="h-5 w-5"></PencilIcon>
             編輯
           </button>
-          <button className="btn btn-error" disabled={selectedRowCount === 0}>
+          <button className="btn btn-error" disabled={selectedRowsCount === 0}>
             <TrashIcon className="h-5 w-5"></TrashIcon>
             刪除
           </button>

@@ -1,16 +1,15 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import { ArtworksOrderAddBtn } from '@components/artworks';
-import { IndeterminateCheckbox } from '@components/shared/field';
 import {
   assetsTypeOptionMap,
   salesTypeOptionMap,
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/20/solid';
-import { CellContext, ColumnDef, Row } from '@tanstack/react-table';
+import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { useTable } from '@utils/hooks';
 import { ArtworkDetail } from 'data-access/models';
 import Link from 'next/link';
@@ -27,64 +26,9 @@ const useArtworksOrderTable = ({
   disabled,
   isLoading,
 }: useArtworksOrderTableProps) => {
-  const [rowSelection, setRowSelection] = useState<Record<ArtworkDetail['id'], ArtworkDetail>>({});
   const [selectedArtworks, setSelectedArtworks] = useState<ArtworkDetail[]>([]);
 
-  const selectedRowCount = useMemo(() => Object.keys(rowSelection).length, [rowSelection]);
-
-  const handleClose = (artworks: ArtworkDetail[]) => {
-    setSelectedArtworks(artworks);
-  };
-
-  const handleRowSelectChange = (row: Row<ArtworkDetail>) => {
-    const { id } = row.original;
-
-    id in rowSelection ? delete rowSelection[id] : (rowSelection[id] = row.original);
-
-    setRowSelection(structuredClone(rowSelection));
-  };
-
-  const handleAllRowSelectChange = (rows: Row<ArtworkDetail>[]) => {
-    const selectedRows = rows.filter((row) => row.original.id in rowSelection);
-    const isAnyRowSelected = selectedRows.length > 0;
-
-    isAnyRowSelected
-      ? selectedRows.forEach((row) => delete rowSelection[row.original.id])
-      : rows.forEach((row) => (rowSelection[row.original.id] = row.original));
-
-    setRowSelection(structuredClone(rowSelection));
-  };
-
   const columns: ColumnDef<ArtworkDetail, any>[] = [
-    {
-      id: 'select',
-      header: ({ table }) => (
-        <div className="flex items-center">
-          {!disabled && (
-            <IndeterminateCheckbox
-              {...{
-                checked: selectedRowCount > 0 && selectedRowCount > artworks.length,
-                indeterminate: selectedRowCount > 0,
-                onChange: () => handleAllRowSelectChange(table.getRowModel().rows),
-              }}
-            />
-          )}
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className="flex items-center">
-          {!disabled && (
-            <IndeterminateCheckbox
-              {...{
-                checked: row.original.id in rowSelection,
-                indeterminate: false,
-                onChange: () => handleRowSelectChange(row),
-              }}
-            />
-          )}
-        </div>
-      ),
-    },
     {
       header: '編號',
       accessorKey: 'displayId',
@@ -228,21 +172,24 @@ const useArtworksOrderTable = ({
     totalCount: disabled ? artworks.length : selectedArtworks.length,
   };
 
-  const { table, tableBlock } = useTable({
+  const { tableBlock, selectedRowsCount, ...props } = useTable({
     data: tableData,
     columns,
+    disabled,
     isLoading: disabled ? isLoading : false,
   });
 
+  const handleClose = (artworks: ArtworkDetail[]) => {
+    setSelectedArtworks(artworks);
+  };
+
   return {
-    rowSelection,
-    table,
     tableBlock: (
       <>
         {!disabled && (
           <div className="flex items-center gap-2 py-2 mb-2">
-            <span>已選擇 {selectedRowCount} 筆</span>
-            <button className="btn btn-error" disabled={selectedRowCount === 0}>
+            <span>已選擇 {selectedRowsCount} 筆</span>
+            <button className="btn btn-error" disabled={selectedRowsCount === 0}>
               <TrashIcon className="h-5 w-5"></TrashIcon>
               刪除
             </button>
@@ -256,6 +203,8 @@ const useArtworksOrderTable = ({
         {tableBlock}
       </>
     ),
+    selectedRowsCount,
+    ...props,
   };
 };
 

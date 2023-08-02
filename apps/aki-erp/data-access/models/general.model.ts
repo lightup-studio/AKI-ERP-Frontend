@@ -1,3 +1,9 @@
+export enum Status {
+  Disabled = 'Disabled',
+  Draft = 'Draft',
+  Enabled = 'Enabled',
+}
+
 export interface ApiResponse<T> {
   data: T;
   status: string;
@@ -10,10 +16,4 @@ export interface Pagination<T> {
   take: number;
   pageCount: number;
   totalCount: number;
-}
-
-export enum Status {
-  Disabled = 'Disabled',
-  Draft = 'Draft',
-  Enabled = 'Enabled',
 }

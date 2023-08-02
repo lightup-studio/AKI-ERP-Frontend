@@ -1,7 +1,7 @@
 'use client';
 
 import { ArtworksBatchUpdateDialog } from '@components/artworks';
-import { IndeterminateCheckbox, SearchField } from '@components/shared/field';
+import { SearchField } from '@components/shared/field';
 import {
   StoreType,
   assetsTypeOptionMap,
@@ -17,7 +17,7 @@ import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
-import { useSelectionList, useTable } from '@utils/hooks';
+import { useTable } from '@utils/hooks';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import { showConfirm } from '@utils/swalUtil';
 import { ArtworkDetail, SalesReturnOrder, Status } from 'data-access/models';
@@ -41,25 +41,7 @@ const ShipmentReturnOrders = () => {
     onSelectionChange,
   });
 
-  const { getSelectAllProps, getSelectItemProps, selectedRowCount, selectedRows, clearSelection } =
-    useSelectionList<SalesReturnOrder>();
-
   const columns: ColumnDef<SalesReturnOrder, any>[] = [
-    {
-      id: 'select',
-      header: ({ table }) => (
-        <div className="flex items-center">
-          <IndeterminateCheckbox
-            {...getSelectAllProps(table.getRowModel().rows, data?.totalCount || 0)}
-          />
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className="flex items-center">
-          <IndeterminateCheckbox {...getSelectItemProps(row)} />
-        </div>
-      ),
-    },
     {
       header: '編號',
       cell: ({ row }) => (
@@ -207,11 +189,12 @@ const ShipmentReturnOrders = () => {
     keepPreviousData: true,
   });
 
-  const { table, tableBlock } = useTable<SalesReturnOrder>({
-    data,
-    columns,
-    isLoading,
-  });
+  const { table, tableBlock, selectedRows, selectedRowsCount, clearRowSelection } =
+    useTable<SalesReturnOrder>({
+      data,
+      columns,
+      isLoading,
+    });
 
   const deleteMutation = useMutation(
     (ShipmentReturnOrders: SalesReturnOrder[]) => {
@@ -235,7 +218,7 @@ const ShipmentReturnOrders = () => {
     },
     {
       onSuccess: () => {
-        clearSelection();
+        clearRowSelection();
         refetch();
       },
     }
@@ -293,10 +276,10 @@ const ShipmentReturnOrders = () => {
         <div className="divider mt-2 mb-0"></div>
 
         <div className="flex items-center gap-2 py-2 mb-2">
-          <span>已選擇 {selectedRowCount} 筆</span>
+          <span>已選擇 {selectedRowsCount} 筆</span>
           <button
             className="btn btn-success"
-            disabled={selectedRowCount === 0}
+            disabled={selectedRowsCount === 0}
             onClick={() => setIsOpen(true)}
           >
             <PencilIcon className="h-5 w-5"></PencilIcon>
@@ -304,7 +287,7 @@ const ShipmentReturnOrders = () => {
           </button>
           <button
             className="btn btn-error"
-            disabled={selectedRowCount === 0}
+            disabled={selectedRowsCount === 0}
             onClick={handleDelete}
           >
             <TrashIcon className="h-5 w-5"></TrashIcon>
