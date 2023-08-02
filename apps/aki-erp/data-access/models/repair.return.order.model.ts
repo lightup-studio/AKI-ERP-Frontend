@@ -25,7 +25,7 @@ export interface CreateOrUpdateRepairReturnOrderRequest {
    * @type {Date}
    * @memberof CreateOrUpdateRepairReturnOrderRequest
    */
-  repairTime?: Date;
+  repairReturnTime?: Date;
   /**
    *
    * @type {string}
@@ -43,7 +43,7 @@ export interface CreateOrUpdateRepairReturnOrderRequest {
    * @type {ContactInformation}
    * @memberof CreateOrUpdateRepairReturnOrderRequest
    */
-  receiverInformation?: ContactInformation;
+  returnerInformation?: ContactInformation;
   /**
    *
    * @type {string}
@@ -87,7 +87,7 @@ export interface RepairReturnOrder {
    * @type {number}
    * @memberof RepairReturnOrder
    */
-  id: number;
+  id?: number;
   /**
    *
    * @type {string}
@@ -99,7 +99,7 @@ export interface RepairReturnOrder {
    * @type {Date}
    * @memberof RepairReturnOrder
    */
-  repairTime?: Date;
+  repairReturnTime?: Date;
   /**
    *
    * @type {string}
@@ -117,7 +117,7 @@ export interface RepairReturnOrder {
    * @type {ContactInformation}
    * @memberof RepairReturnOrder
    */
-  receiverInformation?: ContactInformation;
+  returnerInformation?: ContactInformation;
   /**
    *
    * @type {string}

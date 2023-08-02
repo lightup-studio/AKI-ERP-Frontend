@@ -19,6 +19,7 @@ const data: { [key: string]: React.ReactNode } = {
   '/lend/return-orders': <>進銷存 / 借出歸還單</>,
   '/lend/return-orders/add': <>進銷存 / 借出歸還單 / 新增</>,
   '/repair/orders': <>進銷存 / 維修單</>,
+  '/repair/orders/add': <>進銷存 / 維修單 / 新增</>,
   '/repair/return-orders': <>進銷存 / 維修歸還單</>,
   '/shipment/orders': <>進銷存 / 出貨單</>,
   '/shipment/return-orders': <>進銷存 / 退貨單</>,
