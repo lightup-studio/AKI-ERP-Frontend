@@ -8,7 +8,7 @@ interface ButtonProps
 
 const Button: React.FC<ButtonProps> = ({ isLoading, children, ...props }) => {
   return (
-    <button {...props}>
+    <button disabled={isLoading} {...props}>
       {isLoading ? <span className="loading loading-spinner"></span> : <>{children}</>}
     </button>
   );
