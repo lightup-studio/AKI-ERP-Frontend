@@ -5,11 +5,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { ArtworksSelector } from '@components/artworks';
 import { IndeterminateCheckbox } from '@components/shared/field';
 import {
+  StoreType,
   assetsTypeOptionMap,
   salesTypeOptionMap,
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
-import { createTransferOrder, fetchTransferOrderId } from '@data-access/apis';
+import { createTransferOrder, fetchTransferOrderId, patchArtworksBatchId } from '@data-access/apis';
 import {
   CheckIcon,
   PencilSquareIcon,
@@ -23,7 +24,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { CellContext, ColumnDef, Row } from '@tanstack/react-table';
 import { useTable } from '@utils/hooks';
 import useFieldForm, { FieldConfig } from '@utils/hooks/useFieldForm';
-import { ArtworkDetail, CreateOrUpdateTransferOrderRequest, Status } from 'data-access/models';
+import { ArtworkDetail } from 'data-access/models';
 import dateFnsFormat from 'date-fns/format';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
@@ -312,8 +313,27 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
     isLoading: disabled ? isLoading : false,
   });
 
-  const mutation = useMutation({
-    mutationFn: (data: CreateOrUpdateTransferOrderRequest) => createTransferOrder(data),
+  const createMutation = useMutation({
+    mutationFn: (formData: FormData) => {
+      const artworkIdList = Object.values(rowSelection).map((row) => row.id);
+
+      return Promise.all([
+        createTransferOrder({
+          artworkIdList: artworkIdList,
+          transporter: formData.transporter,
+          transferTime: formData.transferTime,
+          memo: formData.memo,
+        }),
+        patchArtworksBatchId({
+          idList: artworkIdList,
+          properties: {
+            metadata: {
+              storeType: StoreType.NONE,
+            },
+          },
+        }),
+      ]);
+    },
     onSuccess: async () => {
       await showSuccess('新增成功！');
       router.back();
@@ -330,13 +350,7 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
     });
 
     if (!isConfirmed) return;
-    await mutation.mutateAsync({
-      transporter: formData.transporter,
-      transferTime: formData.transferTime,
-      memo: formData.memo,
-      artworkIdList: Object.values(rowSelection).map((row) => row.id),
-      status: Status.Enabled,
-    });
+    await createMutation.mutateAsync(formData);
   };
 
   return (
