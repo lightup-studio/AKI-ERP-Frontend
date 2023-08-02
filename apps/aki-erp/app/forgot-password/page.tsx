@@ -54,7 +54,7 @@ const ForgotPassword = () => {
               </p>
               <div className="text-center mt-4">
                 <Link href="/login">
-                  <button className="btn btn-block btn-primary ">Login</button>
+                  <button className="btn btn-block btn-primary">Login</button>
                 </Link>
               </div>
             </>
@@ -65,6 +65,7 @@ const ForgotPassword = () => {
               <p className="my-8 font-semibold text-center">
                 We will send password reset link on your email Id
               </p>
+
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mb-4">{fieldForm}</div>
 
