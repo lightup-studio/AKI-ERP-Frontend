@@ -10,7 +10,11 @@ import {
   salesTypeOptionMap,
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
-import { createLendReturnOrder, fetchLendReturnOrderId } from '@data-access/apis';
+import {
+  createLendReturnOrder,
+  fetchLendReturnOrderId,
+  patchArtworksBatchId,
+} from '@data-access/apis';
 import {
   CheckIcon,
   PencilSquareIcon,
@@ -24,7 +28,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { CellContext, ColumnDef, Row } from '@tanstack/react-table';
 import { useTable } from '@utils/hooks';
 import useFieldForm, { FieldConfig } from '@utils/hooks/useFieldForm';
-import { ArtworkDetail, CreateOrUpdateLendReturnOrderRequest, Status } from 'data-access/models';
+import { ArtworkDetail } from 'data-access/models';
 import dateFnsFormat from 'date-fns/format';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
@@ -361,8 +365,30 @@ const LendReturnOrderDetail: React.FC<LendReturnOrderDetailProps> = ({ disabled 
     isLoading: disabled ? isLoading : false,
   });
 
-  const mutation = useMutation({
-    mutationFn: (data: CreateOrUpdateLendReturnOrderRequest) => createLendReturnOrder(data),
+  const createMutation = useMutation({
+    mutationFn: (formData: FormData) => {
+      const artworkIdList = Object.values(rowSelection).map((row) => row.id);
+
+      return Promise.all([
+        createLendReturnOrder({
+          artworkIdList: artworkIdList,
+          lendReturnTime: formData.lendReturnTime,
+          lendDepartment: formData.lendDepartment,
+          returnerInformation: formData.returnerInformation,
+          contactPersonInformation: formData.contactPersonInformation,
+          memo: formData.memo,
+        }),
+        patchArtworksBatchId({
+          idList: artworkIdList,
+          properties: {
+            metadata: {
+              storeType: StoreType.RETURNED_LEND_OR_RETURNED_REPAIR,
+              lendDepartment: formData.lendDepartment,
+            },
+          },
+        }),
+      ]);
+    },
     onSuccess: async () => {
       await showSuccess('新增成功！');
       router.back();
@@ -379,19 +405,7 @@ const LendReturnOrderDetail: React.FC<LendReturnOrderDetailProps> = ({ disabled 
     });
 
     if (!isConfirmed) return;
-    await mutation.mutateAsync({
-      artworkIdList: Object.values(rowSelection).map((row) => row.id),
-      status: Status.Enabled,
-      lendReturnTime: formData.lendReturnTime,
-      lendDepartment: formData.lendDepartment,
-      returnerInformation: formData.returnerInformation,
-      contactPersonInformation: formData.contactPersonInformation,
-      memo: formData.memo,
-      metadata: {
-        storeType: StoreType.RETURNED_LEND_OR_RETURNED_REPAIR,
-        lendDepartment: formData.lendDepartment,
-      },
-    });
+    await createMutation.mutateAsync(formData);
   };
 
   return (

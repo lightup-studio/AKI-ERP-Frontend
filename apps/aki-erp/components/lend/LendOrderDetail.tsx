@@ -10,7 +10,7 @@ import {
   salesTypeOptionMap,
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
-import { createLendOrder, fetchLendOrderId } from '@data-access/apis';
+import { createLendOrder, fetchLendOrderId, patchArtworksBatchId } from '@data-access/apis';
 import {
   CheckIcon,
   PencilSquareIcon,
@@ -24,7 +24,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { CellContext, ColumnDef, Row } from '@tanstack/react-table';
 import { useTable } from '@utils/hooks';
 import useFieldForm, { FieldConfig } from '@utils/hooks/useFieldForm';
-import { ArtworkDetail, CreateOrUpdateLendOrderRequest, Status } from 'data-access/models';
+import { ArtworkDetail } from 'data-access/models';
 import dateFnsFormat from 'date-fns/format';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
@@ -142,10 +142,10 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
       ? (parseDate(dateFnsFormat(new Date(data.lendTime), 'yyyy-MM-dd')) as unknown as Date)
       : undefined;
 
+    setValue('lendTime', lendTime);
     setValue('lendDepartment', data.lendDepartment);
     setValue('receiverInformation', data.receiverInformation);
     setValue('contactPersonInformation', data.contactPersonInformation);
-    setValue('lendTime', lendTime);
     setValue('memo', data.memo);
   }, [data]);
 
@@ -357,8 +357,30 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
     isLoading: disabled ? isLoading : false,
   });
 
-  const mutation = useMutation({
-    mutationFn: (data: CreateOrUpdateLendOrderRequest) => createLendOrder(data),
+  const createMutation = useMutation({
+    mutationFn: (formData: FormData) => {
+      const artworkIdList = Object.values(rowSelection).map((row) => row.id);
+
+      return Promise.all([
+        createLendOrder({
+          artworkIdList: artworkIdList,
+          lendTime: formData.lendTime,
+          lendDepartment: formData.lendDepartment,
+          receiverInformation: formData.receiverInformation,
+          contactPersonInformation: formData.contactPersonInformation,
+          memo: formData.memo,
+        }),
+        patchArtworksBatchId({
+          idList: artworkIdList,
+          properties: {
+            metadata: {
+              storeType: StoreType.LEND,
+              lendDepartment: formData.lendDepartment,
+            },
+          },
+        }),
+      ]);
+    },
     onSuccess: async () => {
       await showSuccess('新增成功！');
       router.back();
@@ -375,19 +397,7 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
     });
 
     if (!isConfirmed) return;
-    await mutation.mutateAsync({
-      artworkIdList: Object.values(rowSelection).map((row) => row.id),
-      status: Status.Enabled,
-      lendTime: formData.lendTime,
-      lendDepartment: formData.lendDepartment,
-      receiverInformation: formData.receiverInformation,
-      contactPersonInformation: formData.contactPersonInformation,
-      memo: formData.memo,
-      metadata: {
-        storeType: StoreType.LEND,
-        lendDepartment: formData.lendDepartment,
-      },
-    });
+    await createMutation.mutateAsync(formData);
   };
 
   return (
