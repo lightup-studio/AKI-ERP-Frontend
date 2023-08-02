@@ -269,7 +269,7 @@ const PurchaseReturnOrders = () => {
           <i className="flex-grow"></i>
           <Link className="btn btn-info" href={`${pathname}/add?${searchParams.toString()}`}>
             <PlusIcon className="h-5 w-5"></PlusIcon>
-            新增進貨單
+            新增進貨退還單
           </Link>
         </div>
 

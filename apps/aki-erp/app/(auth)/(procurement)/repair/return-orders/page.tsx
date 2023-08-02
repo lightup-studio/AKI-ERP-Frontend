@@ -243,7 +243,7 @@ const RepairReturnOrders = () => {
 
   const handleDelete = async () => {
     const { isConfirmed } = await showConfirm({
-      title: '確定刪除維修單嗎？',
+      title: '確定刪除維修歸還單嗎？',
       icon: 'warning',
     });
 
@@ -313,7 +313,7 @@ const RepairReturnOrders = () => {
           <i className="flex-grow"></i>
           <Link className="btn btn-info" href={`${pathname}/add?${searchParams.toString()}`}>
             <PlusIcon className="h-5 w-5"></PlusIcon>
-            新增維修單
+            新增維修歸還單
           </Link>
         </div>
 
