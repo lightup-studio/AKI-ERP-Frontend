@@ -5,73 +5,73 @@ import { ContactInformation } from './purchase.order.model';
 /**
  *
  * @export
- * @interface CreateOrUpdateReturnSalesOrderRequest
+ * @interface CreateOrUpdateSalesReturnOrderRequest
  */
-export interface CreateOrUpdateReturnSalesOrderRequest {
+export interface CreateOrUpdateSalesReturnOrderRequest {
   /**
    *
    * @type {number}
-   * @memberof CreateOrUpdateReturnSalesOrderRequest
+   * @memberof CreateOrUpdateSalesReturnOrderRequest
    */
   id?: number;
   /**
    *
    * @type {string}
-   * @memberof CreateOrUpdateReturnSalesOrderRequest
+   * @memberof CreateOrUpdateSalesReturnOrderRequest
    */
   displayId?: string;
   /**
    *
    * @type {Date}
-   * @memberof CreateOrUpdateReturnSalesOrderRequest
+   * @memberof CreateOrUpdateSalesReturnOrderRequest
    */
-  shippingTime?: Date;
+  shippingReturnTime?: Date;
   /**
    *
    * @type {string}
-   * @memberof CreateOrUpdateReturnSalesOrderRequest
+   * @memberof CreateOrUpdateSalesReturnOrderRequest
    */
   shippingDepartment?: string;
   /**
    *
    * @type {ContactInformation}
-   * @memberof CreateOrUpdateReturnSalesOrderRequest
+   * @memberof CreateOrUpdateSalesReturnOrderRequest
    */
   contactPersonInformation?: ContactInformation;
   /**
    *
    * @type {ContactInformation}
-   * @memberof CreateOrUpdateReturnSalesOrderRequest
+   * @memberof CreateOrUpdateSalesReturnOrderRequest
    */
-  receiverInformation?: ContactInformation;
+  returnerInformation?: ContactInformation;
   /**
    *
    * @type {string}
-   * @memberof CreateOrUpdateReturnSalesOrderRequest
+   * @memberof CreateOrUpdateSalesReturnOrderRequest
    */
   address?: string;
   /**
    *
    * @type {string}
-   * @memberof CreateOrUpdateReturnSalesOrderRequest
+   * @memberof CreateOrUpdateSalesReturnOrderRequest
    */
   memo?: string;
   /**
    *
    * @type {Array<number>}
-   * @memberof CreateOrUpdateReturnSalesOrderRequest
+   * @memberof CreateOrUpdateSalesReturnOrderRequest
    */
   artworkIdList?: Array<number>;
   /**
    *
    * @type {Status}
-   * @memberof CreateOrUpdateReturnSalesOrderRequest
+   * @memberof CreateOrUpdateSalesReturnOrderRequest
    */
   status?: Status;
   /**
    *
    * @type {{ [key: string]: any; }}
-   * @memberof CreateOrUpdateReturnSalesOrderRequest
+   * @memberof CreateOrUpdateSalesReturnOrderRequest
    */
   metadata?: { [key: string]: any };
 }

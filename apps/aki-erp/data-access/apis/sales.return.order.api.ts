@@ -1,5 +1,5 @@
 import {
-  CreateOrUpdateReturnSalesOrderRequest,
+  CreateOrUpdateSalesReturnOrderRequest,
   Pagination,
   ReturnSalesOrder,
   Status,
@@ -35,7 +35,7 @@ export const fetchReturnSalesOrder = async (
 };
 
 export const createReturnSalesOrder = async (
-  body?: CreateOrUpdateReturnSalesOrderRequest
+  body?: CreateOrUpdateSalesReturnOrderRequest
 ): Promise<ReturnSalesOrder> => {
   const url = '/api/Order/salesReturn';
 
@@ -44,7 +44,7 @@ export const createReturnSalesOrder = async (
 };
 
 export const updateReturnSalesOrder = async (
-  body?: CreateOrUpdateReturnSalesOrderRequest
+  body?: CreateOrUpdateSalesReturnOrderRequest
 ): Promise<ReturnSalesOrder> => {
   const url = '/api/Order/salesReturn';
 

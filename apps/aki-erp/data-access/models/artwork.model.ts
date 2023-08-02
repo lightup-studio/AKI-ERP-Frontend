@@ -91,6 +91,8 @@ export interface ArtworkMetadata {
   repairNote?: string;
   /** 已歸還，單位 */
   returnRepairDepartment?: string;
+  /** 出貨，單位 */
+  shippingDepartment?: string;
   /** 已退回，單位 */
   returnedShippingDepartment?: string;
   /** 銷售狀態 */
