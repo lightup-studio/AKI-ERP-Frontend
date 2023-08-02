@@ -1,8 +1,8 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Image from '../Image';
 import SidebarSubmenu from './SidebarSubmenu';
 
 const routes = [
@@ -196,7 +196,9 @@ const LeftSidebar = () => {
 
       <ul className="menu gap-2 pt-2 w-80 bg-base-100 text-base-content h-full flex-nowrap">
         <li className="py-2 font-semibold text-xl">
-          <Image src="/images/dark/logo.svg" alt="AKI ERP" width={177} height={30} />
+          <div className="p-0">
+            <Image src="/images/dark/logo.svg" alt="AKI ERP" width="177px" height="34.5px" />
+          </div>
         </li>
 
         {routes.map((route, k) => (
