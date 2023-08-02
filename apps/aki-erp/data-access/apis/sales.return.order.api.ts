@@ -1,15 +1,15 @@
 import {
   CreateOrUpdateSalesReturnOrderRequest,
   Pagination,
-  ReturnSalesOrder,
+  SalesReturnOrder,
   Status,
 } from '@data-access/models';
 import axios from 'axios';
 
-export const fetchReturnSalesOrder = async (
+export const fetchSalesReturnOrder = async (
   status: Status,
   queryString?: string
-): Promise<Pagination<ReturnSalesOrder>> => {
+): Promise<Pagination<SalesReturnOrder>> => {
   const params = new URLSearchParams(queryString);
 
   const url = '/api/Order/salesReturn';
@@ -27,55 +27,55 @@ export const fetchReturnSalesOrder = async (
     query.append(key, value);
   });
 
-  const res = await axios.get<Pagination<ReturnSalesOrder>>(
+  const res = await axios.get<Pagination<SalesReturnOrder>>(
     `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`
   );
 
   return res.data;
 };
 
-export const createReturnSalesOrder = async (
+export const createSalesReturnOrder = async (
   body?: CreateOrUpdateSalesReturnOrderRequest
-): Promise<ReturnSalesOrder> => {
+): Promise<SalesReturnOrder> => {
   const url = '/api/Order/salesReturn';
 
   const res = await axios.post(url, body);
   return res.data;
 };
 
-export const updateReturnSalesOrder = async (
+export const updateSalesReturnOrder = async (
   body?: CreateOrUpdateSalesReturnOrderRequest
-): Promise<ReturnSalesOrder> => {
+): Promise<SalesReturnOrder> => {
   const url = '/api/Order/salesReturn';
 
   const res = await axios.put(url, body, { params: { allowCreate: true } });
   return res.data;
 };
 
-export const deleteReturnSalesOrderId = async (id: number): Promise<void> => {
+export const deleteSalesReturnOrderId = async (id: number): Promise<void> => {
   const url = '/api/Order/salesReturn';
 
   const res = await axios.delete(`${url}/${id}`);
   return res.data;
 };
 
-export const fetchReturnSalesOrderId = async (id: number): Promise<ReturnSalesOrder> => {
+export const fetchSalesReturnOrderId = async (id: number): Promise<SalesReturnOrder> => {
   const url = '/api/Order/salesReturn';
 
   const res = await axios.get(`${url}/${id}`);
   return res.data;
 };
 
-export const fetchReturnSalesOrderDIDdisplayId = async (
+export const fetchSalesReturnOrderDIDdisplayId = async (
   displayId: string
-): Promise<ReturnSalesOrder> => {
+): Promise<SalesReturnOrder> => {
   const url = '/api/Order/salesReturn';
 
   const res = await axios.get(`${url}/DID:${displayId}`);
   return res.data;
 };
 
-export const deleteReturnSalesOrderDIDdisplayId = async (displayId: string): Promise<void> => {
+export const deleteSalesReturnOrderDIDdisplayId = async (displayId: string): Promise<void> => {
   const url = '/api/Order/salesReturn';
 
   const res = await axios.delete(`${url}/DID:${displayId}`);

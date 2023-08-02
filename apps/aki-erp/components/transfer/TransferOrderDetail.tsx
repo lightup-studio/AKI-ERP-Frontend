@@ -58,21 +58,18 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
       name: 'transporter',
       label: '運輸廠商',
       disabled: disabled,
-      validated: yup.string().required('必填項目'),
     },
     {
       type: 'DATE',
       name: 'transferTime',
       label: '調撥日期',
       disabled: disabled,
-      validated: yup.date().required('必填項目'),
     },
     {
       type: 'TEXT',
       name: 'memo',
       label: '備註',
       disabled: disabled,
-      validated: yup.string().required('必填項目'),
     },
   ];
 

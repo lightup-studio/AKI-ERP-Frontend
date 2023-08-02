@@ -11,8 +11,8 @@ import {
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
 import {
-  createRepairReturnOrder,
-  fetchRepairReturnOrderId,
+  createSalesReturnOrder,
+  fetchSalesReturnOrderId,
   patchArtworksBatchId,
 } from '@data-access/apis';
 import {
@@ -37,8 +37,8 @@ import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
 import * as yup from 'yup';
 
 type FormData = {
-  repairDepartment?: string;
-  repairReturnTime?: Date;
+  shippingDepartment?: string;
+  shippingReturnTime?: Date;
   contactPersonInformation?: {
     name?: string;
     phone?: string;
@@ -52,8 +52,8 @@ type FormData = {
 };
 
 const schema = yup.object().shape({
-  repairDepartment: yup.string().required('必填項目'),
-  repairReturnTime: yup.date().required('必填項目'),
+  shippingDepartment: yup.string().required('必填項目'),
+  shippingReturnTime: yup.date().required('必填項目'),
   contactPersonInformation: yup.object({
     name: yup.string().required('必填項目'),
     phone: yup.string().required('必填項目'),
@@ -66,25 +66,25 @@ const schema = yup.object().shape({
   memo: yup.string().required('必填項目'),
 });
 
-interface RepairReturnOrderDetailProps {
+interface ShipmentReturnOrderDetailProps {
   disabled?: boolean;
 }
 
-const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disabled }) => {
+const ShipmentReturnOrderDetail: React.FC<ShipmentReturnOrderDetailProps> = ({ disabled }) => {
   const router = useRouter();
   const { id } = useParams();
 
   const configs: FieldConfig<FormData>[] = [
     {
       type: 'TEXT',
-      name: 'repairDepartment',
-      label: '維修歸還單位',
+      name: 'shippingDepartment',
+      label: '退貨單位',
       disabled: disabled,
     },
     {
       type: 'DATE',
-      name: 'repairReturnTime',
-      label: '維修日期',
+      name: 'shippingReturnTime',
+      label: '退貨日期',
       disabled: disabled,
     },
     {
@@ -134,8 +134,8 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
   const [isOpenArtworksSelector, setIsOpenArtworksSelector] = useState(false);
 
   const { data, isLoading } = useQuery(
-    ['fetchRepairReturnOrderId', id],
-    () => fetchRepairReturnOrderId(+id),
+    ['fetchSalesReturnOrderId', id],
+    () => fetchSalesReturnOrderId(+id),
     {
       enabled: !!disabled,
       keepPreviousData: true,
@@ -145,14 +145,16 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
   useEffect(() => {
     if (!data) return;
 
-    const repairReturnTime = data.repairReturnTime
-      ? (parseDate(dateFnsFormat(new Date(data.repairReturnTime), 'yyyy-MM-dd')) as unknown as Date)
+    const shippingReturnTime = data.shippingReturnTime
+      ? (parseDate(
+          dateFnsFormat(new Date(data.shippingReturnTime), 'yyyy-MM-dd')
+        ) as unknown as Date)
       : undefined;
 
+    setValue('shippingReturnTime', shippingReturnTime);
     setValue('contactPersonInformation', data.contactPersonInformation);
     setValue('returnerInformation', data.returnerInformation);
-    setValue('repairDepartment', data.repairDepartment);
-    setValue('repairReturnTime', repairReturnTime);
+    setValue('shippingDepartment', data.shippingDepartment);
     setValue('memo', data.memo);
   }, [data]);
 
@@ -369,10 +371,10 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
       const artworkIdList = Object.values(rowSelection).map((row) => row.id);
 
       return Promise.all([
-        createRepairReturnOrder({
+        createSalesReturnOrder({
           artworkIdList: artworkIdList,
-          repairReturnTime: formData.repairReturnTime,
-          repairDepartment: formData.repairDepartment,
+          shippingReturnTime: formData.shippingReturnTime,
+          shippingDepartment: formData.shippingDepartment,
           returnerInformation: formData.returnerInformation,
           contactPersonInformation: formData.contactPersonInformation,
           memo: formData.memo,
@@ -381,9 +383,9 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
           idList: artworkIdList,
           properties: {
             metadata: {
-              storeType: StoreType.RETURNED_LEND_OR_RETURNED_REPAIR,
-              repairDepartment: undefined,
-              returnRepairDepartment: formData.repairDepartment,
+              storeType: StoreType.RETURNED_SHIPPING,
+              shippingDepartment: undefined,
+              returnedShippingDepartment: formData.shippingDepartment,
             },
           },
         }),
@@ -400,7 +402,7 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
 
   const onSubmit = async (formData: FormData) => {
     const { isConfirmed } = await showConfirm({
-      title: '確定新增維修歸還單？',
+      title: '確定新增出貨單？',
       icon: 'question',
     });
 
@@ -488,4 +490,4 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
   );
 };
 
-export default RepairReturnOrderDetail;
+export default ShipmentReturnOrderDetail;

@@ -82,7 +82,6 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
       name: 'lendTime',
       label: '借展日期',
       disabled: disabled,
-      validated: yup.date().required('必填項目'),
     },
     {
       type: 'TEXT',

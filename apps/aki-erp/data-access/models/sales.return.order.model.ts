@@ -79,85 +79,85 @@ export interface CreateOrUpdateSalesReturnOrderRequest {
 /**
  *
  * @export
- * @interface ReturnSalesOrder
+ * @interface SalesReturnOrder
  */
-export interface ReturnSalesOrder {
+export interface SalesReturnOrder {
   /**
    *
    * @type {number}
-   * @memberof ReturnSalesOrder
+   * @memberof SalesReturnOrder
    */
   id: number;
   /**
    *
    * @type {string}
-   * @memberof ReturnSalesOrder
+   * @memberof SalesReturnOrder
    */
   displayId?: string;
   /**
    *
    * @type {Date}
-   * @memberof ReturnSalesOrder
+   * @memberof SalesReturnOrder
    */
-  shippingTime?: Date;
+  shippingReturnTime?: Date;
   /**
    *
    * @type {string}
-   * @memberof ReturnSalesOrder
+   * @memberof SalesReturnOrder
    */
   shippingDepartment?: string;
   /**
    *
    * @type {ContactInformation}
-   * @memberof ReturnSalesOrder
+   * @memberof SalesReturnOrder
    */
   contactPersonInformation?: ContactInformation;
   /**
    *
    * @type {ContactInformation}
-   * @memberof ReturnSalesOrder
+   * @memberof SalesReturnOrder
    */
-  receiverInformation?: ContactInformation;
+  returnerInformation?: ContactInformation;
   /**
    *
    * @type {string}
-   * @memberof ReturnSalesOrder
+   * @memberof SalesReturnOrder
    */
   address?: string;
   /**
    *
    * @type {string}
-   * @memberof ReturnSalesOrder
+   * @memberof SalesReturnOrder
    */
   memo?: string;
   /**
    *
    * @type {Array<Artwork>}
-   * @memberof ReturnSalesOrder
+   * @memberof SalesReturnOrder
    */
   artworks?: Array<ArtworkDetail>;
   /**
    *
    * @type {Date}
-   * @memberof ReturnSalesOrder
+   * @memberof SalesReturnOrder
    */
   createTime?: Date;
   /**
    *
    * @type {Date}
-   * @memberof ReturnSalesOrder
+   * @memberof SalesReturnOrder
    */
   lastModifyTime?: Date;
   /**
    *
    * @type {Status}
-   * @memberof ReturnSalesOrder
+   * @memberof SalesReturnOrder
    */
   status?: Status;
   /**
    *
    * @type {{ [key: string]: any; }}
-   * @memberof ReturnSalesOrder
+   * @memberof SalesReturnOrder
    */
   metadata?: { [key: string]: any };
 }

@@ -82,7 +82,6 @@ const ShipmentOrderDetail: React.FC<ShipmentOrderDetailProps> = ({ disabled }) =
       name: 'shippingTime',
       label: '出貨日期',
       disabled: disabled,
-      validated: yup.date().required('必填項目'),
     },
     {
       type: 'TEXT',

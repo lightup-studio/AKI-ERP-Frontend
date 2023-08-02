@@ -220,8 +220,8 @@ const ShipmentOrders = () => {
             status: Status.Disabled,
             metadata: {
               storeType: StoreType.NONE,
-              repairDepartment: undefined,
-              returnRepairDepartment: undefined,
+              shippingDepartment: undefined,
+              returnedShippingDepartment: undefined,
             },
           },
         }),

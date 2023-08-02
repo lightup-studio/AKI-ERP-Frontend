@@ -82,7 +82,6 @@ const RepairOrderDetail: React.FC<RepairOrderDetailProps> = ({ disabled }) => {
       name: 'repairTime',
       label: '維修日期',
       disabled: disabled,
-      validated: yup.date().required('必填項目'),
     },
     {
       type: 'TEXT',
