@@ -46,6 +46,9 @@ jobs:
         username: root
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
+          P_VERSION=$(docker image ls | grep -oP 'ghcr.io/lightup-studio/aki-erp\W+\K\d+\.\d+.\d+(\-[^\W]+)' | awk 'NR == 1')
+          docker pull ghcr.io/lightup-studio/aki-erp:${{ github.event.inputs.version || github.event.release.tag_name }}
           docker stop aki-erp 2> /dev/null
           docker rm aki-erp 2> /dev/null
+          docker image rm ghcr.io/lightup-studio/aki-erp:$P_VERSION 2> /dev/null
           docker run -d --restart on-failure --name aki-erp -p 18888:3000 ghcr.io/lightup-studio/aki-erp:${{ github.event.inputs.version || github.event.release.tag_name }}
