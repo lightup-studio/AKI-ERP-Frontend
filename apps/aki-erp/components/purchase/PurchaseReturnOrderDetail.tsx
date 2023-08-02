@@ -10,7 +10,11 @@ import {
   salesTypeOptionMap,
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
-import { createPurchaseOrder, fetchPurchaseOrderId, patchArtworksBatchId } from '@data-access/apis';
+import {
+  createPurchaseReturnOrder,
+  fetchPurchaseReturnOrderId,
+  patchArtworksBatchId,
+} from '@data-access/apis';
 import {
   CheckIcon,
   PencilSquareIcon,
@@ -33,13 +37,13 @@ import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
 import * as yup from 'yup';
 
 type FormData = {
-  salesCompany?: string;
-  purchaseTime?: Date;
-  salesInformation?: {
+  returnCompany?: string;
+  purchaseReturnTime?: Date;
+  contactPersonInformation?: {
     name?: string;
     phone?: string;
   };
-  receiverInformation?: {
+  returnerInformation?: {
     name?: string;
     phone?: string;
     address?: string;
@@ -47,73 +51,73 @@ type FormData = {
 };
 
 const schema = yup.object().shape({
-  salesCompany: yup.string().required('必填項目'),
-  purchaseTime: yup.date().required('必填項目'),
-  salesInformation: yup.object({
+  returnCompany: yup.string().required('必填項目'),
+  purchaseReturnTime: yup.date().required('必填項目'),
+  returnerInformation: yup.object({
     name: yup.string().required('必填項目'),
     phone: yup.string().required('必填項目'),
   }),
-  receiverInformation: yup.object({
+  contactPersonInformation: yup.object({
     name: yup.string().required('必填項目'),
     phone: yup.string().required('必填項目'),
     address: yup.string().required('必填項目'),
   }),
 });
 
-interface PurchaseOrderDetailProps {
+interface PurchaseReturnOrderDetailProps {
   disabled?: boolean;
 }
 
-const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) => {
+const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ disabled }) => {
   const router = useRouter();
   const { id } = useParams();
 
   const configs: FieldConfig<FormData>[] = [
     {
       type: 'TEXT',
-      name: 'salesCompany',
+      name: 'returnCompany',
       label: '進貨單位',
       disabled: disabled,
       validated: yup.string().required('必填項目'),
     },
     {
       type: 'DATE',
-      name: 'purchaseTime',
+      name: 'purchaseReturnTime',
       label: '進貨日期',
       disabled: disabled,
       validated: yup.date().required('必填項目'),
     },
     {
       type: 'TEXT',
-      name: 'salesInformation.name',
+      name: 'contactPersonInformation.name',
       label: '聯絡人',
       disabled: disabled,
       validated: yup.string().required('必填項目'),
     },
     {
       type: 'TEXT',
-      name: 'salesInformation.phone',
+      name: 'contactPersonInformation.phone',
       label: '聯絡人電話',
       disabled: disabled,
       validated: yup.string().required('必填項目'),
     },
     {
       type: 'TEXT',
-      name: 'receiverInformation.name',
+      name: 'returnerInformation.name',
       label: '收件人',
       disabled: disabled,
       validated: yup.string().required('必填項目'),
     },
     {
       type: 'TEXT',
-      name: 'receiverInformation.phone',
+      name: 'returnerInformation.phone',
       label: '收件人電話',
       disabled: disabled,
       validated: yup.string().required('必填項目'),
     },
     {
       type: 'TEXT',
-      name: 'receiverInformation.address',
+      name: 'returnerInformation.address',
       label: '地址',
       disabled: disabled,
       validated: yup.string().required('必填項目'),
@@ -129,8 +133,8 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
   const [isOpenArtworksSelector, setIsOpenArtworksSelector] = useState(false);
 
   const { data, isLoading } = useQuery(
-    ['fetchPurchaseOrderId', +id],
-    () => fetchPurchaseOrderId(+id),
+    ['fetchPurchaseReturnOrderId', +id],
+    () => fetchPurchaseReturnOrderId(+id),
     {
       enabled: !!disabled,
       keepPreviousData: true,
@@ -140,14 +144,16 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
   useEffect(() => {
     if (!data) return;
 
-    const purchaseTime = data.purchaseTime
-      ? (parseDate(dateFnsFormat(new Date(data.purchaseTime), 'yyyy-MM-dd')) as unknown as Date)
+    const purchaseReturnTime = data.purchaseReturnTime
+      ? (parseDate(
+          dateFnsFormat(new Date(data.purchaseReturnTime), 'yyyy-MM-dd')
+        ) as unknown as Date)
       : undefined;
 
-    setValue('purchaseTime', purchaseTime);
-    setValue('salesCompany', data.salesCompany);
-    setValue('salesInformation', data.salesInformation);
-    setValue('receiverInformation', data.receiverInformation);
+    setValue('returnCompany', data.returnCompany);
+    setValue('returnerInformation', data.returnerInformation);
+    setValue('contactPersonInformation', data.contactPersonInformation);
+    setValue('purchaseReturnTime', purchaseReturnTime);
   }, [data]);
 
   const [rowSelection, setRowSelection] = useState<Record<ArtworkDetail['id'], ArtworkDetail>>({});
@@ -363,18 +369,18 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
       const artworkIdList = Object.values(rowSelection).map((row) => row.id);
 
       return Promise.all([
-        createPurchaseOrder({
+        createPurchaseReturnOrder({
           artworkIdList: artworkIdList,
-          salesCompany: formData.salesCompany,
-          purchaseTime: formData.purchaseTime,
-          salesInformation: formData.salesInformation,
-          receiverInformation: formData.receiverInformation,
+          returnCompany: formData.returnCompany,
+          purchaseReturnTime: formData.purchaseReturnTime,
+          returnerInformation: formData.returnerInformation,
+          contactPersonInformation: formData.contactPersonInformation,
         }),
         patchArtworksBatchId({
           idList: artworkIdList,
           properties: {
             metadata: {
-              storeType: StoreType.IN_STOCK,
+              storeType: StoreType.NONE,
             },
           },
         }),
@@ -479,4 +485,4 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
   );
 };
 
-export default PurchaseOrderDetail;
+export default PurchaseReturnOrderDetail;

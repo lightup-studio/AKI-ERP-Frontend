@@ -136,13 +136,13 @@ export interface CreateOrUpdatePurchaseOrderRequest {
    * @type {ContactInformation}
    * @memberof CreateOrUpdatePurchaseOrderRequest
    */
-  salesInformation: ContactInformation;
+  salesInformation?: ContactInformation;
   /**
    *
    * @type {ContactInformation}
    * @memberof CreateOrUpdatePurchaseOrderRequest
    */
-  receiverInformation: ContactInformation;
+  receiverInformation?: ContactInformation;
   /**
    *
    * @type {Array<number>}
@@ -154,7 +154,7 @@ export interface CreateOrUpdatePurchaseOrderRequest {
    * @type {Status}
    * @memberof CreateOrUpdatePurchaseOrderRequest
    */
-  status: Status;
+  status?: Status;
   /**
    *
    * @type {{ [key: string]: any; }}
