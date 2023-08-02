@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 
+import Button from '@components/shared/Button';
 import { StoreType } from '@constants/artwork.constant';
 import { createRepairOrder, fetchRepairOrderId, patchArtworksBatchId } from '@data-access/apis';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
@@ -213,9 +214,13 @@ const RepairOrderDetail: React.FC<RepairOrderDetailProps> = ({ disabled }) => {
 
           {!disabled && (
             <div className="bg-base-100 mt-4 md:col-span-2 flex gap-2 justify-center">
-              <button className="btn btn-success" onClick={handleSubmit(onSubmit)}>
+              <Button
+                className="btn btn-success"
+                isLoading={isLoading}
+                onClick={handleSubmit(onSubmit)}
+              >
                 <CheckIcon className="w-4"></CheckIcon> 儲存
-              </button>
+              </Button>
               <button
                 className="btn btn-error btn-base-200"
                 type="button"
