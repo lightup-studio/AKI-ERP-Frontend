@@ -223,7 +223,7 @@ const LendReturnOrderDetail: React.FC<LendReturnOrderDetailProps> = ({ disabled 
             <div className="bg-base-100 mt-4 md:col-span-2 flex gap-2 justify-center">
               <Button
                 className="btn btn-success"
-                isLoading={isLoading}
+                isLoading={createMutation.isLoading}
                 onClick={handleSubmit(onSubmit)}
               >
                 <CheckIcon className="w-4"></CheckIcon> 儲存
