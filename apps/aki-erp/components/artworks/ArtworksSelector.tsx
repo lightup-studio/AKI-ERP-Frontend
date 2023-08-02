@@ -240,7 +240,7 @@ const ArtworksSelector = ({
 
   const addPurchaseOrder = async () => {
     const { isConfirmed } = await showConfirm({
-      title: `是否將這 ${selectedRowCount} 筆藝術品新增至進貨單？`,
+      title: `是否新增 ${selectedRowCount} 筆藝術品？`,
       icon: 'question',
       html: `
       <ul class="list-disc"> ${selectedRows
@@ -256,7 +256,7 @@ const ArtworksSelector = ({
       return;
     }
 
-    await showSuccess('已成功新增藝術品至進貨單！');
+    await showSuccess('已成功新增藝術品！');
     onClose?.(selectedRows);
   };
 
@@ -266,7 +266,7 @@ const ArtworksSelector = ({
         'modal-open': isOpen,
       })}
     >
-      <div className="modal-box max-w-none overflow-hidden flex flex-col p-0">
+      <div className="modal-box absolute top-0 max-w-none overflow-hidden flex flex-col p-0">
         <h3 className="font-bold m-4 pb-2 mb-0 text-2xl border-b-base-content border-b flex justify-between items-baseline">
           新增藝術品
           <span className="text-xl">已選擇 {selectedRowCount} 筆</span>
