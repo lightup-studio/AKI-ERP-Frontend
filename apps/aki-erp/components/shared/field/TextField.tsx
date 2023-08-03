@@ -7,7 +7,7 @@ interface TextFieldProps
 }
 
 const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
-  { errorMsg, ...props },
+  { defaultValue, errorMsg, ...props },
   ref
 ) {
   const { name, value } = props;
@@ -17,7 +17,7 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(function Te
       {...props}
       id={name}
       ref={ref}
-      value={value || ''}
+      value={defaultValue || value || ''}
       className={classNames('input input-bordered w-full', { 'input-error': errorMsg })}
     />
   );
