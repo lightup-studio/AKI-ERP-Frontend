@@ -11,7 +11,7 @@ import {
 import { CheckIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
-import useArtworkTable, { inputColumn, selectColumn } from '@utils/hooks/useArtworkTable';
+import useArtworksTable, { inputColumn, selectColumn } from '@utils/hooks/useArtworksTable';
 import classnames from 'classnames';
 import { ArtworkDetail, Status } from 'data-access/models';
 import Link from 'next/link';
@@ -212,7 +212,7 @@ const ArtworksSelector = ({
     },
   ];
 
-  const { dataQuery, table, tableBlock, selectedRows, selectedRowsCount } = useArtworkTable({
+  const { table, tableBlock, selectedRows, selectedRowsCount } = useArtworksTable({
     status: Status.Enabled,
     columns,
     selectItems,

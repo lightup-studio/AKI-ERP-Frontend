@@ -76,7 +76,7 @@ const selectColumn = (
   );
 };
 
-const useArtworkTable = ({
+const useArtworksTable = ({
   status,
   columns,
   selectItems,
@@ -161,4 +161,4 @@ const useArtworkTable = ({
 
 export { inputColumn, selectColumn };
 
-export default useArtworkTable;
+export default useArtworksTable;

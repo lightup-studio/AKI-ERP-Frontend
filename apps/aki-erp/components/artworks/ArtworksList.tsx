@@ -20,7 +20,7 @@ import { useMutation } from '@tanstack/react-query';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
-import useArtworkTable, { inputColumn, selectColumn } from '@utils/hooks/useArtworkTable';
+import useArtworksTable, { inputColumn, selectColumn } from '@utils/hooks/useArtworksTable';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { ArtworksTitleProps } from './ArtworksTitle';
@@ -214,7 +214,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
   ];
 
   const { dataQuery, table, tableBlock, clearRowSelection, selectedRows, selectedRowsCount } =
-    useArtworkTable({
+    useArtworksTable({
       status,
       columns,
       selectItems,
