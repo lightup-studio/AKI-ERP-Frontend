@@ -1,6 +1,7 @@
 'use client';
 
 import Button from '@components/shared/Button';
+import Image from '@components/shared/Image';
 import axiosInstance from '@contexts/axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
@@ -9,7 +10,6 @@ import { showError } from '@utils/swalUtil';
 import { AxiosError } from 'axios';
 import { authorizeWithPassword } from 'data-access/apis/authorizations.api';
 import { AuthorizeWithPasswordResponse } from 'data-access/models';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import * as yup from 'yup';
@@ -69,8 +69,14 @@ const Login = () => {
     <div className="min-h-screen bg-base-200 flex items-center">
       <div className="card mx-auto w-full max-w-md shadow-xl">
         <div className="grid md:grid-cols-1 p-10 bg-base-100 rounded-xl">
-          <div className="relative mb-10 h-8">
-            <Image src="/images/dark/logo.svg" alt="AKI" fill />
+          <div className="mb-10">
+            <Image
+              priority
+              src="/images/dark/logo.svg"
+              alt="AKI ERP"
+              width="auto"
+              height="34.5px"
+            />
           </div>
 
           <h2 className="text-2xl font-semibold text-center">Login</h2>
