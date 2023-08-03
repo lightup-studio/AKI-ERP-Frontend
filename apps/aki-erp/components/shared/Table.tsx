@@ -1,6 +1,7 @@
 import { Table, flexRender } from '@tanstack/react-table';
 import classNames from 'classnames';
 import React from 'react';
+import Skeleton from './Skeleton';
 
 interface TableProps<T = any> {
   table: Table<T>;
@@ -38,16 +39,19 @@ const Table: React.FC<TableProps> = ({ table, isLoading }) => {
         </thead>
 
         <tbody>
-          {isLoading ? (
-            <tr className="bg-base-200 text-base-content">
-              <td colSpan={table.getHeaderGroups()[0].headers.length}>
-                <div className="flex justify-center items-center min-h-[3rem]">
-                  <span className="loading loading-bars loading-xs"></span>
-                </div>
-              </td>
-            </tr>
-          ) : table.getRowModel().rows.length === 0 ? (
-            <tr className="bg-base-200 text-base-content">
+          {isLoading &&
+            [0, 1, 2, 3, 4].map((index) => (
+              <tr key={index} className="text-sm">
+                {table.getHeaderGroups()[0].headers.map((header) => (
+                  <td key={header.id} className="p-2">
+                    <Skeleton />
+                  </td>
+                ))}
+              </tr>
+            ))}
+
+          {!isLoading && table.getRowModel().rows.length === 0 ? (
+            <tr>
               <td colSpan={table.getHeaderGroups()[0].headers.length}>
                 <div className="flex justify-center items-center min-h-[3rem]">No Data.</div>
               </td>
@@ -56,13 +60,11 @@ const Table: React.FC<TableProps> = ({ table, isLoading }) => {
             table.getRowModel().rows.map((row) => {
               return (
                 <tr key={row.id} className="text-sm">
-                  {row.getVisibleCells().map((cell) => {
-                    return (
-                      <td key={cell.id} className="p-2">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </td>
-                    );
-                  })}
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="p-2">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
                 </tr>
               );
             })
