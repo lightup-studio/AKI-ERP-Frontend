@@ -1,5 +1,5 @@
+import axios from '@contexts/axios';
 import { Country } from '@data-access/models';
-import axios from 'axios';
 
 export async function fetchCountryList({
   onlyAvailable = false,

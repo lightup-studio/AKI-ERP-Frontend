@@ -8,3 +8,4 @@ export * from './repair.return.order.api';
 export * from './sales.order.api';
 export * from './sales.return.order.api';
 export * from './transfer.order.api';
+export * from './users.api';

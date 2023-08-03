@@ -1,5 +1,5 @@
+import axios from '@contexts/axios';
 import { Pagination, Partner, PartnerType } from '@data-access/models';
-import axios from 'axios';
 
 export async function fetchPartnerList<
   TPartnerType extends PartnerType | undefined | null = undefined | null

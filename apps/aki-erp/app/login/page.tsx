@@ -1,6 +1,7 @@
 'use client';
 
 import Button from '@components/shared/Button';
+import axiosInstance from '@contexts/axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
 import useFieldForm, { FieldConfig } from '@utils/hooks/useFieldForm';
@@ -48,7 +49,9 @@ const Login = () => {
     mutationKey: ['authorizeWithPassword'],
     mutationFn: (formData: FormData) => authorizeWithPassword(formData.username, formData.password),
     onSuccess: (data) => {
-      localStorage.setItem('token', data.accessToken);
+      localStorage.setItem('userId', data.user?.id?.toString() ?? '');
+      axiosInstance.defaults.headers['Authorization'] = data.accessToken;
+
       router.push('/artworks');
     },
     onError: async (error: AxiosError<AuthorizeWithPasswordResponse>) => {

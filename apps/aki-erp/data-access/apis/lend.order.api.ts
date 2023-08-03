@@ -1,5 +1,5 @@
+import axios from '@contexts/axios';
 import { CreateOrUpdateLendOrderRequest, LendOrder, Pagination, Status } from '@data-access/models';
-import axios from 'axios';
 
 export const fetchLendOrder = async (
   status: Status,

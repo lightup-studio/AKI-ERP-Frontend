@@ -1,10 +1,10 @@
+import axios from '@contexts/axios';
 import {
   CreateOrUpdateSalesOrderRequest,
   Pagination,
   SalesOrder,
   Status,
 } from '@data-access/models';
-import axios from 'axios';
 
 export const fetchSalesOrder = async (
   status: Status,

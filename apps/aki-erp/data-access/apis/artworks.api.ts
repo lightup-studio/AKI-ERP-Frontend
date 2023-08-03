@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Option as ComboboxOption } from '@components/shared/MyCombobox';
 import { salesTypeOptions, storeTypeOptions } from '@constants/artwork.constant';
+import axios from '@contexts/axios';
 import {
   Artwork,
   ArtworkDetail,
@@ -8,7 +9,6 @@ import {
   CommonBatchPartialUpdateById,
   Pagination,
 } from '@data-access/models';
-import axios from 'axios';
 import { rangeRight } from 'lodash-es';
 
 import { assetsTypeOptions } from '@constants/artwork.constant';
