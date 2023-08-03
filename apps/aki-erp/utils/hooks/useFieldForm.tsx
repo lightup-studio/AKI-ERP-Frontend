@@ -62,7 +62,7 @@ const useFieldForm = <TFieldValues extends FieldValues = FieldValues, TContext =
     );
   });
 
-  return { fieldForm, control, ...useFormReturn };
+  return { fieldForm, control, formState: { errors }, ...useFormReturn };
 };
 
 export type { FieldConfig };

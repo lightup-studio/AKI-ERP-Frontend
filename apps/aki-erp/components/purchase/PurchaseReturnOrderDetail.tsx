@@ -40,11 +40,11 @@ const schema = yup.object().shape({
   returnerInformation: yup.object({
     name: yup.string().required('必填項目'),
     phone: yup.string().required('必填項目'),
+    address: yup.string().required('必填項目'),
   }),
   contactPersonInformation: yup.object({
     name: yup.string().required('必填項目'),
     phone: yup.string().required('必填項目'),
-    address: yup.string().required('必填項目'),
   }),
 });
 
