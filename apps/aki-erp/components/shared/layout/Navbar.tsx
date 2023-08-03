@@ -65,16 +65,16 @@ const Navbar = () => {
             className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
           >
             <li className="justify-between">
-              <Link href={'/profile-settings'}>
+              <Link href="/profile-settings">
                 Profile Settings
                 <span className="badge">New</span>
               </Link>
             </li>
             <div className="divider mt-0 mb-0"></div>
             <li>
-              <button className="btn btn-link" onClick={logoutUser}>
+              <div className="w-full" onClick={logoutUser}>
                 Logout
-              </button>
+              </div>
             </li>
           </ul>
         </div>
