@@ -5,6 +5,7 @@ import {
   ColumnDef,
   PaginationState,
   Row,
+  TableMeta,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
@@ -13,12 +14,14 @@ import { useEffect, useState } from 'react';
 
 const useTable = <T = any,>({
   data = [],
+  meta,
   columns,
   disabled,
   isLoading,
   totalCount = 0,
 }: {
   data?: T[];
+  meta?: TableMeta<T>;
   columns: ColumnDef<T, any>[];
   disabled?: boolean;
   isLoading?: boolean;
@@ -99,7 +102,8 @@ const useTable = <T = any,>({
   };
 
   const table = useReactTable<T>({
-    data: data,
+    data,
+    meta,
     state: { pagination: { pageSize, pageIndex } },
     columns: disabled ? columns : [selectColumn, ...columns],
     pageCount: Math.ceil(totalCount / pageSize) ?? -1,

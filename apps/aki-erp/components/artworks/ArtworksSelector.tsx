@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 
-import IndeterminateCheckbox from '@components/shared/field/IndeterminateCheckbox';
 import SearchInput from '@components/shared/field/SearchField';
 import {
   assetsTypeOptions,
@@ -12,8 +11,7 @@ import {
 import { CheckIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
-import { inputColumn, selectColumn, useArtworkTable } from '@utils/hooks/useArtworkTable';
-import useSelectionList from '@utils/hooks/useSelectionList';
+import useArtworkTable, { inputColumn, selectColumn } from '@utils/hooks/useArtworkTable';
 import classnames from 'classnames';
 import { ArtworkDetail, Status } from 'data-access/models';
 import Link from 'next/link';
@@ -49,25 +47,7 @@ const ArtworksSelector = ({
     onSelectionChange,
   });
 
-  const { getSelectAllProps, getSelectItemProps, selectedRowCount, selectedRows, clearSelection } =
-    useSelectionList<ArtworkDetail>();
-
   const columns: ColumnDef<ArtworkDetail, any>[] = [
-    {
-      id: 'select',
-      header: ({ table }) => (
-        <div className="flex items-center">
-          <IndeterminateCheckbox
-            {...getSelectAllProps(table.getRowModel().rows, dataQuery.data?.totalCount || 0)}
-          />
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className="flex items-center">
-          <IndeterminateCheckbox {...getSelectItemProps(row)} />
-        </div>
-      ),
-    },
     {
       header: '編號',
       accessorKey: 'displayId',
@@ -232,7 +212,7 @@ const ArtworksSelector = ({
     },
   ];
 
-  const { dataQuery, table, tableBlock } = useArtworkTable({
+  const { dataQuery, table, tableBlock, selectedRows, selectedRowsCount } = useArtworkTable({
     status: Status.Enabled,
     columns,
     selectItems,
@@ -240,7 +220,7 @@ const ArtworksSelector = ({
 
   const addPurchaseOrder = async () => {
     const { isConfirmed } = await showConfirm({
-      title: `是否新增 ${selectedRowCount} 筆藝術品？`,
+      title: `是否新增 ${selectedRowsCount} 筆藝術品？`,
       icon: 'question',
       html: `
       <ul class="list-disc"> ${selectedRows
@@ -269,7 +249,7 @@ const ArtworksSelector = ({
       <div className="modal-box absolute top-0 max-w-none overflow-hidden flex flex-col p-0">
         <h3 className="font-bold m-4 pb-2 mb-0 text-2xl border-b-base-content border-b flex justify-between items-baseline">
           新增藝術品
-          <span className="text-xl">已選擇 {selectedRowCount} 筆</span>
+          <span className="text-xl">已選擇 {selectedRowsCount} 筆</span>
         </h3>
 
         <div className="my-3 mr-2 px-4 py-2 overflow-y-auto">
@@ -310,7 +290,7 @@ const ArtworksSelector = ({
               <button
                 className="btn btn-success"
                 onClick={addPurchaseOrder}
-                disabled={selectedRowCount === 0}
+                disabled={selectedRowsCount === 0}
               >
                 <CheckIcon className="w-4"></CheckIcon> 儲存
               </button>

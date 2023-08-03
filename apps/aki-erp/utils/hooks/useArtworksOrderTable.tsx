@@ -176,7 +176,16 @@ const useArtworksOrderTable = ({
   });
 
   const handleClose = (artworks: ArtworkDetail[]) => {
-    setSelectedArtworks(artworks);
+    setSelectedArtworks((prev) => {
+      const data = prev.reduce<{ [key: string]: ArtworkDetail }>((prev, curr) => {
+        prev[curr.id] = curr;
+        return prev;
+      }, {});
+
+      const list = artworks.filter((artwork) => !data[artwork.id]);
+
+      return [...prev, ...list];
+    });
   };
 
   return {

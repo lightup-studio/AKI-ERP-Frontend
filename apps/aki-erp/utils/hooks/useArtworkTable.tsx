@@ -1,25 +1,18 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Option as ComboboxOption } from '@components/shared/MyCombobox';
-import Table from '@components/shared/Table';
-import TablePagination from '@components/shared/TablePagination';
 import { fetchArtworkList2, patchArtwork } from '@data-access/apis/artworks.api';
 import { ArtworkDetail, Status } from '@data-access/models';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import {
-  CellContext,
-  ColumnDef,
-  PaginationState,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { cloneDeep } from 'lodash-es';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { SelectItem } from './useArtworkSearches';
 import useSelectionList from './useSelectionList';
+import useTable from './useTable';
 
 // Give our default column cell renderer editing superpowers!
-export const inputColumn = ({
+const inputColumn = ({
   getValue,
   row: { index },
   column: { id },
@@ -48,7 +41,7 @@ export const inputColumn = ({
 };
 
 // Give our default column cell renderer editing superpowers!
-export const selectColumn = (
+const selectColumn = (
   { getValue, row: { index }, column: { id }, table }: CellContext<ArtworkDetail, any>,
   options: ComboboxOption[],
   config?: { getValue?: () => any; onChange?: (value: string) => void }
@@ -83,7 +76,7 @@ export const selectColumn = (
   );
 };
 
-export const useArtworkTable = ({
+const useArtworkTable = ({
   status,
   columns,
   selectItems,
@@ -94,8 +87,6 @@ export const useArtworkTable = ({
   getSelectAllProps?: ReturnType<typeof useSelectionList>['getSelectAllProps'];
   getSelectItemProps?: ReturnType<typeof useSelectionList>['getSelectItemProps'];
 }) => {
-  const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const params = new URLSearchParams(searchParams);
@@ -116,26 +107,6 @@ export const useArtworkTable = ({
     }
   }, [dataQuery.isSuccess, dataQuery.data]);
 
-  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
-    pageIndex: +(params.get('pageIndex') || 0),
-    pageSize: +(params.get('pageSize') || 50),
-  });
-  const pagination = useMemo(() => ({ pageIndex, pageSize }), [pageIndex, pageSize]);
-
-  useEffect(() => {
-    if (
-      pageIndex === +(params.get('pageIndex') || 0) &&
-      pageSize === +(params.get('pageSize') || 50)
-    ) {
-      return;
-    }
-
-    pageIndex > 0 ? params.set('pageIndex', `${pageIndex}`) : params.delete('pageIndex');
-    pageSize !== 50 ? params.set('pageSize', `${pageSize}`) : params.delete('pageSize');
-
-    router.push(`${pathname}?${params.toString()}`);
-  }, [pageIndex, pageSize]);
-
   const columnMutation = useMutation({
     mutationKey: ['updateArtwork'],
     mutationFn: ({ id, data }: { id: number; data: Partial<ArtworkDetail> }) =>
@@ -145,16 +116,10 @@ export const useArtworkTable = ({
     },
   });
 
-  const table = useReactTable({
+  const { table, tableBlock, ...props } = useTable<ArtworkDetail>({
     data: tableData,
+    totalCount: dataQuery.data?.totalCount,
     columns,
-    pageCount: dataQuery.data?.pageCount ?? -1,
-    state: {
-      pagination,
-    },
-    getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
-    onPaginationChange: setPagination,
     meta: {
       updateColumnData: function <TColumnId extends keyof ArtworkDetail>(
         rowIndex: number,
@@ -187,23 +152,13 @@ export const useArtworkTable = ({
   });
 
   return {
+    ...props,
     dataQuery,
     table,
-    tableBlock: (
-      <>
-        <Table table={table} isLoading={dataQuery.isLoading} />
-
-        <div className="divider mt-2" />
-
-        <TablePagination
-          {...{
-            table,
-            pageIndex,
-            pageSize,
-            totalCount: dataQuery.data?.totalCount ?? 0,
-          }}
-        />
-      </>
-    ),
+    tableBlock,
   };
 };
+
+export { inputColumn, selectColumn };
+
+export default useArtworkTable;

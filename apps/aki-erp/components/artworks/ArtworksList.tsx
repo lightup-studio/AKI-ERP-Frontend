@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react';
 
-import IndeterminateCheckbox from '@components/shared/field/IndeterminateCheckbox';
 import SearchField from '@components/shared/field/SearchField';
 import {
   StoreType,
@@ -21,8 +20,7 @@ import { useMutation } from '@tanstack/react-query';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
-import { inputColumn, selectColumn, useArtworkTable } from '@utils/hooks/useArtworkTable';
-import useSelectionList from '@utils/hooks/useSelectionList';
+import useArtworkTable, { inputColumn, selectColumn } from '@utils/hooks/useArtworkTable';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { ArtworksTitleProps } from './ArtworksTitle';
@@ -42,9 +40,6 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
     onSelectionChange,
   });
 
-  const { getSelectAllProps, getSelectItemProps, selectedRowCount, selectedRows, clearSelection } =
-    useSelectionList<ArtworkDetail>();
-
   // temp defined status variable for api break change
   const status = useMemo<Status>(() => {
     return type === 'inventory'
@@ -55,21 +50,6 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
   }, [type]);
 
   const columns: ColumnDef<ArtworkDetail, any>[] = [
-    {
-      id: 'select',
-      header: ({ table }) => (
-        <div className="flex items-center">
-          <IndeterminateCheckbox
-            {...getSelectAllProps(table.getRowModel().rows, dataQuery.data?.totalCount || 0)}
-          />
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className="flex items-center">
-          <IndeterminateCheckbox {...getSelectItemProps(row)} />
-        </div>
-      ),
-    },
     {
       header: '編號',
       accessorKey: 'displayId',
@@ -233,17 +213,18 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
     },
   ];
 
-  const { dataQuery, table, tableBlock } = useArtworkTable({
-    status,
-    columns,
-    selectItems,
-  });
+  const { dataQuery, table, tableBlock, clearRowSelection, selectedRows, selectedRowsCount } =
+    useArtworkTable({
+      status,
+      columns,
+      selectItems,
+    });
 
   const deleteMutation = useMutation({
     mutationKey: ['deleteArtworks'],
     mutationFn: deleteArtworks,
     onSuccess: () => {
-      clearSelection();
+      clearRowSelection();
       dataQuery.refetch();
     },
   });
@@ -253,19 +234,19 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
     mutationFn: (ids: number[]) =>
       patchArtworks(ids, { status: Status.Enabled, metadata: { storeType: StoreType.IN_STOCK } }),
     onSuccess: () => {
-      clearSelection();
+      clearRowSelection();
       dataQuery.refetch();
     },
   });
 
   const handleDelete = () => {
-    if (deleteMutation.isLoading || selectedRowCount === 0) return;
+    if (deleteMutation.isLoading || selectedRowsCount === 0) return;
     const deletedIds = selectedRows.map((artwork) => artwork.id);
     deleteMutation.mutate(deletedIds);
   };
 
   const handleEnable = () => {
-    if (enableMutation.isLoading || selectedRowCount === 0) return;
+    if (enableMutation.isLoading || selectedRowsCount === 0) return;
     const enabledIds = selectedRows.map((artwork) => artwork.id);
     enableMutation.mutate(enabledIds);
   };
@@ -310,8 +291,8 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
       <div className="divider mt-2 mb-0"></div>
 
       <div className="flex items-center gap-2 py-2 mb-2">
-        <span>已選擇 {selectedRowCount} 筆</span>
-        <button className="btn btn-error" onClick={handleDelete} disabled={selectedRowCount === 0}>
+        <span>已選擇 {selectedRowsCount} 筆</span>
+        <button className="btn btn-error" onClick={handleDelete} disabled={selectedRowsCount === 0}>
           <TrashIcon className="h-5 w-5"></TrashIcon>
           刪除
         </button>
@@ -319,7 +300,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
           <button
             className="btn btn-accent"
             onClick={handleEnable}
-            disabled={selectedRowCount === 0}
+            disabled={selectedRowsCount === 0}
           >
             加入庫存
           </button>
