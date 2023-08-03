@@ -11,7 +11,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   const [userId, setUserId] = useState<string | null>();
 
   const { isFetching, isError } = useQuery({
-    queryKey: ['PurchaseReturnOrder', userId],
+    queryKey: ['fetchUsersId', userId],
     queryFn: () => fetchUsersId(userId || 'undefined'),
     keepPreviousData: true,
   });

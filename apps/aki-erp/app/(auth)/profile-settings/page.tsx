@@ -1,59 +1,81 @@
 'use client';
 
+import { fetchUsersId } from '@data-access/apis';
+import { useQuery } from '@tanstack/react-query';
 import { useFieldForm } from '@utils/hooks';
 import { FieldConfig } from '@utils/hooks/useFieldForm';
+import { useEffect, useState } from 'react';
 
-const configs: FieldConfig[] = [
-  {
-    type: 'TEXT',
-    name: 'name',
-    label: 'Name',
-  },
-  {
-    type: 'TEXT',
-    name: 'email',
-    label: 'Email',
-  },
-  {
-    type: 'TEXT',
-    name: 'title',
-    label: 'Title',
-  },
-  {
-    type: 'TEXT',
-    name: 'place',
-    label: 'Place',
-  },
-  {
-    type: 'TEXT',
-    name: 'about',
-    label: 'About',
-  },
-  {
-    type: 'TEXT',
-    name: 'language',
-    label: 'Language',
-  },
-  {
-    type: 'TEXT',
-    name: 'timezone',
-    label: 'Timezone',
-  },
-];
+type FormData = {
+  name?: string;
+  email?: string;
+  title?: string;
+  place?: string;
+  about?: string;
+  language?: string;
+  timezone?: string;
+};
 
 const ProfileSettings = () => {
-  const { fieldForm } = useFieldForm({
-    configs: configs,
-    defaultValues: {
-      name: 'Alex',
-      email: 'alex@dashwind.com',
-      title: 'UI/UX Designer',
-      place: 'California',
-      about: 'Doing what I love, part time traveller',
-      language: 'English',
-      timezone: 'IST',
-    },
+  const [userId, setUserId] = useState<string | null>();
+
+  const { data, isFetched } = useQuery({
+    queryKey: ['fetchUsersId'],
+    queryFn: () => fetchUsersId(userId || 'undefined'),
+    enabled: !!userId,
   });
+
+  const configs: FieldConfig[] = [
+    {
+      type: 'TEXT',
+      name: 'name',
+      label: 'Name',
+      defaultValue: data?.name,
+    },
+    {
+      type: 'TEXT',
+      name: 'email',
+      label: 'Email',
+      defaultValue: 'alex@dashwind.com',
+    },
+    {
+      type: 'TEXT',
+      name: 'title',
+      label: 'Title',
+      defaultValue: 'UI/UX Designer',
+    },
+    {
+      type: 'TEXT',
+      name: 'place',
+      label: 'Place',
+      defaultValue: 'California',
+    },
+    {
+      type: 'TEXT',
+      name: 'about',
+      label: 'About',
+      defaultValue: 'Doing what I love, part time traveller',
+    },
+    {
+      type: 'TEXT',
+      name: 'language',
+      label: 'Language',
+      defaultValue: 'English',
+    },
+    {
+      type: 'TEXT',
+      name: 'timezone',
+      label: 'Timezone',
+      defaultValue: 'IST',
+    },
+  ];
+
+  const { fieldForm, setValue } = useFieldForm<FormData>({ configs: configs });
+
+  useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    setUserId(userId);
+  }, []);
 
   return (
     <div className="card w-full p-6 bg-base-100 shadow-xl">
