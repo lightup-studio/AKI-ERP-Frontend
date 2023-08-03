@@ -124,7 +124,7 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
     setValue('receiverInformation', data.receiverInformation);
   }, [data]);
 
-  const { rowSelection, table, tableBlock } = useArtworksOrderTable({
+  const { table, tableBlock, rowSelection } = useArtworksOrderTable({
     artworks: data?.artworks,
     disabled,
     isLoading,

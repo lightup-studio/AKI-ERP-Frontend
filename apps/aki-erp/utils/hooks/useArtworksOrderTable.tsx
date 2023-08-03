@@ -167,13 +167,9 @@ const useArtworksOrderTable = ({
     },
   ];
 
-  const tableData = {
+  const { tableBlock, selectedRowsCount, ...props } = useTable({
     data: disabled ? artworks : selectedArtworks,
     totalCount: disabled ? artworks.length : selectedArtworks.length,
-  };
-
-  const { tableBlock, selectedRowsCount, ...props } = useTable({
-    data: tableData,
     columns,
     disabled,
     isLoading: disabled ? isLoading : false,
@@ -184,6 +180,7 @@ const useArtworksOrderTable = ({
   };
 
   return {
+    ...props,
     tableBlock: (
       <>
         {!disabled && (
@@ -203,8 +200,6 @@ const useArtworksOrderTable = ({
         {tableBlock}
       </>
     ),
-    selectedRowsCount,
-    ...props,
   };
 };
 

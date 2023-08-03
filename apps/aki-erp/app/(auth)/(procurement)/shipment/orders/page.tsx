@@ -187,7 +187,8 @@ const ShipmentOrders = () => {
 
   const { table, tableBlock, selectedRows, selectedRowsCount, clearRowSelection } =
     useTable<SalesOrder>({
-      data,
+      data: data?.data,
+      totalCount: data?.totalCount,
       columns,
       isLoading,
     });

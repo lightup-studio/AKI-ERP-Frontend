@@ -191,7 +191,8 @@ const LendReturnOrders = () => {
 
   const { table, tableBlock, selectedRows, selectedRowsCount, clearRowSelection } =
     useTable<LendReturnOrder>({
-      data,
+      data: data?.data,
+      totalCount: data?.totalCount,
       columns,
       isLoading,
     });

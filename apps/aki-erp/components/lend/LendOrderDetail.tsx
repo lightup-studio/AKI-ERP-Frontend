@@ -129,7 +129,7 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
     setValue('memo', data.memo);
   }, [data]);
 
-  const { rowSelection, table, tableBlock } = useArtworksOrderTable({
+  const { table, tableBlock, rowSelection } = useArtworksOrderTable({
     artworks: data?.artworks,
     disabled,
     isLoading,

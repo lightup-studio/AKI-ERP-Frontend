@@ -187,7 +187,8 @@ const PurchaseOrders = () => {
 
   const { table, tableBlock, selectedRows, selectedRowsCount, clearRowSelection } =
     useTable<PurchaseOrder>({
-      data,
+      data: data?.data,
+      totalCount: data?.totalCount,
       columns,
       isLoading,
     });

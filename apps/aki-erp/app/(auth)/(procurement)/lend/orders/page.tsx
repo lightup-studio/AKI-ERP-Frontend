@@ -187,7 +187,8 @@ const LendOrders = () => {
 
   const { table, tableBlock, selectedRows, selectedRowsCount, clearRowSelection } =
     useTable<LendOrder>({
-      data,
+      data: data?.data,
+      totalCount: data?.totalCount,
       columns,
       isLoading,
     });

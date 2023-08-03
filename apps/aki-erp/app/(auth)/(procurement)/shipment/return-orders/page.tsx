@@ -191,7 +191,8 @@ const ShipmentReturnOrders = () => {
 
   const { table, tableBlock, selectedRows, selectedRowsCount, clearRowSelection } =
     useTable<SalesReturnOrder>({
-      data,
+      data: data?.data,
+      totalCount: data?.totalCount,
       columns,
       isLoading,
     });

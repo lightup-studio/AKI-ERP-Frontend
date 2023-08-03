@@ -130,7 +130,7 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
     setValue('purchaseReturnTime', purchaseReturnTime);
   }, [data]);
 
-  const { rowSelection, table, tableBlock } = useArtworksOrderTable({
+  const { table, tableBlock, rowSelection } = useArtworksOrderTable({
     artworks: data?.artworks,
     disabled,
     isLoading,

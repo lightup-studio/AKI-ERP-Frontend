@@ -1,7 +1,6 @@
 import Table from '@components/shared/Table';
 import TablePagination from '@components/shared/TablePagination';
 import { IndeterminateCheckbox } from '@components/shared/field';
-import { Pagination } from '@data-access/models';
 import {
   ColumnDef,
   PaginationState,
@@ -13,15 +12,17 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const useTable = <T = any,>({
-  data,
+  data = [],
   columns,
   disabled,
   isLoading,
+  totalCount = 0,
 }: {
-  data?: Pick<Pagination<T>, 'data' | 'totalCount'>;
+  data?: T[];
   columns: ColumnDef<T, any>[];
   disabled?: boolean;
   isLoading?: boolean;
+  totalCount?: number;
 }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -74,8 +75,8 @@ const useTable = <T = any,>({
         {!disabled && (
           <IndeterminateCheckbox
             {...{
-              checked: selectedRowsCount > 0 && selectedRowsCount === data?.totalCount,
-              indeterminate: selectedRowsCount > 0 && selectedRowsCount < Number(data?.totalCount),
+              checked: selectedRowsCount > 0 && selectedRowsCount === totalCount,
+              indeterminate: selectedRowsCount > 0 && selectedRowsCount < totalCount,
               onChange: () => onSelectAllClick(table.getRowModel().rows),
             }}
           />
@@ -98,10 +99,10 @@ const useTable = <T = any,>({
   };
 
   const table = useReactTable<T>({
-    data: data?.data || [],
+    data: data,
     state: { pagination: { pageSize, pageIndex } },
     columns: disabled ? columns : [selectColumn, ...columns],
-    pageCount: Math.ceil((data?.totalCount || 0) / pageSize) ?? -1,
+    pageCount: Math.ceil(totalCount / pageSize) ?? -1,
     manualPagination: true,
     getCoreRowModel: getCoreRowModel(),
     onPaginationChange: setPagination,
@@ -118,7 +119,7 @@ const useTable = <T = any,>({
           table,
           pageSize,
           pageIndex,
-          totalCount: data?.totalCount ?? 0,
+          totalCount: totalCount,
         }}
       />
     </>
