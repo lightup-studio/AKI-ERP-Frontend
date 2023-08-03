@@ -118,8 +118,9 @@ const useArtworksTable = ({
 
   const { table, tableBlock, ...props } = useTable<ArtworkDetail>({
     data: tableData,
+    columns: columns,
+    isLoading: dataQuery.isFetching,
     totalCount: dataQuery.data?.totalCount,
-    columns,
     meta: {
       updateColumnData: function <TColumnId extends keyof ArtworkDetail>(
         rowIndex: number,

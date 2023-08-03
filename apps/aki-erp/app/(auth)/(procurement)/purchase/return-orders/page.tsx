@@ -180,7 +180,7 @@ const PurchaseReturnOrders = () => {
   ];
 
   const params = new URLSearchParams(searchParams);
-  const { data, isLoading } = useQuery({
+  const { data, isFetching } = useQuery({
     queryKey: ['PurchaseReturnOrder', params.toString()],
     queryFn: () => fetchPurchaseReturnOrder(Status.Enabled, params.toString()),
     enabled: !!selectItems,
@@ -191,8 +191,8 @@ const PurchaseReturnOrders = () => {
     useTable<PurchaseReturnOrder>({
       data: data?.data,
       totalCount: data?.totalCount,
-      columns,
-      isLoading,
+      columns: columns,
+      isLoading: isFetching,
     });
 
   return (

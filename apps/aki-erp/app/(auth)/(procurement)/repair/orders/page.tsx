@@ -178,7 +178,7 @@ const RepairOrders = () => {
   ];
 
   const params = new URLSearchParams(searchParams);
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isFetching, refetch } = useQuery({
     queryKey: ['RepairOrder', params.toString()],
     queryFn: () => fetchRepairOrder(Status.Enabled, params.toString()),
     enabled: !!selectItems,
@@ -189,8 +189,8 @@ const RepairOrders = () => {
     useTable<RepairOrder>({
       data: data?.data,
       totalCount: data?.totalCount,
-      columns,
-      isLoading,
+      columns: columns,
+      isLoading: isFetching,
     });
 
   const deleteMutation = useMutation(

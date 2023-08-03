@@ -182,7 +182,7 @@ const LendReturnOrders = () => {
   ];
 
   const params = new URLSearchParams(searchParams);
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isFetching, refetch } = useQuery({
     queryKey: ['LendReturnOrder', params.toString()],
     queryFn: () => fetchLendReturnOrder(Status.Enabled, params.toString()),
     enabled: !!selectItems,
@@ -193,8 +193,8 @@ const LendReturnOrders = () => {
     useTable<LendReturnOrder>({
       data: data?.data,
       totalCount: data?.totalCount,
-      columns,
-      isLoading,
+      columns: columns,
+      isLoading: isFetching,
     });
 
   const deleteMutation = useMutation(

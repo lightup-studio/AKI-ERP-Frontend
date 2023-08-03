@@ -102,8 +102,8 @@ const useTable = <T = any,>({
   };
 
   const table = useReactTable<T>({
-    data,
-    meta,
+    data: isLoading ? [] : data,
+    meta: meta,
     state: { pagination: { pageSize, pageIndex } },
     columns: disabled ? columns : [selectColumn, ...columns],
     pageCount: Math.ceil(totalCount / pageSize) ?? -1,

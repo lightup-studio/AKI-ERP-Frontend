@@ -178,7 +178,7 @@ const ShipmentOrders = () => {
   ];
 
   const params = new URLSearchParams(searchParams);
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isFetching, refetch } = useQuery({
     queryKey: ['SalesOrder', params.toString()],
     queryFn: () => fetchSalesOrder(Status.Enabled, params.toString()),
     enabled: !!selectItems,
@@ -189,8 +189,8 @@ const ShipmentOrders = () => {
     useTable<SalesOrder>({
       data: data?.data,
       totalCount: data?.totalCount,
-      columns,
-      isLoading,
+      columns: columns,
+      isLoading: isFetching,
     });
 
   const deleteMutation = useMutation(
