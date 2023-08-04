@@ -17,7 +17,7 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(function Te
       {...props}
       id={name}
       ref={ref}
-      value={defaultValue || value || ''}
+      value={value || ''}
       className={classNames('input input-bordered w-full', { 'input-error': errorMsg })}
     />
   );

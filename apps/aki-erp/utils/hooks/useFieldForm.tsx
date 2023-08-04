@@ -8,7 +8,6 @@ interface FieldConfig<TFieldValues = any> {
   label?: string;
   disabled?: boolean;
   required?: boolean;
-  defaultValue?: any;
 }
 
 interface useFieldFormProps<TFieldValues extends FieldValues = FieldValues, TContext = any>
