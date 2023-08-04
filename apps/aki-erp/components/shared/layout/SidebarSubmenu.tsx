@@ -39,7 +39,7 @@ const SidebarSubmenu = ({ submenu, path, name, icon }: SidebarSubmenuProps) => {
     <details open={isExpanded}>
       <summary
         className={classNames('flex pl-0 py-0', {
-          'bg-base-200': location.pathname.startsWith(path || ''),
+          'bg-base-200': pathname.startsWith(path || ''),
         })}
       >
         <Link className="flex-grow pl-4 py-3 relative" href={path || ''}>
