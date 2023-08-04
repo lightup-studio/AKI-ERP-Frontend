@@ -10,7 +10,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const useTable = <T = any,>({
   data = [],
@@ -52,7 +52,7 @@ const useTable = <T = any,>({
   }, [pageSize, pageIndex]);
 
   const [rowSelection, setRowSelection] = useState<Record<string, T>>({});
-  const selectedRows = Object.values(rowSelection);
+  const selectedRows = useMemo(() => Object.values(rowSelection), [rowSelection]);
   const selectedRowsCount = selectedRows.length;
 
   const onSelectClick = (row: Row<T>) => {

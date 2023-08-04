@@ -12,13 +12,14 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
 
   const { isFetching, isError } = useQuery({
     queryKey: ['fetchUsersId', userId],
-    queryFn: () => fetchUsersId(userId || 'undefined'),
+    queryFn: () => fetchUsersId(userId || ''),
+    enabled: !!userId,
     keepPreviousData: true,
   });
 
   useEffect(() => {
     const userId = localStorage.getItem('userId');
-    setUserId(userId);
+    userId ? setUserId(userId) : redirect('/login');
   }, []);
 
   if (isError) redirect('/login');
