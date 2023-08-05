@@ -23,7 +23,8 @@
       "@contexts/*": ["contexts/*"],
       "@constants/*": ["constants/*"],
       "@components/*": ["components/*"],
-      "@data-access/*": ["data-access/*"]
+      "@data-access/*": ["data-access/*"],
+      "@aki-erp/storybook-ui": ["../../libs/storybook-ui/src/index.ts"]
     }
   },
   "include": [
