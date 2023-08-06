@@ -1,7 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import { useLocalStorage } from 'react-use';
+import { useEffect, useRef } from 'react';
 
 import { AxiosError } from 'axios';
 import cx from 'classnames';
@@ -9,12 +8,12 @@ import { authorizeWithPassword } from 'data-access/apis/authorizations.api';
 import { AuthorizeWithPasswordResponse } from 'data-access/models';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useLocalStorage } from 'react-use';
 import * as yup from 'yup';
 
 import { useResizeAndToggle } from '@aki-erp/storybook-ui';
 import Button from '@components/shared/Button';
 import Image from '@components/shared/Image';
-import axiosInstance from '@contexts/axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
 import useFieldForm, { FieldConfig } from '@utils/hooks/useFieldForm';
@@ -95,6 +94,11 @@ const ResizeAndToggle = () => {
 const Login = () => {
   const router = useRouter();
 
+  useEffect(() => {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('accessToken');
+  }, []);
+
   const { fieldForm, handleSubmit } = useFieldForm({
     configs: configs,
     resolver: yupResolver(schema),
@@ -104,10 +108,11 @@ const Login = () => {
     mutationKey: ['authorizeWithPassword'],
     mutationFn: (formData: FormData) => authorizeWithPassword(formData.username, formData.password),
     onSuccess: (data) => {
-      localStorage.setItem('userId', data.user?.id?.toString() ?? '');
-      axiosInstance.defaults.headers['Authorization'] = data.accessToken;
-
-      router.push('/artworks');
+      if (data.accessToken && data.user?.id) {
+        localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('userId', data.user?.id.toString());
+        router.push('/artworks');
+      }
     },
     onError: async (error: AxiosError<AuthorizeWithPasswordResponse>) => {
       if (error.response?.data) {
