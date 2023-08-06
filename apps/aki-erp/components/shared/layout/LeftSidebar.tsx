@@ -1,7 +1,13 @@
 'use client';
 
+import { useRef } from 'react';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useLocalStorage } from 'react-use';
+
+import { useResizeAndToggle } from '@aki-erp/storybook-ui';
+
 import Image from '../Image';
 import SidebarSubmenu from './SidebarSubmenu';
 
@@ -190,11 +196,30 @@ const routes = [
 const LeftSidebar = () => {
   const pathName = usePathname();
 
+  const targetRef = useRef(null);
+  const [width, setWidth] = useLocalStorage('desktop-sidebar-width', 200);
+  const { dragNode } = useResizeAndToggle(targetRef, {
+    getCacheStateAndAction: () => [
+      {
+        show: true,
+        width: width!,
+      },
+      ({ width }) => {
+        setWidth(width);
+      },
+    ],
+    direction: 'right',
+  });
+
   return (
     <div className="drawer-side">
       <label htmlFor="left-sidebar-drawer" className="drawer-overlay"></label>
 
-      <ul className="menu gap-2 pt-2 w-80 bg-base-100 text-base-content h-full flex-nowrap">
+      <ul
+        className="menu gap-2 pt-2 w-80 bg-base-100 text-base-content h-full flex-nowrap"
+        ref={targetRef}
+      >
+        {dragNode}
         <li className="py-2 font-semibold text-xl">
           <div className="p-0">
             <Image
@@ -216,12 +241,7 @@ const LeftSidebar = () => {
             ) : route.submenu ? (
               <SidebarSubmenu {...route} />
             ) : (
-              <Link
-                href={route.path || ''}
-                // className={({ isActive }) =>
-                //   `${isActive ? 'font-semibold  bg-base-200' : 'font-normal'}`
-                // }
-              >
+              <Link href={route.path || ''}>
                 {route?.icon} {route.name}
                 {route.path && pathName.startsWith(route.path) ? (
                   <span

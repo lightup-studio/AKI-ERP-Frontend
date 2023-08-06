@@ -1,17 +1,14 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 import { AxiosError } from 'axios';
-import cx from 'classnames';
 import { authorizeWithPassword } from 'data-access/apis/authorizations.api';
 import { AuthorizeWithPasswordResponse } from 'data-access/models';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useLocalStorage } from 'react-use';
 import * as yup from 'yup';
 
-import { useResizeAndToggle } from '@aki-erp/storybook-ui';
 import Button from '@components/shared/Button';
 import Image from '@components/shared/Image';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -41,55 +38,6 @@ const configs: FieldConfig<FormData>[] = [
     label: 'password',
   },
 ];
-
-const ResizeAndToggle = () => {
-  const targetRef = useRef(null);
-
-  const [showBlock, setShowBlock] = useLocalStorage('block-show', false);
-  console.log('🐞 ~ showBlock:', showBlock);
-
-  const [width, setWidth] = useLocalStorage('block-width', 100);
-  console.log('🐞 ~ width:', width);
-
-  const { dragNode, setShow, show } = useResizeAndToggle(targetRef, {
-    getCacheStateAndAction: () => [
-      {
-        show: showBlock!,
-        width: width!,
-      },
-      ({ show, width }) => {
-        // those two will save into cache when end move mode, like save into storage
-        console.log('🐞 ~ width:', width);
-        console.log('🐞 ~ show:', show);
-        setShowBlock(show);
-        setWidth(width);
-      },
-    ],
-    direction: 'right',
-  });
-
-  return (
-    <>
-      <button
-        type="button"
-        onClick={() => {
-          setShow(!show);
-        }}
-      >
-        {show ? 'hide' : 'show'}
-      </button>
-      <div
-        ref={targetRef}
-        className={cx(
-          'bg-blue-300 relative h-8',
-          show ? 'min-w-[200px] max-w-[80vw]' : '!w-0 overflow-hidden'
-        )}
-      >
-        {dragNode}
-      </div>
-    </>
-  );
-};
 
 const Login = () => {
   const router = useRouter();
@@ -127,7 +75,6 @@ const Login = () => {
 
   return (
     <>
-      <ResizeAndToggle />
       <div className="min-h-screen bg-base-200 flex items-center">
         <div className="card mx-auto w-full max-w-md shadow-xl">
           <div className="grid md:grid-cols-1 p-10 bg-base-100 rounded-xl">
