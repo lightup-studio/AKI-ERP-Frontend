@@ -5,6 +5,7 @@ const { join } = require('path');
 module.exports = {
   content: [
     join(__dirname, '{app,pages,components,utils}/**/*!(*.stories|*.spec).{ts,tsx,html}'),
+    join(__dirname, '../../libs/storybook-ui/src/**/*!(*.stories|*.spec).{ts,tsx,html}'),
     ...createGlobPatternsForDependencies(__dirname),
   ],
   theme: {
