@@ -8,7 +8,7 @@ const Container = ({ children }: { children: React.ReactNode }) => {
 
       <div className="drawer-content flex flex-col h-screen overflow-hidden">
         <Navbar />
-        <main className="flex-1 overflow-y-auto pt-4 px-4 bg-base-200 relative">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 bg-base-200 relative">{children}</main>
       </div>
 
       <LeftSidebar />

@@ -285,7 +285,7 @@ const Collector = () => {
   return (
     <>
       <div className="flex flex-col gap-4">
-        <div className="card w-full p-6 bg-base-100 shadow-xl">
+        <div className="card w-full h-full p-6 bg-base-100 shadow-xl">
           <h2 className="text-xl font-bold border-l-8 border-accent pl-4 mb-6">新增藏家</h2>
 
           <form className="flex flex-wrap gap-3 items-end" onSubmit={handleSubmit(onSubmit)}>
@@ -368,7 +368,7 @@ const Collector = () => {
           </form>
         </div>
 
-        <div className="card w-full p-6 bg-base-100 shadow-xl">
+        <div className="card w-full h-full p-6 bg-base-100 shadow-xl">
           <h2 className="text-xl font-bold border-l-8 border-accent pl-4 mb-6">藏家列表</h2>
 
           <div className="flex gap-2 flex-col md:flex-row">
