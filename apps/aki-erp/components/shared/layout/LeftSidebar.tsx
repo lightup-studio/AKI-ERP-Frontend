@@ -224,7 +224,7 @@ const LeftSidebar = () => {
           <div className="p-0">
             <Image
               priority
-              src="/images/dark/logo.svg"
+              src="/images/light/logo.svg"
               alt="AKI ERP"
               width="177px"
               height="34.5px"

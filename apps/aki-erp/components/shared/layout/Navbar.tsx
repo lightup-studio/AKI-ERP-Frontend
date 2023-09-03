@@ -43,7 +43,7 @@ const Navbar = () => {
         </select> */}
         {/* <ThemeToggleButton></ThemeToggleButton> */}
         {/* Notification icon */}
-        <button className="btn btn-ghost ml-4  btn-circle">
+        <button className="btn btn-ghost ml-4 btn-circle">
           <div className="indicator">
             <BellIcon className="h-6 w-6" />
             {/* {noOfNotifications > 0 ? (
@@ -54,7 +54,7 @@ const Navbar = () => {
           </div>
         </button>
         {/* Profile icon, opening menu on click */}
-        <div className="dropdown dropdown-end ml-4">
+        <div className="dropdown dropdown-end">
           <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
             <div className="w-10 rounded-full">
               <UserCircleIcon />
