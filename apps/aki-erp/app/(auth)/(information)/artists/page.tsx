@@ -378,7 +378,7 @@ const Artists = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 py-2 mb-2">
+          <div className="flex items-center gap-2">
             <span>已選擇 {selectedRowCount} 筆</span>
             <button
               className="btn btn-error"
@@ -407,7 +407,7 @@ const Artists = () => {
           <div className="h-full w-full pb-6 bg-base-100 text-center">
             <Table table={table} isLoading={isLoading} />
 
-            <div className="divider mt-2" />
+            <div className="divider" />
 
             <div className="join">
               <button

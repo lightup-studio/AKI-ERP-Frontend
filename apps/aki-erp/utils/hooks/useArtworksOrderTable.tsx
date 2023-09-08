@@ -167,7 +167,7 @@ const useArtworksOrderTable = ({
     },
   ];
 
-  const { tableBlock, selectedRowsCount, ...props } = useTable({
+  const { tableBlock, rowSelection, selectedRowsCount, clearRowSelection, ...props } = useTable({
     data: disabled ? artworks : selectedArtworks,
     totalCount: disabled ? artworks.length : selectedArtworks.length,
     columns,
@@ -188,14 +188,23 @@ const useArtworksOrderTable = ({
     });
   };
 
+  const handleDelete = () => {
+    setSelectedArtworks((prev) => prev.filter((item, index) => !rowSelection[index]));
+    clearRowSelection();
+  };
+
   return {
     ...props,
     tableBlock: (
       <>
         {!disabled && (
-          <div className="flex items-center gap-2 py-2 mb-2">
+          <div className="flex items-center gap-2">
             <span>已選擇 {selectedRowsCount} 筆</span>
-            <button className="btn btn-error" disabled={selectedRowsCount === 0}>
+            <button
+              className="btn btn-error"
+              disabled={selectedRowsCount === 0}
+              onClick={handleDelete}
+            >
               <TrashIcon className="h-5 w-5"></TrashIcon>
               刪除
             </button>
@@ -209,6 +218,9 @@ const useArtworksOrderTable = ({
         {tableBlock}
       </>
     ),
+    rowSelection,
+    selectedRowsCount,
+    clearRowSelection,
   };
 };
 

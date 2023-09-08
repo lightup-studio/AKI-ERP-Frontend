@@ -116,7 +116,7 @@ const useTable = <T = any,>({
     <>
       <Table table={table} isLoading={isLoading} />
 
-      <div className="divider mt-2" />
+      <div className="divider" />
 
       <TablePagination
         {...{

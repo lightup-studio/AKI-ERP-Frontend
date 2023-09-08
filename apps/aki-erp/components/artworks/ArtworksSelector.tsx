@@ -281,7 +281,7 @@ const ArtworksSelector = ({
             </div>
           </div>
 
-          <div className="divider mt-2 mb-0"></div>
+          <div className="divider my-2"></div>
 
           <div className="h-full w-full bg-base-100 text-center">
             {tableBlock}

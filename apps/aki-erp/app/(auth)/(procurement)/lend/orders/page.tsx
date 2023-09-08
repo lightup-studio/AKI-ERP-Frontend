@@ -173,9 +173,9 @@ const LendOrders = () => {
           </div>
         </div>
 
-        <div className="divider mt-2 mb-0"></div>
+        <div className="divider my-2"></div>
 
-        <div className="flex items-center gap-2 py-2 mb-2">
+        <div className="flex items-center gap-2">
           <span>已選擇 {selectedRowsCount} 筆</span>
           <button
             className="btn btn-success"
