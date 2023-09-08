@@ -36,13 +36,12 @@ const PurchaseReturnOrders = () => {
   const columns: ColumnDef<PurchaseReturnOrder, any>[] = [
     {
       header: '編號',
-      accessorKey: 'artworks.0.displayId',
-      cell: ({ cell }) => (
+      cell: ({ row }) => (
         <Link
           className="text-info flex items-center whitespace-nowrap"
-          href={`/artworks/${cell.getValue()}?${searchParams.toString()}`}
+          href={`/purchase/return-orders/${row.original.id}?${searchParams.toString()}`}
         >
-          {cell.getValue()}
+          {row.original.displayId}
           <PencilSquareIcon className="h-4 w-4 ml-2 inline-block"></PencilSquareIcon>
         </Link>
       ),

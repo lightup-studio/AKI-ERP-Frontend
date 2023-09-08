@@ -129,7 +129,7 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
     setValue('memo', data.memo);
   }, [data]);
 
-  const { table, tableBlock, rowSelection } = useArtworksOrderTable({
+  const { table, tableBlock } = useArtworksOrderTable({
     artworks: data?.artworks,
     disabled,
     isLoading,
@@ -137,7 +137,7 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
 
   const createMutation = useMutation({
     mutationFn: (formData: FormData) => {
-      const artworkIdList = Object.values(rowSelection).map((row) => row.id);
+      const artworkIdList = table.getRowModel().rows.map((item) => item.original.id);
 
       return Promise.all([
         createLendOrder({

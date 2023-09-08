@@ -124,7 +124,7 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
     setValue('receiverInformation', data.receiverInformation);
   }, [data]);
 
-  const { table, tableBlock, rowSelection } = useArtworksOrderTable({
+  const { table, tableBlock } = useArtworksOrderTable({
     artworks: data?.artworks,
     disabled,
     isLoading,
@@ -132,7 +132,7 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
 
   const createMutation = useMutation({
     mutationFn: (formData: FormData) => {
-      const artworkIdList = Object.values(rowSelection).map((row) => row.id);
+      const artworkIdList = table.getRowModel().rows.map((item) => item.original.id);
 
       return Promise.all([
         createPurchaseOrder({
