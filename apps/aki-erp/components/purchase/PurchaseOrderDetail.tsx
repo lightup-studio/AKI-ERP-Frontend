@@ -173,7 +173,7 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
 
   return (
     <>
-      <div className="card w-full h-full p-6 bg-base-100 shadow-xl">
+      <div className="card w-full min-h-full p-6 bg-base-100 shadow-xl">
         <div className="flex gap-4 flex-col md:flex-row">
           <form className="w-full grid grid-cols-2 gap-4">{fieldForm}</form>
 

@@ -131,7 +131,7 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
 
   return (
     <>
-      <div className="card w-full h-full p-6 bg-base-100 shadow-xl">
+      <div className="card w-full min-h-full p-6 bg-base-100 shadow-xl">
         <div className="flex gap-4 flex-col md:flex-row">
           <form className="w-full grid gap-4">{fieldForm}</form>
 

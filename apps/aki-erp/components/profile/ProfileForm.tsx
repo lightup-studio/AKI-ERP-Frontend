@@ -70,7 +70,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ data }) => {
   });
 
   return (
-    <div className="card w-full h-full p-6 bg-base-100 shadow-xl">
+    <div className="card w-full min-h-full p-6 bg-base-100 shadow-xl">
       <h1 className="text-2xl font-semibold ml-2">Profile Settings</h1>
 
       <div className="divider"></div>

@@ -137,7 +137,7 @@ const RepairOrders = () => {
 
   return (
     <>
-      <div className="card w-full h-full p-6 bg-base-100 shadow-xl">
+      <div className="card w-full min-h-full p-6 bg-base-100 shadow-xl">
         <div className="md:w-1/2 mb-3">
           <SearchField {...getSearchInputProps()} />
         </div>
