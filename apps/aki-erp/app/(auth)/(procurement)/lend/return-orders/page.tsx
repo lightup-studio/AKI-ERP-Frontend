@@ -1,13 +1,8 @@
 'use client';
 
-import { ArtworksBatchUpdateDialog } from '@components/artworks';
+import { ArtworksBatchUpdateDialog, ArtworksPreviewBtn } from '@components/artworks';
 import { SearchField } from '@components/shared/field';
-import {
-  StoreType,
-  assetsTypeOptionMap,
-  salesTypeOptionMap,
-  storeTypeOptionMap,
-} from '@constants/artwork.constant';
+import { StoreType } from '@constants/artwork.constant';
 import {
   deleteLendReturnOrderId,
   fetchLendReturnOrder,
@@ -16,15 +11,15 @@ import {
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { CellContext, ColumnDef } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
+import { formatDateTime } from '@utils/format';
 import { useTable } from '@utils/hooks';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import { showConfirm } from '@utils/swalUtil';
-import { ArtworkDetail, LendReturnOrder, Status } from 'data-access/models';
+import { LendReturnOrder, Status } from 'data-access/models';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
 
 const LendReturnOrders = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -55,129 +50,40 @@ const LendReturnOrders = () => {
       ),
     },
     {
-      header: '作品名稱',
-      accessorKey: 'artworks.0.enName',
+      header: '借展單位',
+      accessorKey: 'lendDepartment',
     },
     {
-      header: '作品圖',
-      accessorKey: 'artworks.0.displayImageUrl',
-      cell: ({ cell }) => (
-        <div>
-          <DialogTrigger>
-            <Button>
-              <img src={cell.getValue()} alt="Artwork" loading="lazy" className="h-20" />
-            </Button>
-            <Popover placement="right">
-              <Dialog className="h-[80vh]">
-                <img
-                  src={cell.getValue()}
-                  alt="Artwork"
-                  className="w-full h-full object-contain"
-                  loading="lazy"
-                />
-              </Dialog>
-            </Popover>
-          </DialogTrigger>
-        </div>
-      ),
+      header: '借展日期',
+      cell: ({ row }) => formatDateTime(row.original.lendReturnTime),
     },
     {
-      header: '藝術家',
-      accessorKey: 'artworks.0.artists',
-      cell: ({ cell }) => (
-        <div>
-          {cell
-            .getValue<ArtworkDetail['artists']>()
-            ?.map((artist) => `${artist.zhName} ${artist.enName}`)
-            .join(',')}
-        </div>
-      ),
+      header: '聯絡人',
+      accessorKey: 'contactPersonInformation.name',
     },
     {
-      id: 'media',
-      header: '媒材',
-      accessorKey: 'artworks.0.metadata',
-      cell: ({ cell }: CellContext<LendReturnOrder, ArtworkDetail['metadata']>) =>
-        cell.getValue()?.media ?? '無',
+      header: '聯絡人電話',
+      accessorKey: 'contactPersonInformation.phone',
     },
     {
-      id: 'size',
-      header: '尺寸',
-      accessorKey: 'artworks.0.metadata',
-      cell: ({ cell }: CellContext<LendReturnOrder, ArtworkDetail['metadata']>) => {
-        const { length, width, height } = cell.getValue<ArtworkDetail['metadata']>() || {};
-        const lengthText = length && `長 ${length}`;
-        const widthText = width && `寬 ${width}`;
-        const heightText = height && `高 ${height}`;
-        return lengthText && widthText && heightText
-          ? `${lengthText} x ${widthText} x ${heightText}`
-          : widthText && heightText
-          ? `${widthText} x ${heightText}`
-          : lengthText && widthText
-          ? `${lengthText} x ${widthText}`
-          : lengthText
-          ? `${lengthText}`
-          : widthText
-          ? `${widthText}`
-          : heightText
-          ? `${heightText}`
-          : '無';
-      },
+      header: '收件人',
+      accessorKey: 'returnerInformation.name',
     },
     {
-      id: 'year',
-      header: '年代',
-      cell: ({ row }) => {
-        if (!row.original.artworks?.length) return '無';
-
-        const { yearRangeStart, yearRangeEnd } = row.original.artworks[0];
-        return yearRangeStart === yearRangeEnd
-          ? yearRangeStart && yearRangeStart !== 0
-            ? yearRangeEnd
-            : '無'
-          : `${yearRangeStart}~${yearRangeEnd}`;
-      },
+      header: '收件人電話',
+      accessorKey: 'returnerInformation.phone',
     },
     {
-      id: 'otherInfo',
-      header: '其他資訊',
-      accessorKey: 'artworks.0.metadata',
-      cell: ({ cell }: CellContext<LendReturnOrder, ArtworkDetail['metadata']>) => {
-        const { frame, frameDimensions, pedestal, pedestalDimensions, cardboardBox, woodenBox } =
-          cell.getValue()?.otherInfo || {};
-        if (frame) return `表框${frameDimensions && `，尺寸 ${frameDimensions}`}`;
-        if (pedestal) return `台座${pedestalDimensions && `，尺寸 ${pedestalDimensions}`}`;
-        if (cardboardBox) return '紙箱';
-        if (woodenBox) return '木箱';
-        return '無';
-      },
+      header: '地址',
+      accessorKey: 'returnerInformation.address',
     },
     {
-      id: 'storeType',
-      header: '庫存狀態',
-      accessorKey: 'artworks.0.metadata',
-      cell: ({ cell }: CellContext<LendReturnOrder, ArtworkDetail['metadata']>) => {
-        const storeTypeId = cell.getValue()?.storeType ?? 'inStock';
-        return storeTypeOptionMap[storeTypeId].label;
-      },
+      header: '備註',
+      accessorKey: 'memo',
     },
     {
-      id: 'salesType',
-      header: '銷售狀態',
-      accessorKey: 'artworks.0.metadata',
-      cell: ({ getValue }: CellContext<LendReturnOrder, ArtworkDetail['metadata']>) => {
-        const salesTypeId = getValue()?.salesType ?? 'unsold';
-        return salesTypeOptionMap[salesTypeId].label;
-      },
-    },
-    {
-      id: 'assetsType',
-      header: '資產類型',
-      accessorKey: 'artworks.0.metadata',
-      cell: ({ getValue }: CellContext<LendReturnOrder, ArtworkDetail['metadata']>) => {
-        const assetsTypeId = getValue()?.assetsType ?? 'A';
-        return assetsTypeOptionMap[assetsTypeId].label;
-      },
+      header: '功能',
+      cell: ({ row }) => <ArtworksPreviewBtn artworks={row.original.artworks} />,
     },
   ];
 
