@@ -10,9 +10,7 @@ module.exports = {
     ...createGlobPatternsForDependencies(__dirname),
   ],
   theme: {
-    extend: {
-      themes: ["light", "dark", "cupcake"],
-    },
+    extend: {},
   },
   plugins: [require('@tailwindcss/typography'), require('daisyui')],
 };
