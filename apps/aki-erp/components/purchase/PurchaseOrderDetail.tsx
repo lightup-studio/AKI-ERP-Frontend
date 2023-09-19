@@ -1,10 +1,16 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import Button from '@components/shared/Button';
 import { StoreType } from '@constants/artwork.constant';
-import { createPurchaseOrder, fetchPurchaseOrderId, patchArtworksBatchId } from '@data-access/apis';
+import {
+  createPurchaseOrder,
+  fetchArtworkDetail,
+  fetchPurchaseOrderId,
+  patchArtworksBatchId,
+} from '@data-access/apis';
+import { ArtworkDetail, ArtworkMetadata } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -12,7 +18,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useArtworksOrderTable } from '@utils/hooks';
 import useFieldForm, { FieldConfig } from '@utils/hooks/useFieldForm';
 import dateFnsFormat from 'date-fns/format';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
 import * as yup from 'yup';
 
@@ -49,8 +55,11 @@ interface PurchaseOrderDetailProps {
 }
 
 const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) => {
-  const router = useRouter();
   const { id } = useParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [draftArtworks, setDraftArtworks] = useState<ArtworkDetail<ArtworkMetadata>[]>([]);
 
   const configs: FieldConfig<FormData>[] = [
     {
@@ -112,6 +121,13 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
   );
 
   useEffect(() => {
+    const artworkIds = searchParams.getAll('artworkId');
+    Promise.all(artworkIds.map((item) => fetchArtworkDetail(item))).then((list) =>
+      setDraftArtworks(list)
+    );
+  }, []);
+
+  useEffect(() => {
     if (!data) return;
 
     const purchaseTime = data.purchaseTime
@@ -125,7 +141,7 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
   }, [data]);
 
   const { table, tableBlock } = useArtworksOrderTable({
-    artworks: data?.artworks,
+    artworks: [...draftArtworks, ...(data?.artworks || [])],
     disabled,
     isLoading,
   });

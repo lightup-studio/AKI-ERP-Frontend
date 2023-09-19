@@ -22,12 +22,13 @@ import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import useArtworksTable, { inputColumn, selectColumn } from '@utils/hooks/useArtworksTable';
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ArtworksTitleProps } from './ArtworksTitle';
 
 type ArtworksListProps = Pick<ArtworksTitleProps, 'type'>;
 
 const ArtworksList = ({ type }: ArtworksListProps) => {
+  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -251,6 +252,13 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
     enableMutation.mutate(enabledIds);
   };
 
+  const handleAddOrders = () => {
+    const query = new URLSearchParams();
+    selectedRows.map((artwork) => query.append('artworkId', artwork.id.toString()));
+
+    router.push(`/purchase/orders/add?${query.toString()}`);
+  };
+
   return (
     <div className="card w-full min-h-full p-6 bg-base-100 shadow-xl">
       <div className="md:w-1/2 mb-3">
@@ -299,7 +307,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
         {status === 'Draft' && (
           <button
             className="btn btn-accent"
-            onClick={handleEnable}
+            onClick={handleAddOrders}
             disabled={selectedRowsCount === 0}
           >
             加入庫存

@@ -168,8 +168,8 @@ const useArtworksOrderTable = ({
   ];
 
   const { tableBlock, rowSelection, selectedRowsCount, clearRowSelection, ...props } = useTable({
-    data: disabled ? artworks : selectedArtworks,
-    totalCount: disabled ? artworks.length : selectedArtworks.length,
+    data: [...artworks, ...selectedArtworks],
+    totalCount: artworks.length + selectedArtworks.length,
     columns,
     disabled,
     isLoading: disabled ? isLoading : false,
