@@ -220,7 +220,6 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
                   <>表格匯出</>
                 )}
               </button>
-              Ｆ
             </div>
             <select
               className="select select-bordered"
