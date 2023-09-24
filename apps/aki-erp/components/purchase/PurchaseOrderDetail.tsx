@@ -12,7 +12,7 @@ import Button from '@components/shared/Button';
 import { StoreType } from '@constants/artwork.constant';
 import {
   createPurchaseOrder,
-  exportLendOrderById,
+  exportPurchaseOrderById,
   fetchArtworkDetail,
   fetchPurchaseOrderId,
   patchArtworksBatchId,
@@ -192,7 +192,7 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
 
   const exportOrderMutation = useMutation({
     mutationKey: ['exportPurchaseOrder', +id],
-    mutationFn: exportLendOrderById,
+    mutationFn: exportPurchaseOrderById,
     onSuccess: ({ downloadPageUrl }) => {
       const linkElement = document.createElement('a');
       linkElement.setAttribute('href', downloadPageUrl);
