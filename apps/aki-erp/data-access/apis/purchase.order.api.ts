@@ -6,13 +6,13 @@ import {
   Status,
 } from '@data-access/models';
 
+const url = '/api/Order/purchase';
+
 export const fetchPurchaseOrder = async (
   status: Status,
   queryString?: string
 ): Promise<Pagination<PurchaseOrder>> => {
   const params = new URLSearchParams(queryString);
-
-  const url = '/api/Order/purchase';
   const query = new URLSearchParams();
 
   [...params.entries()].forEach(([key, value]) => {
@@ -37,45 +37,38 @@ export const fetchPurchaseOrder = async (
 export const createPurchaseOrder = async (
   body?: CreateOrUpdatePurchaseOrderRequest
 ): Promise<PurchaseOrder> => {
-  const url = '/api/Order/purchase';
-
   const res = await axios.post(url, body);
   return res.data;
 };
 
-export const updatPurchaseeOrder = async (
+export const updatePurchaseOrder = async (
   body?: CreateOrUpdatePurchaseOrderRequest
 ): Promise<PurchaseOrder> => {
-  const url = '/api/Order/purchase';
-
   const res = await axios.put(url, body, { params: { allowCreate: true } });
   return res.data;
 };
 
 export const deletePurchaseOrderId = async (id: number): Promise<void> => {
-  const url = '/api/Order/purchase';
-
   const res = await axios.delete(`${url}/${id}`);
   return res.data;
 };
 
 export const fetchPurchaseOrderId = async (id: number): Promise<PurchaseOrder> => {
-  const url = '/api/Order/purchase';
-
   const res = await axios.get(`${url}/${id}`);
   return res.data;
 };
 
-export const fetchPurchaseOrderDIDdisplayId = async (displayId: string): Promise<PurchaseOrder> => {
-  const url = '/api/Order/purchase';
+export const exportPurchaseOrderById = async (id: number) => {
+  const res = await axios.get<{ downloadPageUrl: string }>(`${url}/${id}/export`);
+  return res.data;
+};
 
+export const fetchPurchaseOrderDIDdisplayId = async (displayId: string): Promise<PurchaseOrder> => {
   const res = await axios.get(`${url}/DID:${displayId}`);
   return res.data;
 };
 
 export const deletePurchaseOrderDIDdisplayId = async (displayId: string): Promise<void> => {
-  const url = '/api/Order/purchase';
-
   const res = await axios.delete(`${url}/DID:${displayId}`);
   return res.data;
 };

@@ -6,13 +6,13 @@ import {
   TransferOrder,
 } from '@data-access/models';
 
+const url = '/api/Order/transfer';
+
 export const fetchTransferOrder = async (
   status: Status,
   queryString?: string
 ): Promise<Pagination<TransferOrder>> => {
   const params = new URLSearchParams(queryString);
-
-  const url = '/api/Order/transfer';
   const query = new URLSearchParams();
 
   [...params.entries()].forEach(([key, value]) => {
@@ -37,8 +37,6 @@ export const fetchTransferOrder = async (
 export const createTransferOrder = async (
   body?: CreateOrUpdateTransferOrderRequest
 ): Promise<TransferOrder> => {
-  const url = '/api/Order/transfer';
-
   const res = await axios.post(url, body);
   return res.data;
 };
@@ -46,36 +44,31 @@ export const createTransferOrder = async (
 export const updateTransferOrder = async (
   body?: CreateOrUpdateTransferOrderRequest
 ): Promise<TransferOrder> => {
-  const url = '/api/Order/transfer';
-
   const res = await axios.put(url, body, { params: { allowCreate: true } });
   return res.data;
 };
 
 export const deleteTransferOrderId = async (id: number): Promise<void> => {
-  const url = '/api/Order/transfer';
-
   const res = await axios.delete(`${url}/${id}`);
   return res.data;
 };
 
 export const fetchTransferOrderId = async (id: number): Promise<TransferOrder> => {
-  const url = '/api/Order/transfer';
-
   const res = await axios.get(`${url}/${id}`);
   return res.data;
 };
 
-export const fetchTransferOrderDIDdisplayId = async (displayId: string): Promise<TransferOrder> => {
-  const url = '/api/Order/transfer';
+export const exportTransferOrderById = async (id: number) => {
+  const res = await axios.get<{ downloadPageUrl: string }>(`${url}/${id}/export`);
+  return res.data;
+};
 
+export const fetchTransferOrderDIDdisplayId = async (displayId: string): Promise<TransferOrder> => {
   const res = await axios.get(`${url}/DID:${displayId}`);
   return res.data;
 };
 
 export const deleteTransferOrderDIDdisplayId = async (displayId: string): Promise<void> => {
-  const url = '/api/Order/transfer';
-
   const res = await axios.delete(`${url}/DID:${displayId}`);
   return res.data;
 };

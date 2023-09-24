@@ -6,13 +6,13 @@ import {
   Status,
 } from '@data-access/models';
 
+const url = '/api/Order/sales';
+
 export const fetchSalesOrder = async (
   status: Status,
   queryString?: string
 ): Promise<Pagination<SalesOrder>> => {
   const params = new URLSearchParams(queryString);
-
-  const url = '/api/Order/sales';
   const query = new URLSearchParams();
 
   [...params.entries()].forEach(([key, value]) => {
@@ -37,8 +37,6 @@ export const fetchSalesOrder = async (
 export const createSalesOrder = async (
   body?: CreateOrUpdateSalesOrderRequest
 ): Promise<SalesOrder> => {
-  const url = '/api/Order/sales';
-
   const res = await axios.post(url, body);
   return res.data;
 };
@@ -46,36 +44,31 @@ export const createSalesOrder = async (
 export const updateSalesOrder = async (
   body?: CreateOrUpdateSalesOrderRequest
 ): Promise<SalesOrder> => {
-  const url = '/api/Order/sales';
-
   const res = await axios.put(url, body, { params: { allowCreate: true } });
   return res.data;
 };
 
 export const deleteSalesOrderId = async (id: number): Promise<void> => {
-  const url = '/api/Order/sales';
-
   const res = await axios.delete(`${url}/${id}`);
   return res.data;
 };
 
 export const fetchSalesOrderId = async (id: number): Promise<SalesOrder> => {
-  const url = '/api/Order/sales';
-
   const res = await axios.get(`${url}/${id}`);
   return res.data;
 };
 
-export const fetchSalesOrderDIDdisplayId = async (displayId: string): Promise<SalesOrder> => {
-  const url = '/api/Order/sales';
+export const exportSalesOrderById = async (id: number) => {
+  const res = await axios.get<{ downloadPageUrl: string }>(`${url}/${id}/export`);
+  return res.data;
+};
 
+export const fetchSalesOrderDIDdisplayId = async (displayId: string): Promise<SalesOrder> => {
   const res = await axios.get(`${url}/DID:${displayId}`);
   return res.data;
 };
 
 export const deleteSalesOrderDIDdisplayId = async (displayId: string): Promise<void> => {
-  const url = '/api/Order/sales';
-
   const res = await axios.delete(`${url}/DID:${displayId}`);
   return res.data;
 };

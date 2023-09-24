@@ -2,19 +2,26 @@
 
 import { useEffect } from 'react';
 
+import cx from 'classnames';
+import dateFnsFormat from 'date-fns/format';
+import { useParams, useRouter } from 'next/navigation';
+import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
+import * as yup from 'yup';
+
 import Button from '@components/shared/Button';
 import { StoreType } from '@constants/artwork.constant';
-import { createTransferOrder, fetchTransferOrderId, patchArtworksBatchId } from '@data-access/apis';
+import {
+  createTransferOrder,
+  exportTransferOrderById,
+  fetchTransferOrderId,
+  patchArtworksBatchId,
+} from '@data-access/apis';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useArtworksOrderTable } from '@utils/hooks';
 import useFieldForm, { FieldConfig } from '@utils/hooks/useFieldForm';
-import dateFnsFormat from 'date-fns/format';
-import { useParams, useRouter } from 'next/navigation';
-import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
-import * as yup from 'yup';
 
 type FormData = {
   transporter?: string;
@@ -129,6 +136,22 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
     await createMutation.mutateAsync(formData);
   };
 
+  const exportOrderMutation = useMutation({
+    mutationKey: ['exportTransferOrder', +id],
+    mutationFn: exportTransferOrderById,
+    onSuccess: ({ downloadPageUrl }) => {
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', downloadPageUrl);
+      linkElement.setAttribute('target', '_blank');
+      linkElement.click();
+      linkElement.remove();
+    },
+  });
+
+  const onExportOrder = async () => {
+    await exportOrderMutation.mutateAsync(+id);
+  };
+
   return (
     <>
       <div className="card w-full min-h-full p-6 bg-base-100 shadow-xl">
@@ -137,8 +160,21 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
 
           <div className="flex flex-col gap-4 justify-between">
             <div className="flex md:flex-col gap-2">
-              <button aria-label="export pdf file" className="btn btn-accent flex-1">
-                表格匯出
+              <button
+                aria-label="export table"
+                className={cx('btn btn-accent flex-1', {
+                  'flex-nowrap whitespace-nowrap': exportOrderMutation.isLoading,
+                })}
+                onClick={onExportOrder}
+                disabled={exportOrderMutation.isLoading}
+              >
+                {exportOrderMutation.isLoading ? (
+                  <>
+                    處理中 <span className="loading loading-ring loading-sm"></span>
+                  </>
+                ) : (
+                  <>表格匯出</>
+                )}
               </button>
             </div>
             <select

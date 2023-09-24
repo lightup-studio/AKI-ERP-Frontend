@@ -6,13 +6,13 @@ import {
   Status,
 } from '@data-access/models';
 
+const url = '/api/Order/repairReturn';
+
 export const fetchRepairReturnOrder = async (
   status: Status,
   queryString?: string
 ): Promise<Pagination<RepairReturnOrder>> => {
   const params = new URLSearchParams(queryString);
-
-  const url = '/api/Order/repairReturn';
   const query = new URLSearchParams();
 
   [...params.entries()].forEach(([key, value]) => {
@@ -46,38 +46,33 @@ export const createRepairReturnOrder = async (
 export const updateRepairReturnOrder = async (
   body?: CreateOrUpdateRepairReturnOrderRequest
 ): Promise<RepairReturnOrder> => {
-  const url = '/api/Order/repairReturn';
-
   const res = await axios.put(url, body, { params: { allowCreate: true } });
   return res.data;
 };
 
 export const deleteRepairReturnOrderId = async (id: number): Promise<void> => {
-  const url = '/api/Order/repairReturn';
-
   const res = await axios.delete(`${url}/${id}`);
   return res.data;
 };
 
 export const fetchRepairReturnOrderId = async (id: number): Promise<RepairReturnOrder> => {
-  const url = '/api/Order/repairReturn';
-
   const res = await axios.get(`${url}/${id}`);
+  return res.data;
+};
+
+export const exportRepairReturnOrderById = async (id: number) => {
+  const res = await axios.get<{ downloadPageUrl: string }>(`${url}/${id}/export`);
   return res.data;
 };
 
 export const fetchRepairReturnOrderDIDdisplayId = async (
   displayId: string
 ): Promise<RepairReturnOrder> => {
-  const url = '/api/Order/repairReturn';
-
   const res = await axios.get(`${url}/DID:${displayId}`);
   return res.data;
 };
 
 export const deleteRepairReturnOrderDIDdisplayId = async (displayId: string): Promise<void> => {
-  const url = '/api/Order/repairReturn';
-
   const res = await axios.delete(`${url}/DID:${displayId}`);
   return res.data;
 };

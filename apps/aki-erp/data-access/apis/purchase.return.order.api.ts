@@ -6,13 +6,13 @@ import {
   Status,
 } from '@data-access/models';
 
+const url = '/api/Order/purchaseReturn';
+
 export const fetchPurchaseReturnOrder = async (
   status: Status,
   queryString?: string
 ): Promise<Pagination<PurchaseReturnOrder>> => {
   const params = new URLSearchParams(queryString);
-
-  const url = '/api/Order/purchaseReturn';
   const query = new URLSearchParams();
 
   [...params.entries()].forEach(([key, value]) => {
@@ -37,8 +37,6 @@ export const fetchPurchaseReturnOrder = async (
 export const createPurchaseReturnOrder = async (
   body?: CreateOrUpdatePurchaseReturnOrderRequest
 ): Promise<PurchaseReturnOrder> => {
-  const url = '/api/Order/purchaseReturn';
-
   const res = await axios.post(url, body);
   return res.data;
 };
@@ -46,38 +44,33 @@ export const createPurchaseReturnOrder = async (
 export const updatePurchaseReturnOrder = async (
   body?: CreateOrUpdatePurchaseReturnOrderRequest
 ): Promise<PurchaseReturnOrder> => {
-  const url = '/api/Order/purchaseReturn';
-
   const res = await axios.put(url, body, { params: { allowCreate: true } });
   return res.data;
 };
 
 export const deletePurchaseReturnOrderId = async (id: number): Promise<void> => {
-  const url = '/api/Order/purchaseReturn';
-
   const res = await axios.delete(`${url}/${id}`);
   return res.data;
 };
 
 export const fetchPurchaseReturnOrderId = async (id: number): Promise<PurchaseReturnOrder> => {
-  const url = '/api/Order/purchaseReturn';
-
   const res = await axios.get(`${url}/${id}`);
+  return res.data;
+};
+
+export const exportPurchaseReturnOrderById = async (id: number) => {
+  const res = await axios.get<{ downloadPageUrl: string }>(`${url}/${id}/export`);
   return res.data;
 };
 
 export const fetchPurchaseReturnOrderDIDdisplayId = async (
   displayId: string
 ): Promise<PurchaseReturnOrder> => {
-  const url = '/api/Order/purchaseReturn';
-
   const res = await axios.get(`${url}/DID:${displayId}`);
   return res.data;
 };
 
 export const deletePurchaseReturnOrderDIDdisplayId = async (displayId: string): Promise<void> => {
-  const url = '/api/Order/purchaseReturn';
-
   const res = await axios.delete(`${url}/DID:${displayId}`);
   return res.data;
 };

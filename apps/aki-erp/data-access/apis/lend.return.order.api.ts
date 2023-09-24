@@ -6,13 +6,13 @@ import {
   Status,
 } from '@data-access/models';
 
+const url = '/api/Order/lendReturn';
+
 export const fetchLendReturnOrder = async (
   status: Status,
   queryString?: string
 ): Promise<Pagination<LendReturnOrder>> => {
   const params = new URLSearchParams(queryString);
-
-  const url = '/api/Order/lendReturn';
   const query = new URLSearchParams();
 
   [...params.entries()].forEach(([key, value]) => {
@@ -37,8 +37,6 @@ export const fetchLendReturnOrder = async (
 export const createLendReturnOrder = async (
   body?: CreateOrUpdateLendReturnOrderRequest
 ): Promise<LendReturnOrder> => {
-  const url = '/api/Order/lendReturn';
-
   const res = await axios.post(url, body);
   return res.data;
 };
@@ -46,38 +44,33 @@ export const createLendReturnOrder = async (
 export const updateLendReturnOrder = async (
   body?: CreateOrUpdateLendReturnOrderRequest
 ): Promise<LendReturnOrder> => {
-  const url = '/api/Order/lendReturn';
-
   const res = await axios.put(url, body, { params: { allowCreate: true } });
   return res.data;
 };
 
 export const deleteLendReturnOrderId = async (id: number): Promise<void> => {
-  const url = '/api/Order/lendReturn';
-
   const res = await axios.delete(`${url}/${id}`);
   return res.data;
 };
 
 export const fetchLendReturnOrderId = async (id: number): Promise<LendReturnOrder> => {
-  const url = '/api/Order/lendReturn';
-
   const res = await axios.get(`${url}/${id}`);
+  return res.data;
+};
+
+export const exportLendReturnOrderById = async (id: number) => {
+  const res = await axios.get<{ downloadPageUrl: string }>(`${url}/${id}/export`);
   return res.data;
 };
 
 export const fetchLendReturnOrderDIDdisplayId = async (
   displayId: string
 ): Promise<LendReturnOrder> => {
-  const url = '/api/Order/lendReturn';
-
   const res = await axios.get(`${url}/DID:${displayId}`);
   return res.data;
 };
 
 export const deleteLendReturnOrderDIDdisplayId = async (displayId: string): Promise<void> => {
-  const url = '/api/Order/lendReturn';
-
   const res = await axios.delete(`${url}/DID:${displayId}`);
   return res.data;
 };
