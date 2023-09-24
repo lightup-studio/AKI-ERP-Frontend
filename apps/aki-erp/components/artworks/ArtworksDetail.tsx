@@ -96,7 +96,7 @@ const ArtworksDetail = () => {
 
   const { isLoading, isSuccess, data, isInitialLoading } = useQuery(
     ['data', params.id],
-    () => fetchArtworkDetailByDisplayId(params.id || ''),
+    () => fetchArtworkDetailByDisplayId(params.id?.toString()),
     {
       enabled: !!params.id, // only run the query if the id exists
     }
