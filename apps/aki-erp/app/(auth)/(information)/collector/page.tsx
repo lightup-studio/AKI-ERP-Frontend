@@ -226,6 +226,11 @@ const Collector = () => {
       header: '地址',
       accessorKey: 'address',
     },
+    {
+      id: 'else',
+      header: '其他',
+      accessorKey: 'metadata.else',
+    },
   ];
 
   const table = useReactTable({
@@ -262,6 +267,7 @@ const Collector = () => {
       telephone: '',
       metadata: {
         email: '',
+        else: '',
       },
     },
     resolver: yupResolver<any>(formSchema),
@@ -359,6 +365,22 @@ const Collector = () => {
                 />
                 {errors.address && (
                   <p className="absolute text-error text-xs italic">{errors.address?.message}</p>
+                )}
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="font-bold">其他</label>
+              <div className="relative flex-1">
+                <input
+                  className={cx('input input-bordered w-full text-center', {
+                    'input-error': errors?.metadata?.else,
+                  })}
+                  {...register('metadata.else')}
+                />
+                {errors?.metadata?.else && (
+                  <p className="absolute text-error text-xs italic">
+                    {errors?.metadata?.else?.message}
+                  </p>
                 )}
               </div>
             </div>
