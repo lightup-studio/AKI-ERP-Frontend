@@ -32,11 +32,6 @@ type FormData = {
     name?: string;
     phone?: string;
   };
-  receiverInformation?: {
-    name?: string;
-    phone?: string;
-    address?: string;
-  };
 };
 
 const schema = yup.object().shape({
@@ -44,12 +39,6 @@ const schema = yup.object().shape({
   purchaseTime: yup.date().required('必填項目'),
   salesInformation: yup.object({
     name: yup.string().required('必填項目'),
-    phone: yup.string().required('必填項目'),
-  }),
-  receiverInformation: yup.object({
-    name: yup.string().required('必填項目'),
-    phone: yup.string().required('必填項目'),
-    address: yup.string().required('必填項目'),
   }),
 });
 
@@ -89,24 +78,6 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
       label: '聯絡人電話',
       disabled: disabled,
     },
-    {
-      type: 'TEXT',
-      name: 'receiverInformation.name',
-      label: '收件人',
-      disabled: disabled,
-    },
-    {
-      type: 'TEXT',
-      name: 'receiverInformation.phone',
-      label: '收件人電話',
-      disabled: disabled,
-    },
-    {
-      type: 'TEXT',
-      name: 'receiverInformation.address',
-      label: '地址',
-      disabled: disabled,
-    },
   ];
 
   const { fieldForm, setValue, handleSubmit } = useFieldForm<FormData>({
@@ -140,7 +111,6 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
     setValue('purchaseTime', purchaseTime);
     setValue('salesCompany', data.salesCompany);
     setValue('salesInformation', data.salesInformation);
-    setValue('receiverInformation', data.receiverInformation);
   }, [data]);
 
   const { table, tableBlock } = useArtworksOrderTable({
@@ -159,7 +129,6 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
           salesCompany: formData.salesCompany,
           purchaseTime: formData.purchaseTime,
           salesInformation: formData.salesInformation,
-          receiverInformation: formData.receiverInformation,
         }),
         patchArtworksBatchId({
           idList: artworkIdList,

@@ -62,18 +62,6 @@ const PurchaseOrders = () => {
       accessorKey: 'salesInformation.phone',
     },
     {
-      header: '收件人',
-      accessorKey: 'receiverInformation.name',
-    },
-    {
-      header: '收件人電話',
-      accessorKey: 'receiverInformation.phone',
-    },
-    {
-      header: '地址',
-      accessorKey: 'receiverInformation.address',
-    },
-    {
       header: '功能',
       cell: ({ row }) => <ArtworksPreviewBtn artworks={row.original.artworks} />,
     },
