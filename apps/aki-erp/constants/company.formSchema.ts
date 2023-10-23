@@ -25,8 +25,7 @@ export const formSchema = yup.object().shape({
     .string()
     .required('電話必填')
     .matches(/^[0-9()-\s]+$/, '不能輸入奇怪的字元'),
-  address: yup.string().required('地址必填'),
   metadata: yup.object().shape({
-    email: yup.string().email('Email 格式錯誤').required('Email 必填'),
+    email: yup.string().email('Email 格式錯誤'),
   }),
 });
