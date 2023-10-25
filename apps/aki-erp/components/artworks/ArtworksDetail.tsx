@@ -155,7 +155,7 @@ const ArtworksDetail = () => {
           woodenBox: false,
         },
         warehouseLocation: '',
-        storeType: StoreType.NONE,
+        storeType: StoreType.IN_STOCK,
       },
     },
     resolver: yupResolver<any>(schema),
@@ -707,10 +707,20 @@ const ArtworksDetail = () => {
                 <label className="font-bold whitespace-nowrap">庫存狀態</label>
                 <div className="flex flex-wrap items-center gap-2">
                   <label className="label gap-2">
+                  <input
+                      type="radio"
+                      className="radio radio-secondary"
+                      value={StoreType.IN_STOCK}
+                      {...register('metadata.storeType')}
+                    />
+                    <span className="label-text">在庫</span>
+                  </label>
+
+                  <label className="label gap-2">
                     <input
                       type="radio"
                       className="radio radio-secondary"
-                      value="lend"
+                      value={StoreType.LEND}
                       {...register('metadata.storeType')}
                     />
                     <span className="label-text">借展，單位</span>
@@ -718,7 +728,7 @@ const ArtworksDetail = () => {
                   <input
                     type="text"
                     className="input input-bordered"
-                    disabled={watch('metadata.storeType') !== 'lend'}
+                    disabled={watch('metadata.storeType') !== StoreType.LEND}
                     {...register('metadata.lendDepartment')}
                   />
 
@@ -726,7 +736,7 @@ const ArtworksDetail = () => {
                     <input
                       type="radio"
                       className="radio radio-secondary"
-                      value="repair"
+                      value={StoreType.REPAIR}
                       {...register('metadata.storeType')}
                     />
                     <span className="label-text">維修，單位</span>
@@ -734,7 +744,7 @@ const ArtworksDetail = () => {
                   <input
                     type="text"
                     className="input input-bordered"
-                    disabled={watch('metadata.storeType') !== 'repair'}
+                    disabled={watch('metadata.storeType') !== StoreType.REPAIR}
                     {...register('metadata.repairDepartment')}
                   />
                   <label className="label gap-2 pl-0">
@@ -742,7 +752,7 @@ const ArtworksDetail = () => {
                     <input
                       type="text"
                       className="input input-bordered"
-                      disabled={watch('metadata.storeType') !== 'repair'}
+                      disabled={watch('metadata.storeType') !== StoreType.REPAIR}
                       {...register('metadata.repairNote')}
                     />
                   </label>
@@ -751,7 +761,7 @@ const ArtworksDetail = () => {
                     <input
                       type="radio"
                       className="radio radio-secondary"
-                      value="returnedLend_or_returnedRepair"
+                      value={StoreType.RETURNED_LEND_OR_RETURNED_REPAIR}
                       {...register('metadata.storeType')}
                     />
                     <span className="label-text">已歸還，單位</span>
@@ -759,7 +769,9 @@ const ArtworksDetail = () => {
                   <input
                     type="text"
                     className="input input-bordered"
-                    disabled={watch('metadata.storeType') !== 'returnedLend_or_returnedRepair'}
+                    disabled={
+                      watch('metadata.storeType') !== StoreType.RETURNED_LEND_OR_RETURNED_REPAIR
+                    }
                     {...register('metadata.returnRepairDepartment')}
                   />
 
@@ -767,7 +779,7 @@ const ArtworksDetail = () => {
                     <input
                       type="radio"
                       className="radio radio-secondary"
-                      value="shipping"
+                      value={StoreType.SHIPPING}
                       {...register('metadata.storeType')}
                     />
                     <span className="label-text">已出貨</span>
@@ -777,7 +789,7 @@ const ArtworksDetail = () => {
                     <input
                       type="radio"
                       className="radio radio-secondary"
-                      value="returnedShipping"
+                      value={StoreType.RETURNED_SHIPPING}
                       {...register('metadata.storeType')}
                     />
                     <span className="label-text">已退回，單位</span>
@@ -785,7 +797,7 @@ const ArtworksDetail = () => {
                   <input
                     type="text"
                     className="input input-bordered"
-                    disabled={watch('metadata.storeType') !== 'returnedShipping'}
+                    disabled={watch('metadata.storeType') !== StoreType.RETURNED_SHIPPING}
                     {...register('metadata.returnedShippingDepartment')}
                   />
                 </div>
