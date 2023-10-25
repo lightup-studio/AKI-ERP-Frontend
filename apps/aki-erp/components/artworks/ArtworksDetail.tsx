@@ -74,7 +74,7 @@ const schema = yup.object().shape({
       })
     ),
     media: yup.string().required('媒材為必填項目'),
-    edition: yup.string().required('請輸入版次'),
+    edition: yup.string(),
     otherInfo: yup.object().shape({
       frame: yup.boolean(),
       frameDimensions: yup.string().when('frame', ([frame], field) => {
