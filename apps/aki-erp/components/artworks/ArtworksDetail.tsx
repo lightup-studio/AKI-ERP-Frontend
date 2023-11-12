@@ -40,31 +40,7 @@ const schema = yup.object().shape({
         return !!value.zhName || !!value.enName;
       })
   ),
-  yearRangeStart: yup
-    .number()
-    .typeError('請輸入數字')
-    .transform((value, originValue) => (originValue?.trim?.() === '' ? null : value))
-    .nullable()
-    .required('請輸入開始年份')
-    .test('is-valid-year', '請輸入有效的西元年份', (value) => !value || /^\d{4}$/.test(`${value}`))
-    .max(new Date().getFullYear(), '不得大於今年')
-    .test('start-year-less-than-or-equal-to-end-year', '不得大於結束年份', function (value) {
-      const endYear = (this.parent as ArtworkDetail).yearRangeEnd;
-      return !endYear || !value || value <= endYear;
-    }),
-  yearRangeEnd: yup
-    .number()
-    .typeError('請輸入數字')
-    .transform((value, originValue) => (originValue?.trim?.() === '' ? null : value))
-    .nullable()
-    .required('請輸入結束年份')
-    .test('is-valid-year', '請輸入有效的西元年份', (value) => !value || /^\d{4}$/.test(`${value}`))
-    .test('end-year-greater-than-start-year', '不得小於開始年份', function (value) {
-      const startYear = (this.parent as ArtworkDetail).yearRangeStart || 0;
-      return !value || value >= startYear;
-    })
-    .max(new Date().getFullYear(), '不得大於今年'),
-
+  yearAge: yup.string().required('年代為必填項目'),
   metadata: yup.object().shape({
     artworkType: yup.string().required('作品類型為必填項目'),
     assetsType: yup.string().required('資產類別為必填項目'),
@@ -132,8 +108,7 @@ const ArtworksDetail = () => {
       countryCode: '',
       status: Status.Draft,
       artists: [{ enName: '', zhName: '' }],
-      yearRangeStart: null,
-      yearRangeEnd: null,
+      yearAge: null,
       metadata: {
         artworkType: '',
         assetsType: 'A',
@@ -555,34 +530,18 @@ const ArtworksDetail = () => {
 
               <div className="flex items-center gap-2">
                 <label className="font-bold">年代</label>
-                <div className="flex flex-row items-center flex-1">
-                  <div className="relative">
-                    <input
-                      className={classNames('input input-bordered w-28', {
-                        'input-error': errors.yearRangeStart,
-                      })}
-                      {...register('yearRangeStart')}
-                    />
-                    {errors.yearRangeStart && (
-                      <p className="absolute text-error text-xs italic">
-                        {errors.yearRangeStart.message}
-                      </p>
-                    )}
-                  </div>
-                  <span className="h-[1px] w-3 bg-base-content mx-2"></span>
-                  <div className="relative">
-                    <input
-                      className={classNames('input input-bordered w-28', {
-                        'input-error': errors.yearRangeEnd,
-                      })}
-                      {...register('yearRangeEnd')}
-                    />
-                    {errors.yearRangeEnd && (
-                      <p className="absolute text-error text-xs italic">
-                        {errors.yearRangeEnd.message}
-                      </p>
-                    )}
-                  </div>
+                <div className="relative flex-1">
+                  <input
+                    className={classNames('input input-bordered w-full max-w-xs', {
+                      'input-error': errors.yearAge,
+                    })}
+                    {...register('yearAge')}
+                  />
+                  {errors.yearAge && (
+                    <p className="absolute text-error text-xs italic">
+                      {errors.yearAge.message}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -707,7 +666,7 @@ const ArtworksDetail = () => {
                 <label className="font-bold whitespace-nowrap">庫存狀態</label>
                 <div className="flex flex-wrap items-center gap-2">
                   <label className="label gap-2">
-                  <input
+                    <input
                       type="radio"
                       className="radio radio-secondary"
                       value={StoreType.IN_STOCK}

@@ -41,10 +41,7 @@ export interface ArtworkDetail<TMetadata = ArtworkMetadata> {
   lastModifyTime: string | Date;
   status: Status;
   artists: ArtworkArtist[];
-  /** 取代 startYear */
-  yearRangeStart?: number | null;
-  /** 取代 endYear */
-  yearRangeEnd?: number | null;
+  yearAge: string | null;
   metadata?: TMetadata;
 }
 

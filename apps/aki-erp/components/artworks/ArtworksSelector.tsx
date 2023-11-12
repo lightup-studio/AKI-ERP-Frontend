@@ -136,14 +136,7 @@ const ArtworksSelector = ({
     {
       id: 'year',
       header: '年代',
-      cell: ({ row }) => {
-        const { yearRangeStart, yearRangeEnd } = row.original;
-        return yearRangeStart === yearRangeEnd
-          ? yearRangeStart && yearRangeStart !== 0
-            ? yearRangeEnd
-            : '無'
-          : `${yearRangeStart}~${yearRangeEnd}`;
-      },
+      accessorKey: 'yearAge',
     },
     {
       id: 'otherInfo',
