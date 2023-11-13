@@ -18,12 +18,11 @@ import {
 import { ControllerRenderProps } from 'react-hook-form';
 import { AnimatedCalendar } from './AnimatedCalendar';
 
-interface DatePickerFieldProps
-  extends ControllerRenderProps,
-    Omit<DatePickerProps<DateValue>, 'value' | 'onBlur' | 'onChange'> {
-  disabled?: boolean;
-  errorMsg?: string;
-}
+type DatePickerFieldProps = ControllerRenderProps &
+  Omit<DatePickerProps<DateValue>, 'value' | 'onBlur' | 'onChange'> & {
+    disabled?: boolean;
+    errorMsg?: string;
+  };
 
 const DatePickerField = React.forwardRef<HTMLDivElement, DatePickerFieldProps>(
   function DatePickerField(props, ref) {
