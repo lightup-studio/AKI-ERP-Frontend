@@ -54,3 +54,4 @@ Thumbs.db
 .env.*
 .data/
 .next/
+.nx/cache
