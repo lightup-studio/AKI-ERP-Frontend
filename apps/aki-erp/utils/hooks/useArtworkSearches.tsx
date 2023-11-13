@@ -33,9 +33,9 @@ const SELECT_ITEMS: Pick<SelectItem, 'key' | 'placeholder'>[] = [
 ];
 
 export const useArtworkSearches = () => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const router = useRouter();//?
+  const pathname = usePathname();//?
+  const searchParams = useSearchParams();//?
 
   const params = new URLSearchParams(searchParams);
 
@@ -77,7 +77,7 @@ export const useArtworkSearches = () => {
 
   useEffect(() => {
     if (!selectOptionsQuery.data) return;
-
+    searchParams.getAll('otherInfos');//?
     const selectedOptions = ([...searchParams.entries()] as [SelectItemKey, string][])
       .filter(([key]) => key in selectOptionsQuery.data)
       .map<SelectedOption>(([key, value]) => ({
@@ -113,12 +113,14 @@ export const useArtworkSearches = () => {
         (item) => selectedOptionMapByKey[item.key]
       ) || []
     );
-  }, [searchParams, selectOptionsQuery.data]);
+  }, [searchParams.toString(), selectOptionsQuery.data]);
 
   const addSelectedOptionBySelectItemKey = ({
     selectItemKey,
     selectedOptionValue,
   }: OnSelectionChangeValue) => {
+    selectItemKey;//?
+    selectedOptionValue;//?
     const values = params.getAll(selectItemKey);
     if (!values.includes(selectedOptionValue)) {
       params.append(selectItemKey, selectedOptionValue);
@@ -223,6 +225,8 @@ export const useArtworkSelectedList = ({
         <div className="flex-grow flex flex-wrap gap-2">
           {selectedOptions.map((option, i) => (
             <button
+              data-testid={`selectedOption_${i}`}
+              aria-label={option.label}
               key={`selectedOption_${i}`}
               type="button"
               className="btn btn-outline btn-info pr-0 min-w-[6rem] justify-between"

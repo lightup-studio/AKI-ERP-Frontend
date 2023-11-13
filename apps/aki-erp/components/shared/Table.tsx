@@ -8,7 +8,7 @@ interface TableProps<T = any> {
   isLoading?: boolean;
 }
 
-const Table: React.FC<TableProps> = ({ table, isLoading }) => {
+const AkiTable: React.FC<TableProps> = ({ table, isLoading }) => {
   return (
     <section className="overflow-x-auto w-full">
       <table className="table w-full">
@@ -75,4 +75,4 @@ const Table: React.FC<TableProps> = ({ table, isLoading }) => {
   );
 };
 
-export default Table;
+export default AkiTable;

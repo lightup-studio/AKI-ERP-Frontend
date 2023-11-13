@@ -21,6 +21,7 @@
     "Swal",
     "sweetalert",
     "tailwindcss",
-    "tanstack"
+    "tanstack",
+    "testid"
   ]
 }

@@ -49,9 +49,9 @@ export async function fetchSelectOptions() {
     years: yearOptions,
     mediums: mediaOptions,
     agentGalleries: agentGalleryOptions,
-    storeTypes: storeTypeOptions as unknown as ComboboxOption[],
-    salesTypes: salesTypeOptions as unknown as ComboboxOption[],
-    assetsTypes: assetsTypeOptions as unknown as ComboboxOption[],
+    storeTypes: [...storeTypeOptions],
+    salesTypes: [...salesTypeOptions],
+    assetsTypes: [...assetsTypeOptions],
     otherInfos: artworkOtherInfoOptions,
   } as const;
 
@@ -86,6 +86,7 @@ export async function fetchMediaOptions() {
 
 export async function fetchAgentGalleryOptions() {
   const res = await axios.get<string[]>('/api/Artworks/autoComplete/metadata/agentGalleries');
+
   const distinctAgentGalleries = res.data
     .map((item) => JSON.parse(item))
     .filter((item) => item.length)
@@ -128,9 +129,9 @@ export async function fetchArtworkList2(
     })
     .filter(Boolean)
     .join('&');
-  const res = await axios.get<Pagination<ArtworkDetail>>(
-    `/api/artworks/query?status=${status}&${queryString}`
-  );
+  const res = await axios.get<Pagination<ArtworkDetail>>(`/api/artworks/query`, {
+    params: new URLSearchParams(`status=${status}&${queryString}`),
+  });
   res.data.pageCount = Math.ceil(res.data.totalCount / res.data.take);
   return res.data;
 }
@@ -141,6 +142,7 @@ export async function fetchArtworkDetail(id: string) {
 }
 
 export async function fetchArtworkDetailByDisplayId(displayId: string) {
+  displayId; //?
   const res = await axios.get<ArtworkDetail>(`/api/Artworks/DID:${displayId}`);
   return res.data;
 }

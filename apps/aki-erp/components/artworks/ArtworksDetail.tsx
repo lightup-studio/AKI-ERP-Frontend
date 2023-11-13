@@ -22,6 +22,8 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { useParams, useRouter } from 'next/navigation';
 
+const salesInfoDisplayed = false;
+
 const schema = yup.object().shape({
   warehouseId: yup.number().required('庫存位置為必填項目'),
   enName: yup.string().test('artwork name', '作品名稱為必填項目', (value, context) => {
@@ -75,10 +77,34 @@ const schema = yup.object().shape({
   }),
 });
 
-const ArtworksDetail = () => {
+/**
+ * Renders a form for displaying and editing artwork details.
+ *
+ * This component uses React hooks, react-query, and react-hook-form for managing state and handling form validation.
+ * The form includes fields for inputting artwork information such as name, image, artist, dimensions, and inventory details.
+ * Form validation is implemented using the yup library.
+ *
+ * Example Usage:
+ * ```javascript
+ * import ArtworksDetail from './ArtworksDetail';
+ *
+ * const App = () => {
+ *   return (
+ *     <div>
+ *       <ArtworksDetail />
+ *     </div>
+ *   );
+ * };
+ *
+ * export default App;
+ * ```
+ *
+ * @returns {JSX.Element} The rendered form for displaying and editing artwork details.
+ */
+const ArtworksDetail = (): JSX.Element => {
   const router = useRouter();
   const params = useParams();
-
+  params.id; //?
   const { isLoading, isSuccess, data, isInitialLoading } = useQuery(
     ['data', params.id],
     () => fetchArtworkDetailByDisplayId(params.id?.toString()),
@@ -215,10 +241,12 @@ const ArtworksDetail = () => {
           <div className="bg-base-100 p-4 flex flex-col gap-5 rounded-md shadow-md">
             <div className="flex gap-3">
               <button className="btn btn-outline">庫存資訊</button>
-              <button className="btn btn-outline">銷售資訊</button>
+              {salesInfoDisplayed && <button className="btn btn-outline">銷售資訊</button>}
             </div>
 
-            <label className="font-bold">作品圖片</label>
+            <label className="font-bold" role="label">
+              作品圖片
+            </label>
             <div className="relative">
               <input
                 type="file"
@@ -238,7 +266,9 @@ const ArtworksDetail = () => {
               <img src={watch('imageUrl') || previewImage} className="w-full" alt="作品圖片" />
             )}
 
-            <label className="font-bold">藝術家</label>
+            <label className="font-bold" role="label">
+              藝術家
+            </label>
             <div className="flex flex-wrap gap-4">
               {artworkNameFields.map((field, index) => (
                 <div className="form-control relative" key={field.id}>
@@ -296,19 +326,26 @@ const ArtworksDetail = () => {
           </div>
           <div className="bg-base-100 p-4 flex flex-col gap-5 rounded-md shadow-md">
             <div className="flex flex-col gap-2 pb-2">
-              <label className="font-bold">資產類別</label>
+              <label className="font-bold" role="label">
+                資產類別
+              </label>
               <div className="relative">
                 <select
                   className={classNames('select select-bordered text-lg w-full max-w-xs', {
                     'select-error': errors.metadata?.assetsType,
                   })}
+                  data-testid="assetsType"
                   {...register('metadata.assetsType')}
                 >
                   <option value="" disabled>
                     請選擇
                   </option>
                   {assetsTypeOptions.map(({ value, label }) => (
-                    <option key={value} value={value}>
+                    <option
+                      key={`assetsType__option-${value}`}
+                      data-testid={`assetsType__option-${value}`}
+                      value={value}
+                    >
                       {label}
                     </option>
                   ))}
@@ -322,7 +359,9 @@ const ArtworksDetail = () => {
             </div>
 
             <div className="flex flex-col gap-2 pb-2">
-              <label className="font-bold">作品類型</label>
+              <label className="font-bold" role="label">
+                作品類型
+              </label>
               <div className="relative">
                 <select
                   className={classNames('select select-bordered text-lg w-full max-w-xs', {
@@ -346,7 +385,9 @@ const ArtworksDetail = () => {
             </div>
 
             <div className="flex flex-col gap-2 pb-2">
-              <label className="font-bold">代理藝廊</label>
+              <label className="font-bold" role="label">
+                代理藝廊
+              </label>
               <div className="flex flex-wrap gap-2">
                 {agentGalleryFields.map((field, index) => (
                   <div className="form-control" key={field.id}>
@@ -380,12 +421,15 @@ const ArtworksDetail = () => {
             </div>
 
             <div className="flex flex-col gap-2 pb-2">
-              <label className="font-bold">國籍</label>
+              <label className="font-bold" role="label">
+                國籍
+              </label>
               <div className="relative">
                 <select
                   className={classNames('select select-bordered text-lg w-full max-w-xs', {
                     'select-error': errors.countryCode,
                   })}
+                  data-testid="countryCode"
                   {...register('countryCode')}
                 >
                   <option value="" disabled>
@@ -404,12 +448,15 @@ const ArtworksDetail = () => {
           <div className="bg-base-100 p-4 md:col-span-2 divide-y rounded-md shadow-md">
             <div className="flex flex-col gap-5 pb-6">
               <div className="flex items-center gap-2">
-                <label className="font-bold">進貨單位</label>
+                <label className="font-bold" role="label">
+                  進貨單位
+                </label>
                 <div className="relative flex-1">
                   <input
                     className={classNames('input input-bordered w-full max-w-xs', {
                       'input-error': errors.metadata?.purchasingUnit,
                     })}
+                    data-testid="purchasingUnit"
                     {...register('metadata.purchasingUnit')}
                   />
                   {errors.metadata?.purchasingUnit && (
@@ -450,7 +497,9 @@ const ArtworksDetail = () => {
               </div>
 
               <div className="flex items-center gap-4 flex-wrap md:flex-no-wrap">
-                <label className="font-bold">尺寸</label>
+                <label className="font-bold" role="label">
+                  尺寸
+                </label>
                 <div className="flex flex-wrap flex-1 gap-4">
                   <div className="flex gap-2 items-center">
                     <label>長</label>
@@ -459,10 +508,11 @@ const ArtworksDetail = () => {
                         className={classNames('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.length,
                         })}
+                        data-testid="length"
                         {...register('metadata.length')}
                       />
                       {errors.metadata?.length && (
-                        <p className="absolute text-error text-xs italic">
+                        <p className="absolute text-error text-xs italic" data-testid="lengthError">
                           {errors.metadata?.length.message}
                         </p>
                       )}
@@ -475,10 +525,11 @@ const ArtworksDetail = () => {
                         className={classNames('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.width,
                         })}
+                        data-testid="width"
                         {...register('metadata.width')}
                       />
                       {errors.metadata?.width && (
-                        <p className="absolute text-error text-xs italic">
+                        <p className="absolute text-error text-xs italic" data-testid="widthError">
                           {errors.metadata?.width.message}
                         </p>
                       )}
@@ -491,10 +542,11 @@ const ArtworksDetail = () => {
                         className={classNames('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.height,
                         })}
+                        data-testid="height"
                         {...register('metadata.height')}
                       />
                       {errors.metadata?.height && (
-                        <p className="absolute text-error text-xs italic">
+                        <p className="absolute text-error text-xs italic" data-testid="heightError">
                           {errors.metadata?.height.message}
                         </p>
                       )}
@@ -507,10 +559,14 @@ const ArtworksDetail = () => {
                         className={classNames('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.customSize,
                         })}
+                        data-testid="customSize"
                         {...register('metadata.customSize')}
                       />
                       {errors.metadata?.customSize && (
-                        <p className="absolute text-error text-xs italic">
+                        <p
+                          className="absolute text-error text-xs italic"
+                          data-testid="customSizeError"
+                        >
                           {errors.metadata?.customSize.message}
                         </p>
                       )}
@@ -523,10 +579,14 @@ const ArtworksDetail = () => {
                         className={classNames('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.serialNumber,
                         })}
+                        data-testid="serialNumber"
                         {...register('metadata.serialNumber')}
                       />
                       {errors.metadata?.serialNumber && (
-                        <p className="absolute text-error text-xs italic">
+                        <p
+                          className="absolute text-error text-xs italic"
+                          data-testid="serialNumberError"
+                        >
                           {errors.metadata?.serialNumber.message}
                         </p>
                       )}
@@ -579,6 +639,7 @@ const ArtworksDetail = () => {
                     className={classNames('input input-bordered w-full max-w-xs', {
                       'input-error': errors.yearAge,
                     })}
+                    data-testid="yearAge"
                     {...register('yearAge')}
                   />
                   {errors.yearAge && (
@@ -588,16 +649,19 @@ const ArtworksDetail = () => {
               </div>
 
               <div className="flex items-center gap-2">
-                <label className="font-bold">版次 ed.</label>
+                <label className="font-bold" role="label">
+                  版次 ed.
+                </label>
                 <div className="relative flex-1">
                   <input
                     className={classNames('input input-bordered w-full max-w-xs', {
                       'input-error': errors.metadata?.edition,
                     })}
+                    data-testid="edition"
                     {...register('metadata.edition')}
                   />
                   {errors.metadata?.edition && (
-                    <p className="absolute text-error text-xs italic">
+                    <p className="absolute text-error text-xs italic" data-testid="editionError">
                       {errors.metadata?.edition.message}
                     </p>
                   )}
@@ -605,7 +669,9 @@ const ArtworksDetail = () => {
               </div>
 
               <div className="flex items-start gap-2 flex-col md:flex-row md:items-center">
-                <label className="font-bold">其他資訊</label>
+                <label className="font-bold" role="label">
+                  其他資訊
+                </label>
                 <div className="flex flex-row flex-1 flex-wrap gap-2">
                   <div className="flex gap-2">
                     <label className="flex items-center gap-2 label-text whitespace-nowrap">
@@ -674,6 +740,7 @@ const ArtworksDetail = () => {
                       className={classNames('select select-bordered text-lg', {
                         'select-error': errors.warehouseId,
                       })}
+                      data-testid="warehouseId"
                       {...register('warehouseId', {
                         onChange: (e) =>
                           setValue(
@@ -705,7 +772,9 @@ const ArtworksDetail = () => {
               </div>
 
               <div className="flex items-start gap-2 flex-col md:flex-row md:items-center">
-                <label className="font-bold whitespace-nowrap">庫存狀態</label>
+                <label className="font-bold whitespace-nowrap" role="label">
+                  庫存狀態
+                </label>
                 <div className="flex flex-wrap items-center gap-2">
                   <label className="label gap-2">
                     <input
@@ -805,53 +874,69 @@ const ArtworksDetail = () => {
               </div>
             </div>
 
-            <div className="flex flex-col gap-5 py-5" style={{ display: 'none' }}>
-              <h2 className="text-2xl text-accent font-bold">銷售資訊</h2>
+            {/* TODO: 藝術品明細頁，需要從相關銷售單，來帶入這些欄位嗎?  */}
+            {salesInfoDisplayed && (
+              <div className="flex flex-col gap-5 py-5">
+                <h2 id="sales-information" className="text-2xl text-accent font-bold">
+                  銷售資訊
+                </h2>
 
-              <div className="flex items-center gap-2">
-                <label className="font-bold">購買人</label>
-                <span className="input input-bordered flex items-center">
-                  這是都是從建立銷售單的帶過來的欄位嗎?
-                </span>
-              </div>
+                <div className="flex items-center gap-2">
+                  <label className="font-bold" role="label">
+                    購買人
+                  </label>
+                  <span className="input input-bordered flex items-center">
+                    這是都是從建立銷售單的帶過來的欄位嗎?
+                  </span>
+                </div>
 
-              <div className="flex items-center gap-2">
-                <label className="font-bold">收件者</label>
-                <span className="input input-bordered flex items-center">
-                  這是都是從建立銷售單的帶過來的欄位嗎?
-                </span>
-              </div>
+                <div className="flex items-center gap-2">
+                  <label className="font-bold" role="label">
+                    收件者
+                  </label>
+                  <span className="input input-bordered flex items-center">
+                    這是都是從建立銷售單的帶過來的欄位嗎?
+                  </span>
+                </div>
 
-              <div className="flex items-center gap-2">
-                <label className="font-bold">電話</label>
-                <span className="input input-bordered flex items-center">
-                  這是都是從建立銷售單的帶過來的欄位嗎?
-                </span>
-              </div>
+                <div className="flex items-center gap-2">
+                  <label className="font-bold" role="label">
+                    電話
+                  </label>
+                  <span className="input input-bordered flex items-center">
+                    這是都是從建立銷售單的帶過來的欄位嗎?
+                  </span>
+                </div>
 
-              <div className="flex items-center gap-2">
-                <label className="font-bold">地址</label>
-                <span className="input input-bordered flex items-center">
-                  這是都是從建立銷售單的帶過來的欄位嗎?
-                </span>
-              </div>
+                <div className="flex items-center gap-2">
+                  <label className="font-bold" role="label">
+                    地址
+                  </label>
+                  <span className="input input-bordered flex items-center">
+                    這是都是從建立銷售單的帶過來的欄位嗎?
+                  </span>
+                </div>
 
-              <div className="flex items-center gap-2">
-                <label className="font-bold">售出日期</label>
-                <span className="input input-bordered flex items-center">
-                  這是都是從建立銷售單的帶過來的欄位嗎?
-                </span>
+                <div className="flex items-center gap-2">
+                  <label className="font-bold" role="label">
+                    售出日期
+                  </label>
+                  <span className="input input-bordered flex items-center">
+                    這是都是從建立銷售單的帶過來的欄位嗎?
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <div className="bg-base-100 p-4 md:col-span-2 rounded-md shadow-md">
             <div className="flex justify-center gap-2">
-              <button className="btn btn-success">
+              <button className="btn btn-success" data-testid="submitButton">
                 <CheckIcon className="w-4"></CheckIcon> 儲存
               </button>
               <button
                 className="btn btn-error btn-base-200"
+                data-testid="cancelButton"
                 type="button"
                 onClick={() => router.back()}
               >
