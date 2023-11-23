@@ -17,7 +17,7 @@ const { mockRouter, wrapper } = createTestWrapper();
 
 describe('Creating a new Artwork via ArtworksDetail', () => {
   beforeEach(() => {
-    (useParams as jest.Mock).mockReturnValue({ id: null });
+    jest.mocked(useParams).mockReturnValue({ id: '' });
   });
 
   afterEach(() => {
@@ -72,7 +72,7 @@ describe('Editing an existing Artwork via ArtworksDetail', () => {
 
   beforeEach(() => {
     mock = new MockAdapter(axios);
-    (useParams as jest.Mock).mockReturnValue({ id: '1' });
+    jest.mocked(useParams).mockReturnValue({ id: '1' });
     mock.onGet(`/api/Artworks/DID:1`).reply(200, {
       id: 1,
       name: 'test',
