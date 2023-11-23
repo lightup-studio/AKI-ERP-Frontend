@@ -113,6 +113,7 @@ export const useArtworkSearches = () => {
         (item) => selectedOptionMapByKey[item.key]
       ) || []
     );
+    // Using .toString() to ensure the effect is triggered when the URL query string changes
   }, [searchParams.toString(), selectOptionsQuery.data]);
 
   const addSelectedOptionBySelectItemKey = ({
