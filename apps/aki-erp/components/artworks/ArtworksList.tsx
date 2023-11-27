@@ -109,7 +109,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
       header: '媒材',
       accessorKey: 'metadata',
       cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) =>
-        cell.getValue()?.media ?? '無',
+        (cell.getValue()?.media || cell.getValue()?.zhMedia) ?? '無',
     },
     {
       id: 'size',

@@ -71,6 +71,7 @@ export interface ArtworkMetadata {
   serialNumber: string;
   /** 媒材 */
   media: string;
+  zhMedia: string;
   /** 版次 ed. */
   edition: string;
 

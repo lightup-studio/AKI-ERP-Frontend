@@ -24,8 +24,12 @@ import { useParams, useRouter } from 'next/navigation';
 
 const schema = yup.object().shape({
   warehouseId: yup.number().required('庫存位置為必填項目'),
-  enName: yup.string().required('作品名稱為必填項目'),
-  zhName: yup.string(),
+  enName: yup.string().test('artwork name', '作品名稱為必填項目', (value, context) => {
+    return value || context.parent?.zhName ? true : false;
+  }),
+  zhName: yup.string().test('artwork name', '作品名稱為必填項目', (value, context) => {
+    return value || context.parent?.enName ? true : false;
+  }),
   imageUrl: yup.string().required('請確認圖片是否已上傳？'),
   thumbnailUrl: yup.string(),
   countryCode: yup.string().nonNullable().required('國籍為必填項目'),
@@ -49,7 +53,12 @@ const schema = yup.object().shape({
         name: yup.string().required('代理畫廊名稱為必填項目'),
       })
     ),
-    media: yup.string().required('媒材為必填項目'),
+    media: yup.string().test('media name', '媒材為必填項目', (value, context) => {
+      return value || context.parent?.zhMedia ? true : false;
+    }),
+    zhMedia: yup.string().test('media name', '媒材為必填項目', (value, context) => {
+      return value || context.parent?.media ? true : false;
+    }),
     edition: yup.string(),
     otherInfo: yup.object().shape({
       frame: yup.boolean(),
@@ -120,6 +129,7 @@ const ArtworksDetail = () => {
         customSize: '',
         serialNumber: '',
         media: '',
+        zhMedia: '',
         edition: '',
         otherInfo: {
           frame: false,
@@ -410,17 +420,31 @@ const ArtworksDetail = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-4 flex-wrap md:flex-no-wrap">
                 <label className="font-bold">作品名稱</label>
                 <div className="relative flex-1">
-                  <input
-                    className={classNames('input input-bordered w-full max-w-xs', {
-                      'input-error': errors.enName,
-                    })}
-                    {...register('enName')}
-                  />
-                  {errors.enName && (
+                  <div className="p-1 flex items-center gap-1 flex-wrap">
+                    <input
+                      className={classNames('input input-bordered w-full max-w-xs', {
+                        'input-error': errors.enName,
+                      })}
+                      placeholder="英文名稱"
+                      {...register('enName', { onChange: () => trigger(['enName', 'zhName']) })}
+                    />
+                    <input
+                      className={classNames('input input-bordered w-full max-w-xs', {
+                        'input-error': errors.zhName,
+                      })}
+                      placeholder="中文名稱"
+                      {...register('zhName', { onChange: () => trigger(['enName', 'zhName']) })}
+                    />
+                  </div>
+                  {errors.enName ? (
                     <p className="absolute text-error text-xs italic">{errors.enName.message}</p>
+                  ) : errors.zhName ? (
+                    <p className="absolute text-error text-xs italic">{errors.zhName.message}</p>
+                  ) : (
+                    <></>
                   )}
                 </div>
               </div>
@@ -511,19 +535,39 @@ const ArtworksDetail = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-4 flex-wrap md:flex-no-wrap">
                 <label className="font-bold">媒材</label>
                 <div className="relative flex-1">
-                  <input
-                    className={classNames('input input-bordered w-full max-w-xs', {
-                      'input-error': errors.metadata?.media,
-                    })}
-                    {...register('metadata.media')}
-                  />
-                  {errors.metadata?.media && (
+                  <div className="p-1 flex items-center gap-1 flex-wrap">
+                    <input
+                      className={classNames('input input-bordered w-full max-w-xs', {
+                        'input-error': errors.metadata?.media,
+                      })}
+                      placeholder="英文名稱"
+                      {...register('metadata.media', {
+                        onChange: () => trigger(['metadata.media', 'metadata.zhMedia']),
+                      })}
+                    />
+                    <input
+                      className={classNames('input input-bordered w-full max-w-xs', {
+                        'input-error': errors.metadata?.zhMedia,
+                      })}
+                      placeholder="中文名稱"
+                      {...register('metadata.zhMedia', {
+                        onChange: () => trigger(['metadata.media', 'metadata.zhMedia']),
+                      })}
+                    />
+                  </div>
+                  {errors.metadata?.media ? (
                     <p className="absolute text-error text-xs italic">
                       {errors.metadata?.media.message}
                     </p>
+                  ) : errors.metadata?.zhMedia ? (
+                    <p className="absolute text-error text-xs italic">
+                      {errors.metadata?.zhMedia.message}
+                    </p>
+                  ) : (
+                    <></>
                   )}
                 </div>
               </div>
@@ -538,9 +582,7 @@ const ArtworksDetail = () => {
                     {...register('yearAge')}
                   />
                   {errors.yearAge && (
-                    <p className="absolute text-error text-xs italic">
-                      {errors.yearAge.message}
-                    </p>
+                    <p className="absolute text-error text-xs italic">{errors.yearAge.message}</p>
                   )}
                 </div>
               </div>
