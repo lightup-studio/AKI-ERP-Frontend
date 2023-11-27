@@ -50,7 +50,7 @@ const schema = yup.object().shape({
     phone: yup.string().required('必填項目'),
     address: yup.string().required('必填項目'),
   }),
-  memo: yup.string().required('必填項目'),
+  memo: yup.string(),
 });
 
 interface RepairOrderDetailProps {

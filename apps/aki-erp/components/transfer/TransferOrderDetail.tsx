@@ -32,7 +32,7 @@ type FormData = {
 const schema = yup.object().shape({
   transporter: yup.string().required('必填項目'),
   transferTime: yup.date().required('必填項目'),
-  memo: yup.string().required('必填項目'),
+  memo: yup.string(),
 });
 
 interface TransferOrderDetailProps {
