@@ -154,7 +154,8 @@ const useArtworksOrderTable = ({
       header: '資產類型',
       accessorKey: 'metadata',
       cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
-        const assetsTypeId = cell.getValue()?.assetsType ?? 'A';
+        const assetsType = cell.getValue()?.assetsType;
+        const assetsTypeId = assetsType ? assetsType : 'A';
         return assetsTypeOptionMap[assetsTypeId].label;
       },
     },

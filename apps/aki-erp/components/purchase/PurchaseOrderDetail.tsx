@@ -17,7 +17,7 @@ import {
   fetchPurchaseOrderId,
   patchArtworksBatchId,
 } from '@data-access/apis';
-import { ArtworkDetail, ArtworkMetadata } from '@data-access/models';
+import { ArtworkDetail, ArtworkMetadata, Status } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -133,6 +133,7 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
         patchArtworksBatchId({
           idList: artworkIdList,
           properties: {
+            status: Status.Enabled,
             metadata: {
               storeType: StoreType.IN_STOCK,
             },
