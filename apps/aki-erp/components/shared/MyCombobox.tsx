@@ -9,12 +9,13 @@ export interface Option {
 }
 
 interface MyComboboxProps {
+  testId?: string;
   placeholder?: string;
   options?: Option[];
   onSelectionChange?: (option: Option) => void;
 }
 
-const MyCombobox = ({ options = [], placeholder, onSelectionChange }: MyComboboxProps) => {
+const MyCombobox = ({ testId, options = [], placeholder, onSelectionChange }: MyComboboxProps) => {
   const [query, setQuery] = useState('');
   const comboboxButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -38,6 +39,7 @@ const MyCombobox = ({ options = [], placeholder, onSelectionChange }: MyCombobox
       <div className="relative mt-1">
         <div className="relative w-full cursor-default overflow-hidden rounded-lg text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
           <Combobox.Input
+            data-testid={testId}
             className="input input-bordered w-full py-2 pl-3 pr-10 text-sm leading-5 focus:ring-0"
             placeholder={placeholder}
             onChange={(event) => setQuery(event.target.value)}

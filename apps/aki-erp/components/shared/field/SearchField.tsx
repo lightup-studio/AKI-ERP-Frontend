@@ -34,6 +34,7 @@ const SearchField = ({
       <input
         type="text"
         className={'input input-bordered shadow rounded p-3 w-full'}
+        data-testid="search-field-input"
         placeholder={'請輸入關鍵字...'}
         value={searchTerm || ''}
         onChange={handleInputChange}
