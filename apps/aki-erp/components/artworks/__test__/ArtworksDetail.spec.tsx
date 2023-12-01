@@ -31,7 +31,7 @@ describe('Creating a new Artwork via ArtworksDetail', () => {
     });
 
     const labels = screen.getAllByRole('label');
-    expect(labels).toHaveLength(13);
+    expect(labels).toHaveLength(11);
 
     expect(screen.getByText('作品圖片')).toBeInTheDocument();
     expect(screen.getByText('藝術家')).toBeInTheDocument();
@@ -111,7 +111,7 @@ describe('Editing an existing Artwork via ArtworksDetail', () => {
     });
 
     const labels = await screen.findAllByRole('label');
-    expect(labels).toHaveLength(13);
+    expect(labels).toHaveLength(11);
 
     expect(screen.getByText('作品圖片')).toBeInTheDocument();
     expect(screen.getByText('藝術家')).toBeInTheDocument();
