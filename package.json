@@ -5,6 +5,8 @@
   "scripts": {
     "start": "nx run aki-erp:serve:development",
     "build": "nx run aki-erp:build:production",
+    "test:coverage": "nx run aki-erp:test --codeCoverage",
+    "format:check": "nx format:check --libs-and-apps",
     "storybook-ui:serve": "nx run storybook-ui:storybook",
     "storybook-ui:build": "nx run storybook-ui:build-storybook",
     "prepare": "husky install"
