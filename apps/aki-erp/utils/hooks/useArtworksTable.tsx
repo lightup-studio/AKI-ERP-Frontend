@@ -32,7 +32,7 @@ const inputColumn = ({
 
   return (
     <input
-      className="input px-1 w-full"
+      className="input w-full px-1"
       value={value as string}
       onChange={(e) => setValue(e.target.value)}
       onBlur={onBlur}
@@ -56,7 +56,7 @@ const selectColumn = (
 
   return (
     <select
-      className="input appearance-none p-0 text-center text-sm w-[3rem]"
+      className="input w-[3rem] appearance-none p-0 text-center text-sm"
       value={value as string}
       onChange={(e) => {
         setValue(e.target.value);

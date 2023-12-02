@@ -60,17 +60,26 @@ type assetsTypeOption = (typeof assetsTypeOptions)[number];
 type StoreTypeOption = (typeof storeTypeOptions)[number];
 type SalesTypeOption = (typeof salesTypeOptions)[number];
 
-export const assetsTypeOptionMap = assetsTypeOptions.reduce((acc, cur) => {
-  acc[cur.value] = cur;
-  return acc;
-}, {} as Record<assetsTypeOption['value'], assetsTypeOption>);
+export const assetsTypeOptionMap = assetsTypeOptions.reduce(
+  (acc, cur) => {
+    acc[cur.value] = cur;
+    return acc;
+  },
+  {} as Record<assetsTypeOption['value'], assetsTypeOption>,
+);
 
-export const storeTypeOptionMap = storeTypeOptions.reduce((acc, cur) => {
-  acc[cur.value] = cur;
-  return acc;
-}, {} as Record<StoreTypeOption['value'], StoreTypeOption>);
+export const storeTypeOptionMap = storeTypeOptions.reduce(
+  (acc, cur) => {
+    acc[cur.value] = cur;
+    return acc;
+  },
+  {} as Record<StoreTypeOption['value'], StoreTypeOption>,
+);
 
-export const salesTypeOptionMap = salesTypeOptions.reduce((acc, cur) => {
-  acc[cur.value] = cur;
-  return acc;
-}, {} as Record<SalesTypeOption['value'], SalesTypeOption>);
+export const salesTypeOptionMap = salesTypeOptions.reduce(
+  (acc, cur) => {
+    acc[cur.value] = cur;
+    return acc;
+  },
+  {} as Record<SalesTypeOption['value'], SalesTypeOption>,
+);

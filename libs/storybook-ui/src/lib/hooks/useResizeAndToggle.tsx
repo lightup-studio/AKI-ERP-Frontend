@@ -73,7 +73,7 @@ export const useResizeAndToggle = (
         <div
           ref={dragAnchorRef}
           className={cx(
-            'w-[10px] absolute select-none h-full top-0 z-[1] cursor-col-resize',
+            'absolute top-0 z-[1] h-full w-[10px] cursor-col-resize select-none',
             direction === 'right' ? 'right-0 translate-x-[50%]' : 'left-0 -translate-x-[50%]',
           )}
         />

@@ -69,7 +69,7 @@ export const useArtworkSearches = () => {
           ({
             ...item,
             options: selectOptionsQuery.data[item.key],
-          } as SelectItem),
+          }) as SelectItem,
       );
       setSelectItems(selectItems);
     }
@@ -86,14 +86,17 @@ export const useArtworkSearches = () => {
         value,
       }));
 
-    const selectedOptionMapByKey = selectedOptions.reduce((obj, item) => {
-      if (item.selectItemKey in obj) {
-        obj[item.selectItemKey].push(item);
-      } else {
-        obj[item.selectItemKey] = [item];
-      }
-      return obj;
-    }, {} as Record<SelectItemKey, SelectedOption[]>);
+    const selectedOptionMapByKey = selectedOptions.reduce(
+      (obj, item) => {
+        if (item.selectItemKey in obj) {
+          obj[item.selectItemKey].push(item);
+        } else {
+          obj[item.selectItemKey] = [item];
+        }
+        return obj;
+      },
+      {} as Record<SelectItemKey, SelectedOption[]>,
+    );
 
     setSelectItems((selectItems) => {
       selectItems?.forEach((selectItem) => {
@@ -204,9 +207,9 @@ export const useArtworkSelectedList = ({
 
   return {
     selectionBlock: (
-      <div className="flex items-center flex-col md:flex-row min-h-[6rem]">
-        <label className="text-lg break-keep">篩選條件：</label>
-        <div className="flex-grow flex flex-wrap gap-2">
+      <div className="flex min-h-[6rem] flex-col items-center md:flex-row">
+        <label className="break-keep text-lg">篩選條件：</label>
+        <div className="flex flex-grow flex-wrap gap-2">
           {selectItems?.map((item) => (
             <MyCombobox
               key={item.key}
@@ -221,22 +224,22 @@ export const useArtworkSelectedList = ({
       </div>
     ),
     selectedBlock: (
-      <div className="flex items-center flex-col md:flex-row min-h-12">
-        <label className="text-lg break-keep">已選條件：</label>
-        <div className="flex-grow flex flex-wrap gap-2">
+      <div className="min-h-12 flex flex-col items-center md:flex-row">
+        <label className="break-keep text-lg">已選條件：</label>
+        <div className="flex flex-grow flex-wrap gap-2">
           {selectedOptions.map((option, i) => (
             <button
               data-testid={`selectedOption_${i}`}
               aria-label={option.label}
               key={`selectedOption_${i}`}
               type="button"
-              className="btn btn-outline btn-info pr-0 min-w-[6rem] justify-between"
+              className="btn btn-outline btn-info min-w-[6rem] justify-between pr-0"
               onClick={() =>
                 removeSelectedOptionBySelectItemKey(option.selectItemKey, option.value)
               }
             >
               {option.label}
-              <XMarkIcon className="w-5 h-5 mx-2" id={i.toString()} />
+              <XMarkIcon className="mx-2 h-5 w-5" id={i.toString()} />
             </button>
           ))}
         </div>

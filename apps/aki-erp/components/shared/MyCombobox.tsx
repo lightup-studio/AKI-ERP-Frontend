@@ -46,7 +46,7 @@ const MyCombobox = ({ testId, options = [], placeholder, onSelectionChange }: My
             onClick={handleInputFocus}
           />
           <Combobox.Button
-            className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
+            className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
             ref={comboboxButtonRef}
           >
             <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -59,7 +59,7 @@ const MyCombobox = ({ testId, options = [], placeholder, onSelectionChange }: My
           leaveTo="opacity-0"
           afterLeave={() => setQuery('')}
         >
-          <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-base-100 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+          <Combobox.Options className="bg-base-100 absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
             {filteredOptions.length === 0 && query !== '' ? (
               <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
                 Nothing found.
