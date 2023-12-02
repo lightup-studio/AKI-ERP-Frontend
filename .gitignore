@@ -56,3 +56,4 @@ Thumbs.db
 .data/
 .next/
 .nx/cache
+*.tsbuildinfo
