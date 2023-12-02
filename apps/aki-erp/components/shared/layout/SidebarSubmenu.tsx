@@ -38,15 +38,15 @@ const SidebarSubmenu = ({ submenu, path, name, icon }: SidebarSubmenuProps) => {
   return (
     <details open={isExpanded}>
       <summary
-        className={classNames('flex pl-0 py-0', {
+        className={classNames('flex py-0 pl-0', {
           'bg-base-200': pathname.startsWith(path || ''),
         })}
       >
-        <Link className="flex-grow pl-4 py-3 relative" href={path || ''}>
+        <Link className="relative flex-grow py-3 pl-4" href={path || ''}>
           {icon} {name}
           {pathname.startsWith(path || '') ? (
             <span
-              className="absolute inset-y-0 left-0 w-1 rounded-tr-md rounded-br-md bg-primary "
+              className="bg-primary absolute inset-y-0 left-0 w-1 rounded-tr-md rounded-br-md "
               aria-hidden="true"
             ></span>
           ) : null}
@@ -61,7 +61,7 @@ const SidebarSubmenu = ({ submenu, path, name, icon }: SidebarSubmenuProps) => {
               {m.name}
               {pathname.startsWith(m.path) ? (
                 <span
-                  className="absolute inset-y-0 left-0 w-1 rounded-tr-md rounded-br-md bg-primary "
+                  className="bg-primary absolute inset-y-0 left-0 w-1 rounded-tr-md rounded-br-md "
                   aria-hidden="true"
                 ></span>
               ) : null}

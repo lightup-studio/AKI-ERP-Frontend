@@ -32,7 +32,7 @@ const ArtworksBatchUpdateTable: React.FC<ArtworksBatchUpdateTableProps> = ({
                 <img
                   src={cell.getValue()}
                   alt="Artwork"
-                  className="w-full h-full object-contain"
+                  className="h-full w-full object-contain"
                   loading="lazy"
                 />
               </Dialog>

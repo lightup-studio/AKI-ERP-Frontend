@@ -51,7 +51,7 @@ function TablePagination<T>({
         return (
           <button
             key={key}
-            className={classnames('join-item btn w-14 hidden md:block', {
+            className={classnames('join-item btn hidden w-14 md:block', {
               'btn-active': Number(pageNumber) - 1 === pageIndex,
             })}
             onClick={() => table.setPageIndex(Number(pageNumber) - 1)}
