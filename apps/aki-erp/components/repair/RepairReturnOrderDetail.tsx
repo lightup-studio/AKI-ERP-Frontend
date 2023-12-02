@@ -123,7 +123,7 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
     {
       enabled: !!disabled,
       keepPreviousData: true,
-    }
+    },
   );
 
   useEffect(() => {

@@ -79,7 +79,7 @@ const Artists = () => {
         offset: +(params.get('pageIndex') || 0),
         take: +(params.get('pageSize') || 50),
       }),
-    { keepPreviousData: true }
+    { keepPreviousData: true },
   );
 
   const createMutation = useMutation((data: ArtistPartner) => createPartner(data), {

@@ -58,7 +58,7 @@ const DatePickerField = React.forwardRef<HTMLDivElement, DatePickerFieldProps>(
         </DatePopover>
       </DatePicker>
     );
-  }
+  },
 );
 
 const DatePopover = (props: PopoverProps & React.RefAttributes<HTMLElement>) => {

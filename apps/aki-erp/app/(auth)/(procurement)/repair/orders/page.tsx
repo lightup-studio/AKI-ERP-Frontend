@@ -122,7 +122,7 @@ const RepairOrders = () => {
         clearRowSelection();
         refetch();
       },
-    }
+    },
   );
 
   const handleDelete = async () => {

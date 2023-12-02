@@ -96,7 +96,7 @@ const TransferOrders = () => {
         clearRowSelection();
         refetch();
       },
-    }
+    },
   );
 
   const handleDelete = async () => {

@@ -123,7 +123,7 @@ const ShipmentReturnOrderDetail: React.FC<ShipmentReturnOrderDetailProps> = ({ d
     {
       enabled: !!disabled,
       keepPreviousData: true,
-    }
+    },
   );
 
   useEffect(() => {
@@ -131,7 +131,7 @@ const ShipmentReturnOrderDetail: React.FC<ShipmentReturnOrderDetailProps> = ({ d
 
     const shippingReturnTime = data.shippingReturnTime
       ? (parseDate(
-          dateFnsFormat(new Date(data.shippingReturnTime), 'yyyy-MM-dd')
+          dateFnsFormat(new Date(data.shippingReturnTime), 'yyyy-MM-dd'),
         ) as unknown as Date)
       : undefined;
 

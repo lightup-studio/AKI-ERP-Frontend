@@ -127,10 +127,10 @@ function Carousel({ pageOffset, children, onNext, onPrevious }: CarouselProps) {
               min: pos,
               max: pos,
             }
-          : staticTransition
+          : staticTransition,
       );
     },
-    [x]
+    [x],
   );
 
   useEffect(() => {

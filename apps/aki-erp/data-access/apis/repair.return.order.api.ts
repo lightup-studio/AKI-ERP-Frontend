@@ -10,7 +10,7 @@ const url = '/api/Order/repairReturn';
 
 export const fetchRepairReturnOrder = async (
   status: Status,
-  queryString?: string
+  queryString?: string,
 ): Promise<Pagination<RepairReturnOrder>> => {
   const params = new URLSearchParams(queryString);
   const query = new URLSearchParams();
@@ -28,14 +28,14 @@ export const fetchRepairReturnOrder = async (
   });
 
   const res = await axios.get<Pagination<RepairReturnOrder>>(
-    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`
+    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`,
   );
 
   return res.data;
 };
 
 export const createRepairReturnOrder = async (
-  body?: CreateOrUpdateRepairReturnOrderRequest
+  body?: CreateOrUpdateRepairReturnOrderRequest,
 ): Promise<RepairReturnOrder> => {
   const url = '/api/Order/repairReturn';
 
@@ -44,7 +44,7 @@ export const createRepairReturnOrder = async (
 };
 
 export const updateRepairReturnOrder = async (
-  body?: CreateOrUpdateRepairReturnOrderRequest
+  body?: CreateOrUpdateRepairReturnOrderRequest,
 ): Promise<RepairReturnOrder> => {
   const res = await axios.put(url, body, { params: { allowCreate: true } });
   return res.data;
@@ -66,7 +66,7 @@ export const exportRepairReturnOrderById = async (id: number) => {
 };
 
 export const fetchRepairReturnOrderDIDdisplayId = async (
-  displayId: string
+  displayId: string,
 ): Promise<RepairReturnOrder> => {
   const res = await axios.get(`${url}/DID:${displayId}`);
   return res.data;

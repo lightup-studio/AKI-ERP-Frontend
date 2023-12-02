@@ -10,7 +10,7 @@ const url = '/api/Order/repair';
 
 export const fetchRepairOrder = async (
   status: Status,
-  queryString?: string
+  queryString?: string,
 ): Promise<Pagination<RepairOrder>> => {
   const params = new URLSearchParams(queryString);
   const query = new URLSearchParams();
@@ -28,21 +28,21 @@ export const fetchRepairOrder = async (
   });
 
   const res = await axios.get<Pagination<RepairOrder>>(
-    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`
+    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`,
   );
 
   return res.data;
 };
 
 export const createRepairOrder = async (
-  body?: CreateOrUpdateRepairOrderRequest
+  body?: CreateOrUpdateRepairOrderRequest,
 ): Promise<RepairOrder> => {
   const res = await axios.post(url, body);
   return res.data;
 };
 
 export const updateRepairOrder = async (
-  body?: CreateOrUpdateRepairOrderRequest
+  body?: CreateOrUpdateRepairOrderRequest,
 ): Promise<RepairOrder> => {
   const res = await axios.put(url, body, { params: { allowCreate: true } });
   return res.data;

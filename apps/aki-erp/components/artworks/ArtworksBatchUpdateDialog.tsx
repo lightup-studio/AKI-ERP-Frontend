@@ -37,8 +37,8 @@ const ArtworksBatchUpdateDialog: React.FC<ArtworksBatchUpdateDialogProsp> = ({
           patchArtwork(artwork.id, {
             warehouseId: Number(artwork.warehouseId),
             metadata: artwork.metadata,
-          })
-        )
+          }),
+        ),
       );
     },
     onSuccess: async () => {

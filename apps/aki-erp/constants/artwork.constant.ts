@@ -56,9 +56,9 @@ export const salesTypeOptions = [
   },
 ] as const;
 
-type assetsTypeOption = typeof assetsTypeOptions[number];
-type StoreTypeOption = typeof storeTypeOptions[number];
-type SalesTypeOption = typeof salesTypeOptions[number];
+type assetsTypeOption = (typeof assetsTypeOptions)[number];
+type StoreTypeOption = (typeof storeTypeOptions)[number];
+type SalesTypeOption = (typeof salesTypeOptions)[number];
 
 export const assetsTypeOptionMap = assetsTypeOptions.reduce((acc, cur) => {
   acc[cur.value] = cur;

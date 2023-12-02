@@ -27,11 +27,11 @@ const MyCombobox = ({ testId, options = [], placeholder, onSelectionChange }: My
     (option: Option) => {
       onSelectionChange?.(option);
     },
-    [onSelectionChange]
+    [onSelectionChange],
   );
 
   const filteredOptions = options.filter((option) =>
-    option.label.toLowerCase().includes(query.toLowerCase())
+    option.label.toLowerCase().includes(query.toLowerCase()),
   );
 
   return (

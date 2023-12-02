@@ -44,7 +44,7 @@ const inputColumn = ({
 const selectColumn = (
   { getValue, row: { index }, column: { id }, table }: CellContext<ArtworkDetail, any>,
   options: ComboboxOption[],
-  config?: { getValue?: () => any; onChange?: (value: string) => void }
+  config?: { getValue?: () => any; onChange?: (value: string) => void },
 ) => {
   const initialValue = config?.getValue?.() ?? getValue();
   // We need to keep and update the state of the cell normally
@@ -125,7 +125,7 @@ const useArtworksTable = ({
       updateColumnData: function <TColumnId extends keyof ArtworkDetail>(
         rowIndex: number,
         columnId: TColumnId,
-        value: ArtworkDetail[TColumnId]
+        value: ArtworkDetail[TColumnId],
       ) {
         const currentRow = table.getRowModel().rows[rowIndex];
         const id = currentRow.original.id;
@@ -139,7 +139,7 @@ const useArtworksTable = ({
               } as ArtworkDetail;
             }
             return row;
-          })
+          }),
         );
 
         columnMutation.mutate({

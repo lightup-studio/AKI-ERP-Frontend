@@ -10,7 +10,7 @@ const url = '/api/Order/purchase';
 
 export const fetchPurchaseOrder = async (
   status: Status,
-  queryString?: string
+  queryString?: string,
 ): Promise<Pagination<PurchaseOrder>> => {
   const params = new URLSearchParams(queryString);
   const query = new URLSearchParams();
@@ -28,21 +28,21 @@ export const fetchPurchaseOrder = async (
   });
 
   const res = await axios.get<Pagination<PurchaseOrder>>(
-    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`
+    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`,
   );
 
   return res.data;
 };
 
 export const createPurchaseOrder = async (
-  body?: CreateOrUpdatePurchaseOrderRequest
+  body?: CreateOrUpdatePurchaseOrderRequest,
 ): Promise<PurchaseOrder> => {
   const res = await axios.post(url, body);
   return res.data;
 };
 
 export const updatePurchaseOrder = async (
-  body?: CreateOrUpdatePurchaseOrderRequest
+  body?: CreateOrUpdatePurchaseOrderRequest,
 ): Promise<PurchaseOrder> => {
   const res = await axios.put(url, body, { params: { allowCreate: true } });
   return res.data;

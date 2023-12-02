@@ -2,7 +2,7 @@ import axios from '@contexts/axios';
 import { Pagination, Partner, PartnerType } from '@data-access/models';
 
 export async function fetchPartnerList<
-  TPartnerType extends PartnerType | undefined | null = undefined | null
+  TPartnerType extends PartnerType | undefined | null = undefined | null,
 >({
   type,
   keyword,
@@ -32,14 +32,14 @@ export async function fetchPartnerList<
 }
 
 export async function createPartner<
-  TPartnerType extends PartnerType | undefined | null = undefined | null
+  TPartnerType extends PartnerType | undefined | null = undefined | null,
 >(partner: Partner<TPartnerType>) {
   const res = await axios.post<Partner<TPartnerType>>(`/api/partners`, partner);
   return res.data;
 }
 
 export async function updatePartner<
-  TPartnerType extends PartnerType | undefined | null = undefined | null
+  TPartnerType extends PartnerType | undefined | null = undefined | null,
 >(partner: Partner<TPartnerType>) {
   const res = await axios.put<Partner<TPartnerType>>(`/api/partners`, partner);
   return res.data;

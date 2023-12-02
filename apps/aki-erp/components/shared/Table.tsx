@@ -22,7 +22,7 @@ const AkiTable: React.FC<TableProps> = ({ table, isLoading }) => {
                     colSpan={header.colSpan}
                     className={classNames('p-2', {
                       'min-w-[10rem]': !['select', 'storeType', 'salesType', 'assetsType'].includes(
-                        header.id
+                        header.id,
                       ),
                       'min-w-[3rem]': ['storeType', 'salesType', 'assetsType'].includes(header.id),
                       'text-center': ['assetsType'].includes(header.id),

@@ -44,7 +44,7 @@ const schema = yup.object().shape({
       })
       .test('at-least-one-name', '至少需要提供中文名稱或英文名稱', function (value) {
         return !!value.zhName || !!value.enName;
-      })
+      }),
   ),
   yearAge: yup.string().required('年代為必填項目'),
   metadata: yup.object().shape({
@@ -53,7 +53,7 @@ const schema = yup.object().shape({
     agentGalleries: yup.array().of(
       yup.object().shape({
         name: yup.string().required('代理畫廊名稱為必填項目'),
-      })
+      }),
     ),
     media: yup.string().test('media name', '媒材為必填項目', (value, context) => {
       return value || context.parent?.zhMedia ? true : false;
@@ -110,7 +110,7 @@ const ArtworksDetail = (): JSX.Element => {
     () => fetchArtworkDetailByDisplayId(params.id?.toString()),
     {
       enabled: !!params.id, // only run the query if the id exists
-    }
+    },
   );
 
   const mutation = useMutation({
@@ -745,7 +745,7 @@ const ArtworksDetail = (): JSX.Element => {
                         onChange: (e) =>
                           setValue(
                             'warehouseId',
-                            e.target.value === '' ? undefined : parseInt(e.target.value, 10)
+                            e.target.value === '' ? undefined : parseInt(e.target.value, 10),
                           ),
                       })}
                     >

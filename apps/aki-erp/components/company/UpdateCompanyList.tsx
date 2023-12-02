@@ -56,7 +56,7 @@ const UpdateCompanyDialog = ({
       onSuccess: (data) => {
         onClose?.(data);
       },
-    }
+    },
   );
 
   const onSubmit = (data: CompanyPartner) => {

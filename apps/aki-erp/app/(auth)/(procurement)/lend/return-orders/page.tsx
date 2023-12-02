@@ -125,7 +125,7 @@ const LendReturnOrders = () => {
         clearRowSelection();
         refetch();
       },
-    }
+    },
   );
 
   const handleDelete = async () => {

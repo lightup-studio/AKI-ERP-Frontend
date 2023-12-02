@@ -58,7 +58,7 @@ const UpdateArtistDialog = ({
       onSuccess: (data) => {
         onClose?.(data);
       },
-    }
+    },
   );
 
   const onSubmit = (data: ArtistPartner) => {

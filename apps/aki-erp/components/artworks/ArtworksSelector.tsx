@@ -219,7 +219,7 @@ const ArtworksSelector = ({
       <ul class="list-disc"> ${selectedRows
         .map(
           (row) =>
-            `<li><a class="text-info" href="/app/artworks/${row.displayId}" target="_blank" rel="noopener noreferrer" >${row.displayId}</a></li>`
+            `<li><a class="text-info" href="/app/artworks/${row.displayId}" target="_blank" rel="noopener noreferrer" >${row.displayId}</a></li>`,
         )
         .join('')} </ul>
       `,

@@ -75,7 +75,7 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
     {
       enabled: !!disabled,
       keepPreviousData: true,
-    }
+    },
   );
 
   useEffect(() => {

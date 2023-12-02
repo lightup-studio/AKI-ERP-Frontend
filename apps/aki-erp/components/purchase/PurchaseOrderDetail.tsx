@@ -91,13 +91,13 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
     {
       enabled: !!disabled,
       keepPreviousData: true,
-    }
+    },
   );
 
   useEffect(() => {
     const artworkIds = searchParams.getAll('artworkId');
     Promise.all(artworkIds.map((item) => fetchArtworkDetail(item))).then((list) =>
-      setDraftArtworks(list)
+      setDraftArtworks(list),
     );
   }, []);
 

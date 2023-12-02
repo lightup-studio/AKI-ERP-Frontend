@@ -10,19 +10,12 @@ type UsePanResizeOptions = {
 
 export const usePanMove = (
   target: RefOrElementOrCallback | EventTarget,
-  {
-    onMove,
-    onMoveStart,
-    onMoveEnd,
-    direction = 'horizontal',
-  }: UsePanResizeOptions,
+  { onMove, onMoveStart, onMoveEnd, direction = 'horizontal' }: UsePanResizeOptions,
 ) => {
   useHammer(target, (hammer) => {
     const pan = new Hammer.Pan({
       direction:
-        direction === 'horizontal'
-          ? Hammer.DIRECTION_HORIZONTAL
-          : Hammer.DIRECTION_VERTICAL,
+        direction === 'horizontal' ? Hammer.DIRECTION_HORIZONTAL : Hammer.DIRECTION_VERTICAL,
       threshold: 0,
     });
 

@@ -1,7 +1,7 @@
 export const removeSingleValueForSearchParams = (
   params: URLSearchParams,
   key: string,
-  valueToRemove: string
+  valueToRemove: string,
 ) => {
   const values = params.getAll(key);
   if (values.length) {

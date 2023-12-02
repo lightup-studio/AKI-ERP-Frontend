@@ -106,7 +106,7 @@ const ShipmentReturnOrders = () => {
   const deleteMutation = useMutation(
     (ShipmentReturnOrders: SalesReturnOrder[]) => {
       const artworkIds = ShipmentReturnOrders.flatMap((item) =>
-        item.artworks?.map((item) => item.id)
+        item.artworks?.map((item) => item.id),
       );
       return Promise.all([
         ...ShipmentReturnOrders.map((item) => deleteSalesReturnOrderId(item.id)),
@@ -128,7 +128,7 @@ const ShipmentReturnOrders = () => {
         clearRowSelection();
         refetch();
       },
-    }
+    },
   );
 
   const handleDelete = async () => {

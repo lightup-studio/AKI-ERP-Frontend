@@ -58,7 +58,7 @@ describe('Creating a new Artwork via ArtworksDetail', () => {
     userEvent.selectOptions(screen.getByTestId('assetsType'), selectedValue);
 
     const selectOptionElement = screen.getByTestId(
-      `assetsType__option-${selectedValue}`
+      `assetsType__option-${selectedValue}`,
     ) as HTMLOptionElement;
 
     waitFor(() => {

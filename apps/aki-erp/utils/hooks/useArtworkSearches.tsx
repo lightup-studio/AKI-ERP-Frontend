@@ -33,9 +33,9 @@ const SELECT_ITEMS: Pick<SelectItem, 'key' | 'placeholder'>[] = [
 ];
 
 export const useArtworkSearches = () => {
-  const router = useRouter();//?
-  const pathname = usePathname();//?
-  const searchParams = useSearchParams();//?
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const params = new URLSearchParams(searchParams);
 
@@ -69,7 +69,7 @@ export const useArtworkSearches = () => {
           ({
             ...item,
             options: selectOptionsQuery.data[item.key],
-          } as SelectItem)
+          } as SelectItem),
       );
       setSelectItems(selectItems);
     }
@@ -77,7 +77,7 @@ export const useArtworkSearches = () => {
 
   useEffect(() => {
     if (!selectOptionsQuery.data) return;
-    searchParams.getAll('otherInfos');//?
+    searchParams.getAll('otherInfos'); //?
     const selectedOptions = ([...searchParams.entries()] as [SelectItemKey, string][])
       .filter(([key]) => key in selectOptionsQuery.data)
       .map<SelectedOption>(([key, value]) => ({
@@ -98,11 +98,11 @@ export const useArtworkSearches = () => {
     setSelectItems((selectItems) => {
       selectItems?.forEach((selectItem) => {
         const selectedOptionValues = selectedOptionMapByKey[selectItem.key]?.map(
-          (option) => option.value
+          (option) => option.value,
         );
 
         selectItem.options = selectOptionsQuery.data[selectItem.key].filter(
-          (option: any) => !selectedOptionValues?.includes(option.value)
+          (option: any) => !selectedOptionValues?.includes(option.value),
         );
       });
       return [...(selectItems || [])];
@@ -110,8 +110,8 @@ export const useArtworkSearches = () => {
 
     setSelectedOptions(
       SELECT_ITEMS?.filter((item) => item.key in selectedOptionMapByKey).flatMap(
-        (item) => selectedOptionMapByKey[item.key]
-      ) || []
+        (item) => selectedOptionMapByKey[item.key],
+      ) || [],
     );
     // Using .toString() to ensure the effect is triggered when the URL query string changes
   }, [searchParams.toString(), selectOptionsQuery.data]);
@@ -120,8 +120,8 @@ export const useArtworkSearches = () => {
     selectItemKey,
     selectedOptionValue,
   }: OnSelectionChangeValue) => {
-    selectItemKey;//?
-    selectedOptionValue;//?
+    selectItemKey; //?
+    selectedOptionValue; //?
     const values = params.getAll(selectItemKey);
     if (!values.includes(selectedOptionValue)) {
       params.append(selectItemKey, selectedOptionValue);
@@ -184,7 +184,7 @@ export const useArtworkSelectedList = ({
 >) => {
   const addSelectedOptionBySelectItemKey = (
     selectItemKey: SelectItemKey,
-    selectedOptionValue: string
+    selectedOptionValue: string,
   ) => {
     onSelectionChange('add', {
       selectItemKey,
@@ -194,7 +194,7 @@ export const useArtworkSelectedList = ({
 
   const removeSelectedOptionBySelectItemKey = (
     selectItemKey: SelectItemKey,
-    selectedOptionValue: string
+    selectedOptionValue: string,
   ) => {
     onSelectionChange('remove', {
       selectItemKey,

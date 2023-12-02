@@ -56,7 +56,7 @@ const UpdateCustomerDialog = ({
       onSuccess: (data) => {
         onClose?.(data);
       },
-    }
+    },
   );
 
   const onSubmit = (data: CustomerPartner) => {

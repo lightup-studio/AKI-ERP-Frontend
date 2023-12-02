@@ -88,7 +88,7 @@ const Collector = () => {
         offset: +(searchParams.get('pageIndex') || 0),
         take: +(searchParams.get('pageSize') || 50),
       }),
-    { keepPreviousData: true }
+    { keepPreviousData: true },
   );
 
   const createMutation = useMutation((data: CustomerPartner) => createPartner(data), {

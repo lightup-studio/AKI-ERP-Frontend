@@ -54,7 +54,7 @@ export interface ArtworkMetadata {
   /** 作品類型 */
   artworkType: string | null;
   /** 資產類別 */
-  assetsType?: typeof assetsTypeOptions[number]['value'];
+  assetsType?: (typeof assetsTypeOptions)[number]['value'];
   /** 代理藝廊 */
   agentGalleries: AgentGallery[];
   /** 進貨單位 */
@@ -80,7 +80,7 @@ export interface ArtworkMetadata {
   /** 自填庫存位置 */
   warehouseLocation?: string;
   /** 庫存狀態 */
-  storeType?: typeof storeTypeOptions[number]['value'];
+  storeType?: (typeof storeTypeOptions)[number]['value'];
   /** 借展，單位 */
   lendDepartment?: string;
   /** 維修，單位 */
@@ -94,7 +94,7 @@ export interface ArtworkMetadata {
   /** 已退回，單位 */
   returnedShippingDepartment?: string;
   /** 銷售狀態 */
-  salesType?: typeof salesTypeOptions[number]['value'];
+  salesType?: (typeof salesTypeOptions)[number]['value'];
   salesOrder?: SalesOrder;
 }
 

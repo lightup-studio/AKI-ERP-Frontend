@@ -101,7 +101,7 @@ const PurchaseOrders = () => {
         clearRowSelection();
         refetch();
       },
-    }
+    },
   );
 
   const handleDelete = async () => {

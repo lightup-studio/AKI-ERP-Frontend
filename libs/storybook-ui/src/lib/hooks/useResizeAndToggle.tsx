@@ -1,10 +1,10 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 
-import cx from "classnames";
+import cx from 'classnames';
 
-import { getRefElement, px, RefOrElementOrCallback } from "../utils";
-import { usePanMove } from "./usePanMove";
-import { useResultRef } from "./useResultRef";
+import { getRefElement, px, RefOrElementOrCallback } from '../utils';
+import { usePanMove } from './usePanMove';
+import { useResultRef } from './useResultRef';
 
 export type DragResizeState = {
   show: boolean;
@@ -16,11 +16,8 @@ type UseResizeAndToggleOptions = {
    *
    * @default 'right'
    */
-  direction?: "left" | "right";
-  getCacheStateAndAction: () => [
-    DragResizeState,
-    (value: DragResizeState) => void
-  ];
+  direction?: 'left' | 'right';
+  getCacheStateAndAction: () => [DragResizeState, (value: DragResizeState) => void];
 };
 
 /**
@@ -29,11 +26,9 @@ type UseResizeAndToggleOptions = {
  */
 export const useResizeAndToggle = (
   target: RefOrElementOrCallback | EventTarget,
-  { getCacheStateAndAction, direction = "right" }: UseResizeAndToggleOptions
+  { getCacheStateAndAction, direction = 'right' }: UseResizeAndToggleOptions,
 ) => {
-  const { current: cacheStateAndAction } = useResultRef(() =>
-    getCacheStateAndAction()
-  );
+  const { current: cacheStateAndAction } = useResultRef(() => getCacheStateAndAction());
   const [cacheState, setCacheState] = cacheStateAndAction;
 
   const [show, setShow] = useState(cacheState.show);
@@ -47,9 +42,7 @@ export const useResizeAndToggle = (
       if (!targetElm) return;
 
       // set width directly, make performance better
-      targetElm.style.width = px(
-        widthRef.current + (direction === "right" ? delta : -delta)
-      );
+      targetElm.style.width = px(widthRef.current + (direction === 'right' ? delta : -delta));
     },
     onMoveEnd: () => {
       const targetElm = getRefElement(target as HTMLElement)!;
@@ -80,14 +73,12 @@ export const useResizeAndToggle = (
         <div
           ref={dragAnchorRef}
           className={cx(
-            "w-[10px] absolute select-none h-full top-0 z-[1] cursor-col-resize",
-            direction === "right"
-              ? "right-0 translate-x-[50%]"
-              : "left-0 -translate-x-[50%]"
+            'w-[10px] absolute select-none h-full top-0 z-[1] cursor-col-resize',
+            direction === 'right' ? 'right-0 translate-x-[50%]' : 'left-0 -translate-x-[50%]',
           )}
         />
       ),
-      [direction]
+      [direction],
     ),
   };
 };
