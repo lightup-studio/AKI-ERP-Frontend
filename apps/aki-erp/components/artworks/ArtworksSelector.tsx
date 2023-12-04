@@ -58,7 +58,7 @@ const ArtworksSelector = ({
           href={`/artworks/${cell.getValue()}`}
         >
           {cell.getValue()}
-          <PencilSquareIcon className="h-4 w-4 ml-2 inline-block"></PencilSquareIcon>
+          <PencilSquareIcon className="ml-2 inline-block h-4 w-4"></PencilSquareIcon>
         </Link>
       ),
     },
@@ -81,7 +81,7 @@ const ArtworksSelector = ({
                 <img
                   src={cell.getValue()}
                   alt="Artwork"
-                  className="w-full h-full object-contain"
+                  className="h-full w-full object-contain"
                   loading="lazy"
                 />
               </Dialog>
@@ -121,16 +121,16 @@ const ArtworksSelector = ({
         return lengthText && widthText && heightText
           ? `${lengthText} x ${widthText} x ${heightText}`
           : widthText && heightText
-          ? `${widthText} x ${heightText}`
-          : lengthText && widthText
-          ? `${lengthText} x ${widthText}`
-          : lengthText
-          ? `${lengthText}`
-          : widthText
-          ? `${widthText}`
-          : heightText
-          ? `${heightText}`
-          : '無';
+            ? `${widthText} x ${heightText}`
+            : lengthText && widthText
+              ? `${lengthText} x ${widthText}`
+              : lengthText
+                ? `${lengthText}`
+                : widthText
+                  ? `${widthText}`
+                  : heightText
+                    ? `${heightText}`
+                    : '無';
       },
     },
     {
@@ -219,7 +219,7 @@ const ArtworksSelector = ({
       <ul class="list-disc"> ${selectedRows
         .map(
           (row) =>
-            `<li><a class="text-info" href="/app/artworks/${row.displayId}" target="_blank" rel="noopener noreferrer" >${row.displayId}</a></li>`
+            `<li><a class="text-info" href="/app/artworks/${row.displayId}" target="_blank" rel="noopener noreferrer" >${row.displayId}</a></li>`,
         )
         .join('')} </ul>
       `,
@@ -239,24 +239,24 @@ const ArtworksSelector = ({
         'modal-open': isOpen,
       })}
     >
-      <div className="modal-box absolute top-0 max-w-none overflow-hidden flex flex-col p-0">
-        <h3 className="font-bold m-4 pb-2 mb-0 text-2xl border-b-base-content border-b flex justify-between items-baseline">
+      <div className="modal-box absolute top-0 flex max-w-none flex-col overflow-hidden p-0">
+        <h3 className="border-b-base-content m-4 mb-0 flex items-baseline justify-between border-b pb-2 text-2xl font-bold">
           新增藝術品
           <span className="text-xl">已選擇 {selectedRowsCount} 筆</span>
         </h3>
 
-        <div className="my-3 mr-2 px-4 py-2 overflow-y-auto">
-          <div className="md:w-1/2 mb-3">
+        <div className="my-3 mr-2 overflow-y-auto px-4 py-2">
+          <div className="mb-3 md:w-1/2">
             <SearchInput {...getSearchInputProps()} />
           </div>
 
-          <div className="flex gap-2 flex-col md:flex-row">
-            <div className="flex-grow flex flex-col gap-3">
+          <div className="flex flex-col gap-2 md:flex-row">
+            <div className="flex flex-grow flex-col gap-3">
               {selectionBlock}
               {selectedBlock}
             </div>
 
-            <div className="flex flex-col gap-2 justify-between">
+            <div className="flex flex-col justify-between gap-2">
               <i className="flex-grow"></i>
               <select
                 className="select select-bordered"
@@ -276,10 +276,10 @@ const ArtworksSelector = ({
 
           <div className="divider my-2"></div>
 
-          <div className="h-full w-full bg-base-100 text-center">
+          <div className="bg-base-100 h-full w-full text-center">
             {tableBlock}
 
-            <div className="bg-base-100 mt-4 md:col-span-2 flex gap-2 justify-center">
+            <div className="bg-base-100 mt-4 flex justify-center gap-2 md:col-span-2">
               <button
                 className="btn btn-success"
                 onClick={addPurchaseOrder}

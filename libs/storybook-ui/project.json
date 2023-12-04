@@ -60,6 +60,14 @@
           "quiet": true
         }
       }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc -p tsconfig.json --noEmit"],
+        "cwd": "libs/storybook-ui",
+        "forwardAllArgs": false
+      }
     }
   }
 }

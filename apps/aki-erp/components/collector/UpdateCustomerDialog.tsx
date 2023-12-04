@@ -56,7 +56,7 @@ const UpdateCustomerDialog = ({
       onSuccess: (data) => {
         onClose?.(data);
       },
-    }
+    },
   );
 
   const onSubmit = (data: CustomerPartner) => {
@@ -70,20 +70,20 @@ const UpdateCustomerDialog = ({
       })}
     >
       <form
-        className="modal-box max-w-none overflow-hidden flex flex-col p-0"
+        className="modal-box flex max-w-none flex-col overflow-hidden p-0"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <h3 className="font-bold m-4 pb-2 mb-0 text-2xl border-b-base-content border-b flex justify-between items-baseline">
+        <h3 className="border-b-base-content m-4 mb-0 flex items-baseline justify-between border-b pb-2 text-2xl font-bold">
           編輯藏家 {data?.id}
         </h3>
 
         <div className="my-3 mr-2 px-4 py-2">
-          <div className="flex gap-3 items-end">
+          <div className="flex items-end gap-3">
             <div className="flex flex-col gap-1">
               <label className="font-bold">藏家姓名</label>
               <div className="relative flex-1">
                 <input
-                  className={cx('input input-bordered w-32 text-center rounded-r-none', {
+                  className={cx('input input-bordered w-32 rounded-r-none text-center', {
                     'input-error': errors.zhName,
                   })}
                   placeholder="中文姓名"
@@ -91,7 +91,7 @@ const UpdateCustomerDialog = ({
                   onBlur={() => trigger(['zhName', 'enName'])}
                 />
                 <input
-                  className={cx('input input-bordered w-56 text-center rounded-l-none', {
+                  className={cx('input input-bordered w-56 rounded-l-none text-center', {
                     'input-error': errors.enName,
                   })}
                   placeholder="英文姓名"
@@ -99,7 +99,7 @@ const UpdateCustomerDialog = ({
                   onBlur={() => trigger(['zhName', 'enName'])}
                 />
                 {(errors.zhName || errors.enName) && (
-                  <p className="absolute text-error text-xs italic">
+                  <p className="text-error absolute text-xs italic">
                     {(errors.zhName || errors.enName)?.message}
                   </p>
                 )}
@@ -116,7 +116,7 @@ const UpdateCustomerDialog = ({
                   {...register('telephone')}
                 />
                 {errors.telephone && (
-                  <p className="absolute text-error text-xs italic">{errors.telephone?.message}</p>
+                  <p className="text-error absolute text-xs italic">{errors.telephone?.message}</p>
                 )}
               </div>
             </div>
@@ -131,7 +131,7 @@ const UpdateCustomerDialog = ({
                   {...register('metadata.email')}
                 />
                 {errors?.metadata?.email && (
-                  <p className="absolute text-error text-xs italic">
+                  <p className="text-error absolute text-xs italic">
                     {errors.metadata.email.message}
                   </p>
                 )}
@@ -148,14 +148,14 @@ const UpdateCustomerDialog = ({
                   {...register('address')}
                 />
                 {errors.address && (
-                  <p className="absolute text-error text-xs italic">{errors.address?.message}</p>
+                  <p className="text-error absolute text-xs italic">{errors.address?.message}</p>
                 )}
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-base-100 my-4 md:col-span-2 flex gap-2 justify-center">
+        <div className="bg-base-100 my-4 flex justify-center gap-2 md:col-span-2">
           <button className="btn btn-success">
             <CheckIcon className="w-4"></CheckIcon> 儲存
           </button>

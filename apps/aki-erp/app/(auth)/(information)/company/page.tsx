@@ -79,7 +79,7 @@ const Company = () => {
         offset: +(searchParams.get('pageIndex') || 0),
         take: +(searchParams.get('pageSize') || 50),
       }),
-    { keepPreviousData: true }
+    { keepPreviousData: true },
   );
 
   const createMutation = useMutation((data: CompanyPartner) => createPartner(data), {
@@ -189,7 +189,7 @@ const Company = () => {
           }
           disabled={isLoading}
         >
-          {cell.getValue()} <PencilSquareIcon className="h-4 w-4 inline-block" />
+          {cell.getValue()} <PencilSquareIcon className="inline-block h-4 w-4" />
         </button>
       ),
     },
@@ -276,15 +276,15 @@ const Company = () => {
   return (
     <>
       <div className="flex flex-col gap-4">
-        <div className="card w-full min-h-full p-6 bg-base-100 shadow-xl">
-          <h2 className="text-xl font-bold border-l-8 border-accent pl-4 mb-6">新增廠商</h2>
+        <div className="card bg-base-100 min-h-full w-full p-6 shadow-xl">
+          <h2 className="border-accent mb-6 border-l-8 pl-4 text-xl font-bold">新增廠商</h2>
 
-          <form className="flex flex-wrap gap-3 items-end" onSubmit={handleSubmit(onSubmit)}>
+          <form className="flex flex-wrap items-end gap-3" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-1">
               <label className="font-bold">廠商姓名</label>
               <div className="relative flex-1 whitespace-nowrap">
                 <input
-                  className={cx('input input-bordered w-32 text-center rounded-r-none', {
+                  className={cx('input input-bordered w-32 rounded-r-none text-center', {
                     'input-error': errors.zhName,
                   })}
                   placeholder="中文姓名"
@@ -292,7 +292,7 @@ const Company = () => {
                   onBlur={() => trigger(['zhName', 'enName'])}
                 />
                 <input
-                  className={cx('input input-bordered w-56 text-center rounded-l-none', {
+                  className={cx('input input-bordered w-56 rounded-l-none text-center', {
                     'input-error': errors.enName,
                   })}
                   placeholder="英文姓名"
@@ -300,7 +300,7 @@ const Company = () => {
                   onBlur={() => trigger(['zhName', 'enName'])}
                 />
                 {(errors.zhName || errors.enName) && (
-                  <p className="absolute text-error text-xs italic">
+                  <p className="text-error absolute text-xs italic">
                     {(errors.zhName || errors.enName)?.message}
                   </p>
                 )}
@@ -317,7 +317,7 @@ const Company = () => {
                   {...register('telephone')}
                 />
                 {errors.telephone && (
-                  <p className="absolute text-error text-xs italic">{errors.telephone?.message}</p>
+                  <p className="text-error absolute text-xs italic">{errors.telephone?.message}</p>
                 )}
               </div>
             </div>
@@ -332,7 +332,7 @@ const Company = () => {
                   {...register('metadata.email')}
                 />
                 {errors?.metadata?.email && (
-                  <p className="absolute text-error text-xs italic">
+                  <p className="text-error absolute text-xs italic">
                     {errors.metadata.email.message}
                   </p>
                 )}
@@ -349,7 +349,7 @@ const Company = () => {
                   {...register('address')}
                 />
                 {errors.address && (
-                  <p className="absolute text-error text-xs italic">{errors.address?.message}</p>
+                  <p className="text-error absolute text-xs italic">{errors.address?.message}</p>
                 )}
               </div>
             </div>
@@ -359,17 +359,17 @@ const Company = () => {
           </form>
         </div>
 
-        <div className="card w-full min-h-full p-6 bg-base-100 shadow-xl">
-          <h2 className="text-xl font-bold border-l-8 border-accent pl-4 mb-6">廠商列表</h2>
+        <div className="card bg-base-100 min-h-full w-full p-6 shadow-xl">
+          <h2 className="border-accent mb-6 border-l-8 pl-4 text-xl font-bold">廠商列表</h2>
 
-          <div className="flex gap-2 flex-col md:flex-row">
+          <div className="flex flex-col gap-2 md:flex-row">
             <div className="flex-grow">
-              <div className="md:w-1/2 mb-3">
+              <div className="mb-3 md:w-1/2">
                 <SearchField value={keyword} onSearch={handleSearch} />
               </div>
             </div>
-            <div className="flex flex-col gap-2 justify-between">
-              <div className="flex md:flex-col gap-2">
+            <div className="flex flex-col justify-between gap-2">
+              <div className="flex gap-2 md:flex-col">
                 <button aria-label="export pdf file" className="btn btn-accent flex-1">
                   表格匯出
                 </button>
@@ -404,7 +404,7 @@ const Company = () => {
             </select>
           </div>
 
-          <div className="h-full w-full pb-6 bg-base-100 text-center">
+          <div className="bg-base-100 h-full w-full pb-6 text-center">
             <Table table={table} isLoading={isLoading} />
 
             <div className="divider" />
@@ -441,7 +441,7 @@ const Company = () => {
                 return (
                   <button
                     key={key}
-                    className={cx('join-item btn w-14 hidden md:block', {
+                    className={cx('join-item btn hidden w-14 md:block', {
                       'btn-active': Number(pageNumber) - 1 === pageIndex,
                     })}
                     onClick={() => table.setPageIndex(Number(pageNumber) - 1)}

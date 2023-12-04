@@ -10,7 +10,7 @@ const url = '/api/Order/lendReturn';
 
 export const fetchLendReturnOrder = async (
   status: Status,
-  queryString?: string
+  queryString?: string,
 ): Promise<Pagination<LendReturnOrder>> => {
   const params = new URLSearchParams(queryString);
   const query = new URLSearchParams();
@@ -28,21 +28,21 @@ export const fetchLendReturnOrder = async (
   });
 
   const res = await axios.get<Pagination<LendReturnOrder>>(
-    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`
+    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`,
   );
 
   return res.data;
 };
 
 export const createLendReturnOrder = async (
-  body?: CreateOrUpdateLendReturnOrderRequest
+  body?: CreateOrUpdateLendReturnOrderRequest,
 ): Promise<LendReturnOrder> => {
   const res = await axios.post(url, body);
   return res.data;
 };
 
 export const updateLendReturnOrder = async (
-  body?: CreateOrUpdateLendReturnOrderRequest
+  body?: CreateOrUpdateLendReturnOrderRequest,
 ): Promise<LendReturnOrder> => {
   const res = await axios.put(url, body, { params: { allowCreate: true } });
   return res.data;
@@ -64,7 +64,7 @@ export const exportLendReturnOrderById = async (id: number) => {
 };
 
 export const fetchLendReturnOrderDIDdisplayId = async (
-  displayId: string
+  displayId: string,
 ): Promise<LendReturnOrder> => {
   const res = await axios.get(`${url}/DID:${displayId}`);
   return res.data;

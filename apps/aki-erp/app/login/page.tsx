@@ -75,9 +75,9 @@ const Login = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-base-200 flex items-center">
+      <div className="bg-base-200 flex min-h-screen items-center">
         <div className="card mx-auto w-full max-w-md shadow-xl">
-          <div className="grid md:grid-cols-1 p-10 bg-base-100 rounded-xl">
+          <div className="bg-base-100 grid rounded-xl p-10 md:grid-cols-1">
             <div className="mb-10">
               <Image
                 priority
@@ -88,14 +88,14 @@ const Login = () => {
               />
             </div>
 
-            <h2 className="text-2xl font-semibold text-center">Login</h2>
+            <h2 className="text-center text-2xl font-semibold">Login</h2>
 
             <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
               {fieldForm}
 
-              <div className="text-right text-primary">
+              <div className="text-primary text-right">
                 <Link href="/forgot-password">
-                  <span className="text-sm inline-block hover:text-primary hover:underline hover:cursor-pointer transition duration-200">
+                  <span className="hover:text-primary inline-block text-sm transition duration-200 hover:cursor-pointer hover:underline">
                     Forgot Password?
                   </span>
                 </Link>
@@ -103,7 +103,7 @@ const Login = () => {
 
               <Button
                 type="submit"
-                className="btn w-full btn-primary"
+                className="btn btn-primary w-full"
                 isLoading={mutation.isLoading}
               >
                 Login

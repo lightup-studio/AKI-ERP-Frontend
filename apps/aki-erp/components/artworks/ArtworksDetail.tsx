@@ -44,7 +44,7 @@ const schema = yup.object().shape({
       })
       .test('at-least-one-name', '至少需要提供中文名稱或英文名稱', function (value) {
         return !!value.zhName || !!value.enName;
-      })
+      }),
   ),
   yearAge: yup.string().required('年代為必填項目'),
   metadata: yup.object().shape({
@@ -53,7 +53,7 @@ const schema = yup.object().shape({
     agentGalleries: yup.array().of(
       yup.object().shape({
         name: yup.string().required('代理畫廊名稱為必填項目'),
-      })
+      }),
     ),
     media: yup.string().test('media name', '媒材為必填項目', (value, context) => {
       return value || context.parent?.zhMedia ? true : false;
@@ -110,7 +110,7 @@ const ArtworksDetail = (): JSX.Element => {
     () => fetchArtworkDetailByDisplayId(params.id?.toString()),
     {
       enabled: !!params.id, // only run the query if the id exists
-    }
+    },
   );
 
   const mutation = useMutation({
@@ -228,7 +228,7 @@ const ArtworksDetail = (): JSX.Element => {
 
   if (isInitialLoading && isLoading) {
     return (
-      <div className="h-[80vh] flex items-center justify-center">
+      <div className="flex h-[80vh] items-center justify-center">
         <span className="loading loading-bars loading-lg"></span>
       </div>
     );
@@ -237,8 +237,8 @@ const ArtworksDetail = (): JSX.Element => {
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-base-100 p-4 flex flex-col gap-5 rounded-md shadow-md">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="bg-base-100 flex flex-col gap-5 rounded-md p-4 shadow-md">
             <div className="flex gap-3">
               <button className="btn btn-outline">庫存資訊</button>
               {salesInfoDisplayed && <button className="btn btn-outline">銷售資訊</button>}
@@ -256,7 +256,7 @@ const ArtworksDetail = (): JSX.Element => {
                 onChange={handleFileChange}
               />
               {errors.imageUrl && (
-                <p className="absolute text-error text-xs italic bottom-0 translate-y-full">
+                <p className="text-error absolute bottom-0 translate-y-full text-xs italic">
                   {errors.imageUrl.message}
                 </p>
               )}
@@ -272,10 +272,10 @@ const ArtworksDetail = (): JSX.Element => {
             <div className="flex flex-wrap gap-4">
               {artworkNameFields.map((field, index) => (
                 <div className="form-control relative" key={field.id}>
-                  <div className="input-group border rounded-lg border-base-200 ">
-                    <div className="bg-base-200 p-1 flex items-center gap-1 flex-wrap">
+                  <div className="input-group border-base-200 rounded-lg border ">
+                    <div className="bg-base-200 flex flex-wrap items-center gap-1 p-1">
                       <input
-                        className={classNames('input text-center flex-1 rounded-r-none', {
+                        className={classNames('input flex-1 rounded-r-none text-center', {
                           'border-error':
                             errors.artists?.at?.(index)?.message &&
                             watch(`artists.${index}.zhName`)?.trim() === '',
@@ -286,7 +286,7 @@ const ArtworksDetail = (): JSX.Element => {
                         })}
                       />
                       <input
-                        className={classNames('input text-center flex-1 rounded-l-none', {
+                        className={classNames('input flex-1 rounded-l-none text-center', {
                           'border-error':
                             errors.artists?.at?.(index)?.message &&
                             watch(`artists.${index}.enName`)?.trim() === '',
@@ -297,7 +297,7 @@ const ArtworksDetail = (): JSX.Element => {
                         })}
                       />
                       {errors.artists?.at?.(index) && (
-                        <p className="absolute text-error text-xs italic bottom-0 translate-y-full">
+                        <p className="text-error absolute bottom-0 translate-y-full text-xs italic">
                           {errors.artists?.at?.(index)?.message}
                         </p>
                       )}
@@ -324,14 +324,14 @@ const ArtworksDetail = (): JSX.Element => {
               </button>
             </div>
           </div>
-          <div className="bg-base-100 p-4 flex flex-col gap-5 rounded-md shadow-md">
+          <div className="bg-base-100 flex flex-col gap-5 rounded-md p-4 shadow-md">
             <div className="flex flex-col gap-2 pb-2">
               <label className="font-bold" role="label">
                 資產類別
               </label>
               <div className="relative">
                 <select
-                  className={classNames('select select-bordered text-lg w-full max-w-xs', {
+                  className={classNames('select select-bordered w-full max-w-xs text-lg', {
                     'select-error': errors.metadata?.assetsType,
                   })}
                   data-testid="assetsType"
@@ -351,7 +351,7 @@ const ArtworksDetail = (): JSX.Element => {
                   ))}
                 </select>
                 {errors.metadata?.assetsType && (
-                  <p className="absolute text-error text-xs italic">
+                  <p className="text-error absolute text-xs italic">
                     {errors.metadata?.assetsType.message}
                   </p>
                 )}
@@ -364,7 +364,7 @@ const ArtworksDetail = (): JSX.Element => {
               </label>
               <div className="relative">
                 <select
-                  className={classNames('select select-bordered text-lg w-full max-w-xs', {
+                  className={classNames('select select-bordered w-full max-w-xs text-lg', {
                     'select-error': errors.metadata?.artworkType,
                   })}
                   {...register('metadata.artworkType')}
@@ -377,7 +377,7 @@ const ArtworksDetail = (): JSX.Element => {
                   <option value="公仔">公仔</option>
                 </select>
                 {errors.metadata?.artworkType && (
-                  <p className="absolute text-error text-xs italic">
+                  <p className="text-error absolute text-xs italic">
                     {errors.metadata?.artworkType.message}
                   </p>
                 )}
@@ -391,10 +391,10 @@ const ArtworksDetail = (): JSX.Element => {
               <div className="flex flex-wrap gap-2">
                 {agentGalleryFields.map((field, index) => (
                   <div className="form-control" key={field.id}>
-                    <div className="input-group border rounded-lg border-base-200">
-                      <div className="bg-base-200 p-1 flex items-center gap-2 flex-wrap">
+                    <div className="input-group border-base-200 rounded-lg border">
+                      <div className="bg-base-200 flex flex-wrap items-center gap-2 p-1">
                         <input
-                          className="input text-center flex-1 rounded-r-none"
+                          className="input flex-1 rounded-r-none text-center"
                           placeholder="藝廊名稱"
                           {...register(`metadata.agentGalleries.${index}.name`)}
                         />
@@ -426,7 +426,7 @@ const ArtworksDetail = (): JSX.Element => {
               </label>
               <div className="relative">
                 <select
-                  className={classNames('select select-bordered text-lg w-full max-w-xs', {
+                  className={classNames('select select-bordered w-full max-w-xs text-lg', {
                     'select-error': errors.countryCode,
                   })}
                   data-testid="countryCode"
@@ -440,12 +440,12 @@ const ArtworksDetail = (): JSX.Element => {
                   <option value="JPN">Japan</option>
                 </select>
                 {errors.countryCode && (
-                  <p className="absolute text-error text-xs italic">{errors.countryCode.message}</p>
+                  <p className="text-error absolute text-xs italic">{errors.countryCode.message}</p>
                 )}
               </div>
             </div>
           </div>
-          <div className="bg-base-100 p-4 md:col-span-2 divide-y rounded-md shadow-md">
+          <div className="bg-base-100 divide-y rounded-md p-4 shadow-md md:col-span-2">
             <div className="flex flex-col gap-5 pb-6">
               <div className="flex items-center gap-2">
                 <label className="font-bold" role="label">
@@ -460,17 +460,17 @@ const ArtworksDetail = (): JSX.Element => {
                     {...register('metadata.purchasingUnit')}
                   />
                   {errors.metadata?.purchasingUnit && (
-                    <p className="absolute text-error text-xs italic">
+                    <p className="text-error absolute text-xs italic">
                       {errors.metadata?.purchasingUnit.message}
                     </p>
                   )}
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 flex-wrap md:flex-no-wrap">
+              <div className="md:flex-no-wrap flex flex-wrap items-center gap-4">
                 <label className="font-bold">作品名稱</label>
                 <div className="relative flex-1">
-                  <div className="p-1 flex items-center gap-1 flex-wrap">
+                  <div className="flex flex-wrap items-center gap-1 p-1">
                     <input
                       className={classNames('input input-bordered w-full max-w-xs', {
                         'input-error': errors.enName,
@@ -487,21 +487,21 @@ const ArtworksDetail = (): JSX.Element => {
                     />
                   </div>
                   {errors.enName ? (
-                    <p className="absolute text-error text-xs italic">{errors.enName.message}</p>
+                    <p className="text-error absolute text-xs italic">{errors.enName.message}</p>
                   ) : errors.zhName ? (
-                    <p className="absolute text-error text-xs italic">{errors.zhName.message}</p>
+                    <p className="text-error absolute text-xs italic">{errors.zhName.message}</p>
                   ) : (
                     <></>
                   )}
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 flex-wrap md:flex-no-wrap">
+              <div className="md:flex-no-wrap flex flex-wrap items-center gap-4">
                 <label className="font-bold" role="label">
                   尺寸
                 </label>
-                <div className="flex flex-wrap flex-1 gap-4">
-                  <div className="flex gap-2 items-center">
+                <div className="flex flex-1 flex-wrap gap-4">
+                  <div className="flex items-center gap-2">
                     <label>長</label>
                     <div className="relative flex-1">
                       <input
@@ -512,13 +512,13 @@ const ArtworksDetail = (): JSX.Element => {
                         {...register('metadata.length')}
                       />
                       {errors.metadata?.length && (
-                        <p className="absolute text-error text-xs italic" data-testid="lengthError">
+                        <p className="text-error absolute text-xs italic" data-testid="lengthError">
                           {errors.metadata?.length.message}
                         </p>
                       )}
                     </div>
                   </div>
-                  <div className="flex gap-2 items-center">
+                  <div className="flex items-center gap-2">
                     <label>寬</label>
                     <div className="relative flex-1">
                       <input
@@ -529,13 +529,13 @@ const ArtworksDetail = (): JSX.Element => {
                         {...register('metadata.width')}
                       />
                       {errors.metadata?.width && (
-                        <p className="absolute text-error text-xs italic" data-testid="widthError">
+                        <p className="text-error absolute text-xs italic" data-testid="widthError">
                           {errors.metadata?.width.message}
                         </p>
                       )}
                     </div>
                   </div>
-                  <div className="flex gap-2 items-center">
+                  <div className="flex items-center gap-2">
                     <label>高</label>
                     <div className="relative flex-1">
                       <input
@@ -546,13 +546,13 @@ const ArtworksDetail = (): JSX.Element => {
                         {...register('metadata.height')}
                       />
                       {errors.metadata?.height && (
-                        <p className="absolute text-error text-xs italic" data-testid="heightError">
+                        <p className="text-error absolute text-xs italic" data-testid="heightError">
                           {errors.metadata?.height.message}
                         </p>
                       )}
                     </div>
                   </div>
-                  <div className="flex gap-2 items-center">
+                  <div className="flex items-center gap-2">
                     <label className="whitespace-nowrap">自定義尺寸</label>
                     <div className="relative flex-1">
                       <input
@@ -564,7 +564,7 @@ const ArtworksDetail = (): JSX.Element => {
                       />
                       {errors.metadata?.customSize && (
                         <p
-                          className="absolute text-error text-xs italic"
+                          className="text-error absolute text-xs italic"
                           data-testid="customSizeError"
                         >
                           {errors.metadata?.customSize.message}
@@ -572,7 +572,7 @@ const ArtworksDetail = (): JSX.Element => {
                       )}
                     </div>
                   </div>
-                  <div className="flex gap-2 items-center">
+                  <div className="flex items-center gap-2">
                     <label className="whitespace-nowrap">號數</label>
                     <div className="relative flex-1">
                       <input
@@ -584,7 +584,7 @@ const ArtworksDetail = (): JSX.Element => {
                       />
                       {errors.metadata?.serialNumber && (
                         <p
-                          className="absolute text-error text-xs italic"
+                          className="text-error absolute text-xs italic"
                           data-testid="serialNumberError"
                         >
                           {errors.metadata?.serialNumber.message}
@@ -595,10 +595,10 @@ const ArtworksDetail = (): JSX.Element => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 flex-wrap md:flex-no-wrap">
+              <div className="md:flex-no-wrap flex flex-wrap items-center gap-4">
                 <label className="font-bold">媒材</label>
                 <div className="relative flex-1">
-                  <div className="p-1 flex items-center gap-1 flex-wrap">
+                  <div className="flex flex-wrap items-center gap-1 p-1">
                     <input
                       className={classNames('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.media,
@@ -619,11 +619,11 @@ const ArtworksDetail = (): JSX.Element => {
                     />
                   </div>
                   {errors.metadata?.media ? (
-                    <p className="absolute text-error text-xs italic">
+                    <p className="text-error absolute text-xs italic">
                       {errors.metadata?.media.message}
                     </p>
                   ) : errors.metadata?.zhMedia ? (
-                    <p className="absolute text-error text-xs italic">
+                    <p className="text-error absolute text-xs italic">
                       {errors.metadata?.zhMedia.message}
                     </p>
                   ) : (
@@ -643,7 +643,7 @@ const ArtworksDetail = (): JSX.Element => {
                     {...register('yearAge')}
                   />
                   {errors.yearAge && (
-                    <p className="absolute text-error text-xs italic">{errors.yearAge.message}</p>
+                    <p className="text-error absolute text-xs italic">{errors.yearAge.message}</p>
                   )}
                 </div>
               </div>
@@ -661,20 +661,20 @@ const ArtworksDetail = (): JSX.Element => {
                     {...register('metadata.edition')}
                   />
                   {errors.metadata?.edition && (
-                    <p className="absolute text-error text-xs italic" data-testid="editionError">
+                    <p className="text-error absolute text-xs italic" data-testid="editionError">
                       {errors.metadata?.edition.message}
                     </p>
                   )}
                 </div>
               </div>
 
-              <div className="flex items-start gap-2 flex-col md:flex-row md:items-center">
+              <div className="flex flex-col items-start gap-2 md:flex-row md:items-center">
                 <label className="font-bold" role="label">
                   其他資訊
                 </label>
-                <div className="flex flex-row flex-1 flex-wrap gap-2">
+                <div className="flex flex-1 flex-row flex-wrap gap-2">
                   <div className="flex gap-2">
-                    <label className="flex items-center gap-2 label-text whitespace-nowrap">
+                    <label className="label-text flex items-center gap-2 whitespace-nowrap">
                       <input
                         type="checkbox"
                         className="checkbox checkbox-secondary"
@@ -690,7 +690,7 @@ const ArtworksDetail = (): JSX.Element => {
                     />
                   </div>
                   <div className="flex gap-2">
-                    <label className="flex items-center gap-2 label-text">
+                    <label className="label-text flex items-center gap-2">
                       <input
                         type="checkbox"
                         className="checkbox checkbox-secondary"
@@ -706,7 +706,7 @@ const ArtworksDetail = (): JSX.Element => {
                     />
                   </div>
                   <div className="flex gap-2 py-3">
-                    <label className="flex items-center gap-2 label-text">
+                    <label className="label-text flex items-center gap-2">
                       <input
                         type="checkbox"
                         className="checkbox checkbox-secondary"
@@ -716,7 +716,7 @@ const ArtworksDetail = (): JSX.Element => {
                     </label>
                   </div>
                   <div className="flex gap-2 py-3">
-                    <label className="flex items-center gap-2 label-text">
+                    <label className="label-text flex items-center gap-2">
                       <input
                         type="checkbox"
                         className="checkbox checkbox-secondary"
@@ -730,7 +730,7 @@ const ArtworksDetail = (): JSX.Element => {
             </div>
 
             <div className="flex flex-col gap-5 py-5">
-              <h2 className="text-2xl text-accent font-bold">庫存資訊</h2>
+              <h2 className="text-accent text-2xl font-bold">庫存資訊</h2>
 
               <div className="flex flex-wrap items-center gap-2">
                 <label className="font-bold">在庫位置</label>
@@ -745,7 +745,7 @@ const ArtworksDetail = (): JSX.Element => {
                         onChange: (e) =>
                           setValue(
                             'warehouseId',
-                            e.target.value === '' ? undefined : parseInt(e.target.value, 10)
+                            e.target.value === '' ? undefined : parseInt(e.target.value, 10),
                           ),
                       })}
                     >
@@ -757,7 +757,7 @@ const ArtworksDetail = (): JSX.Element => {
                       <option value={4}>E</option>
                     </select>
                     {errors.warehouseId && (
-                      <p className="absolute text-error text-xs italic">
+                      <p className="text-error absolute text-xs italic">
                         {errors.warehouseId.message}
                       </p>
                     )}
@@ -771,8 +771,8 @@ const ArtworksDetail = (): JSX.Element => {
                 </div>
               </div>
 
-              <div className="flex items-start gap-2 flex-col md:flex-row md:items-center">
-                <label className="font-bold whitespace-nowrap" role="label">
+              <div className="flex flex-col items-start gap-2 md:flex-row md:items-center">
+                <label className="whitespace-nowrap font-bold" role="label">
                   庫存狀態
                 </label>
                 <div className="flex flex-wrap items-center gap-2">
@@ -877,7 +877,7 @@ const ArtworksDetail = (): JSX.Element => {
             {/* TODO: 藝術品明細頁，需要從相關銷售單，來帶入這些欄位嗎?  */}
             {salesInfoDisplayed && (
               <div className="flex flex-col gap-5 py-5">
-                <h2 id="sales-information" className="text-2xl text-accent font-bold">
+                <h2 id="sales-information" className="text-accent text-2xl font-bold">
                   銷售資訊
                 </h2>
 
@@ -929,7 +929,7 @@ const ArtworksDetail = (): JSX.Element => {
             )}
           </div>
 
-          <div className="bg-base-100 p-4 md:col-span-2 rounded-md shadow-md">
+          <div className="bg-base-100 rounded-md p-4 shadow-md md:col-span-2">
             <div className="flex justify-center gap-2">
               <button className="btn btn-success" data-testid="submitButton">
                 <CheckIcon className="w-4"></CheckIcon> 儲存
@@ -948,7 +948,7 @@ const ArtworksDetail = (): JSX.Element => {
       </form>
 
       {mutation.isLoading && (
-        <div className="w-full h-screen flex justify-center items-center text-gray-300 dark:text-gray-200 bg-base-100 fixed top-0 left-0 z-10 opacity-40">
+        <div className="bg-base-100 fixed top-0 left-0 z-10 flex h-screen w-full items-center justify-center text-gray-300 opacity-40 dark:text-gray-200">
           <span className="loading loading-bars loading-lg"></span>
         </div>
       )}

@@ -123,7 +123,7 @@ const LendReturnOrderDetail: React.FC<LendReturnOrderDetailProps> = ({ disabled 
     {
       enabled: !!disabled,
       keepPreviousData: true,
-    }
+    },
   );
 
   useEffect(() => {
@@ -207,12 +207,12 @@ const LendReturnOrderDetail: React.FC<LendReturnOrderDetailProps> = ({ disabled 
 
   return (
     <>
-      <div className="card w-full min-h-full p-6 bg-base-100 shadow-xl">
-        <div className="flex gap-4 flex-col md:flex-row">
-          <form className="w-full grid grid-cols-2 gap-4">{fieldForm}</form>
+      <div className="card bg-base-100 min-h-full w-full p-6 shadow-xl">
+        <div className="flex flex-col gap-4 md:flex-row">
+          <form className="grid w-full grid-cols-2 gap-4">{fieldForm}</form>
 
-          <div className="flex flex-col gap-4 justify-between">
-            <div className="flex md:flex-col gap-2">
+          <div className="flex flex-col justify-between gap-4">
+            <div className="flex gap-2 md:flex-col">
               <button
                 aria-label="export table"
                 className={cx('btn btn-accent flex-1', {
@@ -248,11 +248,11 @@ const LendReturnOrderDetail: React.FC<LendReturnOrderDetailProps> = ({ disabled 
 
         <div className="divider my-2"></div>
 
-        <div className="h-full w-full bg-base-100 text-center">
+        <div className="bg-base-100 h-full w-full text-center">
           {tableBlock}
 
           {!disabled && (
-            <div className="bg-base-100 mt-4 md:col-span-2 flex gap-2 justify-center">
+            <div className="bg-base-100 mt-4 flex justify-center gap-2 md:col-span-2">
               <Button
                 className="btn btn-success"
                 isLoading={createMutation.isLoading}

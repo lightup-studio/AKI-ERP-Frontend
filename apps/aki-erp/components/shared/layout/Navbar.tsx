@@ -17,13 +17,13 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar flex justify-between bg-base-100 z-10 shadow-md ">
+    <div className="navbar bg-base-100 z-10 flex justify-between shadow-md ">
       {/* Menu toggle for mobile view or small screen */}
       <div>
         <label htmlFor="left-sidebar-drawer" className="btn btn-primary drawer-button lg:hidden">
-          <Bars3Icon className="h-5 inline-block w-5" />
+          <Bars3Icon className="inline-block h-5 w-5" />
         </label>
-        <h1 className="text-2xl font-semibold ml-2">
+        <h1 className="ml-2 text-2xl font-semibold">
           <PageTitle />
         </h1>
       </div>
@@ -43,7 +43,7 @@ const Navbar = () => {
         </select> */}
         {/* <ThemeToggleButton></ThemeToggleButton> */}
         {/* Notification icon */}
-        <button className="btn btn-ghost ml-4 btn-circle">
+        <button className="btn btn-ghost btn-circle ml-4">
           <div className="indicator">
             <BellIcon className="h-6 w-6" />
             {/* {noOfNotifications > 0 ? (
@@ -62,7 +62,7 @@ const Navbar = () => {
           </label>
           <ul
             tabIndex={0}
-            className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
+            className="menu menu-compact dropdown-content bg-base-100 rounded-box mt-3 w-52 p-2 shadow"
           >
             <li className="justify-between">
               <Link href="/profile">

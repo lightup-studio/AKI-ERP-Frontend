@@ -55,6 +55,14 @@
       "options": {
         "lintFilePatterns": ["apps/aki-erp/**/*.{ts,tsx,js,jsx}"]
       }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc -p tsconfig.json --noEmit"],
+        "cwd": "apps/aki-erp",
+        "forwardAllArgs": false
+      }
     }
   },
   "tags": []

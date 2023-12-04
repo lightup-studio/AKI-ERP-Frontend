@@ -5,7 +5,7 @@ const url = '/api/Order/lend';
 
 export const fetchLendOrder = async (
   status: Status,
-  queryString?: string
+  queryString?: string,
 ): Promise<Pagination<LendOrder>> => {
   const params = new URLSearchParams(queryString);
   const query = new URLSearchParams();
@@ -23,21 +23,21 @@ export const fetchLendOrder = async (
   });
 
   const res = await axios.get<Pagination<LendOrder>>(
-    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`
+    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`,
   );
 
   return res.data;
 };
 
 export const createLendOrder = async (
-  body?: CreateOrUpdateLendOrderRequest
+  body?: CreateOrUpdateLendOrderRequest,
 ): Promise<LendOrder> => {
   const res = await axios.post(url, body);
   return res.data;
 };
 
 export const updateLendOrder = async (
-  body?: CreateOrUpdateLendOrderRequest
+  body?: CreateOrUpdateLendOrderRequest,
 ): Promise<LendOrder> => {
   const res = await axios.put(url, body, { params: { allowCreate: true } });
   return res.data;

@@ -10,7 +10,7 @@ const url = '/api/Order/transfer';
 
 export const fetchTransferOrder = async (
   status: Status,
-  queryString?: string
+  queryString?: string,
 ): Promise<Pagination<TransferOrder>> => {
   const params = new URLSearchParams(queryString);
   const query = new URLSearchParams();
@@ -28,21 +28,21 @@ export const fetchTransferOrder = async (
   });
 
   const res = await axios.get<Pagination<TransferOrder>>(
-    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`
+    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`,
   );
 
   return res.data;
 };
 
 export const createTransferOrder = async (
-  body?: CreateOrUpdateTransferOrderRequest
+  body?: CreateOrUpdateTransferOrderRequest,
 ): Promise<TransferOrder> => {
   const res = await axios.post(url, body);
   return res.data;
 };
 
 export const updateTransferOrder = async (
-  body?: CreateOrUpdateTransferOrderRequest
+  body?: CreateOrUpdateTransferOrderRequest,
 ): Promise<TransferOrder> => {
   const res = await axios.put(url, body, { params: { allowCreate: true } });
   return res.data;

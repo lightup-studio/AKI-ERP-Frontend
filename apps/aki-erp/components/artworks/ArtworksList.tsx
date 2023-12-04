@@ -46,8 +46,8 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
     return type === 'inventory'
       ? Status.Enabled
       : type === 'draft'
-      ? Status.Draft
-      : Status.Disabled;
+        ? Status.Draft
+        : Status.Disabled;
   }, [type]);
 
   const columns: ColumnDef<ArtworkDetail, any>[] = [
@@ -60,7 +60,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
           href={`${pathname}/${cell.getValue()}?${searchParams.toString()}`}
         >
           {cell.getValue()}
-          <PencilSquareIcon className="h-4 w-4 ml-2 inline-block"></PencilSquareIcon>
+          <PencilSquareIcon className="ml-2 inline-block h-4 w-4"></PencilSquareIcon>
         </Link>
       ),
     },
@@ -83,7 +83,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
                 <img
                   src={cell.getValue()}
                   alt="Artwork"
-                  className="w-full h-full object-contain"
+                  className="h-full w-full object-contain"
                   loading="lazy"
                 />
               </Dialog>
@@ -123,16 +123,16 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
         return lengthText && widthText && heightText
           ? `${lengthText} x ${widthText} x ${heightText}`
           : widthText && heightText
-          ? `${widthText} x ${heightText}`
-          : lengthText && widthText
-          ? `${lengthText} x ${widthText}`
-          : lengthText
-          ? `${lengthText}`
-          : widthText
-          ? `${widthText}`
-          : heightText
-          ? `${heightText}`
-          : '無';
+            ? `${widthText} x ${heightText}`
+            : lengthText && widthText
+              ? `${lengthText} x ${widthText}`
+              : lengthText
+                ? `${lengthText}`
+                : widthText
+                  ? `${widthText}`
+                  : heightText
+                    ? `${heightText}`
+                    : '無';
       },
     },
     {
@@ -253,18 +253,18 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
   };
 
   return (
-    <div className="card w-full min-h-full p-6 bg-base-100 shadow-xl">
-      <div className="md:w-1/2 mb-3">
+    <div className="card bg-base-100 min-h-full w-full p-6 shadow-xl">
+      <div className="mb-3 md:w-1/2">
         <SearchField {...getSearchInputProps()} />
       </div>
 
-      <div className="flex gap-2 flex-col md:flex-row">
-        <div className="flex-grow flex flex-col gap-3">
+      <div className="flex flex-col gap-2 md:flex-row">
+        <div className="flex flex-grow flex-col gap-3">
           {selectionBlock}
           {selectedBlock}
         </div>
-        <div className="flex flex-col gap-2 justify-between">
-          <div className="flex md:flex-col gap-2">
+        <div className="flex flex-col justify-between gap-2">
+          <div className="flex gap-2 md:flex-col">
             <button aria-label="export excel file" className="btn btn-accent flex-1 truncate">
               Excel 匯出
             </button>
@@ -312,7 +312,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
           新增
         </Link>
       </div>
-      <div className="h-full w-full pb-6 bg-base-100 text-center">{tableBlock}</div>
+      <div className="bg-base-100 h-full w-full pb-6 text-center">{tableBlock}</div>
     </div>
   );
 };

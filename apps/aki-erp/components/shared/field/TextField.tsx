@@ -8,7 +8,7 @@ interface TextFieldProps
 
 const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
   { defaultValue, errorMsg, ...props },
-  ref
+  ref,
 ) {
   const { name, value } = props;
 

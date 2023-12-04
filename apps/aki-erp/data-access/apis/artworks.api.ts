@@ -113,7 +113,7 @@ export async function fetchArtworkList(searchParams: URLSearchParams) {
 
 export async function fetchArtworkList2(
   status: 'Enabled' | 'Disabled' | 'Draft' = 'Enabled',
-  searchParams?: URLSearchParams
+  searchParams?: URLSearchParams,
 ) {
   const queryString = (searchParams ? [...searchParams.entries()] : [])
     .map(([key, value]) => {
@@ -158,14 +158,14 @@ export async function createOrUpdateArtworkDetail(artwork: ArtworkDetail) {
 
 export async function patchArtworks(
   ids: number[],
-  data: Partial<ArtworkDetail<Partial<ArtworkMetadata>>>
+  data: Partial<ArtworkDetail<Partial<ArtworkMetadata>>>,
 ) {
   return Promise.all(ids.map((id) => patchArtwork(id, data)));
 }
 
 export async function patchArtwork(
   id: number,
-  data: Partial<ArtworkDetail<Partial<ArtworkMetadata>>>
+  data: Partial<ArtworkDetail<Partial<ArtworkMetadata>>>,
 ) {
   const res = await axios.patch(`/api/Artworks/${id}`, data);
   return res.data;
@@ -181,7 +181,7 @@ export async function deleteArtwork(id: number) {
 }
 
 export async function patchArtworksBatchId(
-  data?: CommonBatchPartialUpdateById
+  data?: CommonBatchPartialUpdateById,
 ): Promise<Array<ArtworkDetail>> {
   const res = await axios.patch(`/api/Artworks/batch/id`, data);
   return res.data;

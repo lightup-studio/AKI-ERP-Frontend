@@ -38,7 +38,7 @@ const useArtworksOrderTable = ({
           href={`/artworks/${cell.getValue()}`}
         >
           {cell.getValue()}
-          <PencilSquareIcon className="h-4 w-4 ml-2 inline-block"></PencilSquareIcon>
+          <PencilSquareIcon className="ml-2 inline-block h-4 w-4"></PencilSquareIcon>
         </Link>
       ),
     },
@@ -60,7 +60,7 @@ const useArtworksOrderTable = ({
                 <img
                   src={cell.getValue()}
                   alt="Artwork"
-                  className="w-full h-full object-contain"
+                  className="h-full w-full object-contain"
                   loading="lazy"
                 />
               </Dialog>
@@ -100,16 +100,16 @@ const useArtworksOrderTable = ({
         return lengthText && widthText && heightText
           ? `${lengthText} x ${widthText} x ${heightText}`
           : widthText && heightText
-          ? `${widthText} x ${heightText}`
-          : lengthText && widthText
-          ? `${lengthText} x ${widthText}`
-          : lengthText
-          ? `${lengthText}`
-          : widthText
-          ? `${widthText}`
-          : heightText
-          ? `${heightText}`
-          : '無';
+            ? `${widthText} x ${heightText}`
+            : lengthText && widthText
+              ? `${lengthText} x ${widthText}`
+              : lengthText
+                ? `${lengthText}`
+                : widthText
+                  ? `${widthText}`
+                  : heightText
+                    ? `${heightText}`
+                    : '無';
       },
     },
     {

@@ -33,7 +33,7 @@ const SearchField = ({
     <div className="relative">
       <input
         type="text"
-        className={'input input-bordered shadow rounded p-3 w-full'}
+        className={'input input-bordered w-full rounded p-3 shadow'}
         data-testid="search-field-input"
         placeholder={'請輸入關鍵字...'}
         value={searchTerm || ''}
@@ -42,7 +42,7 @@ const SearchField = ({
       />
       <button
         aria-label="search"
-        className="absolute top-[50%] right-5 md:right-7 -translate-y-2/4"
+        className="absolute top-[50%] right-5 -translate-y-2/4 md:right-7"
         onClick={handleClick}
       >
         <svg
@@ -64,7 +64,7 @@ const SearchField = ({
       <button
         aria-label="clear search"
         type="button"
-        className="absolute top-[50%] right-0 md:right-2 -translate-y-2/4"
+        className="absolute top-[50%] right-0 -translate-y-2/4 md:right-2"
         onClick={handleClear}
       >
         <svg
