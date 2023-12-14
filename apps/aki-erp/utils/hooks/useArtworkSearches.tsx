@@ -23,7 +23,7 @@ const SELECT_ITEMS: Pick<SelectItem, 'key' | 'placeholder'>[] = [
   { key: 'nationalities', placeholder: '國籍' },
   { key: 'artists', placeholder: '藝術家' },
   { key: 'serialNumbers', placeholder: '號數' },
-  { key: 'years', placeholder: '年代' },
+  { key: 'yearAges', placeholder: '年代' },
   { key: 'storeTypes', placeholder: '庫存狀態' },
   { key: 'salesTypes', placeholder: '銷售狀態' },
   { key: 'assetsTypes', placeholder: '資產類別' },

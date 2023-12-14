@@ -1,6 +1,8 @@
+import { rangeRight } from 'lodash-es';
+
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Option as ComboboxOption } from '@components/shared/MyCombobox';
-import { salesTypeOptions, storeTypeOptions } from '@constants/artwork.constant';
+import { assetsTypeOptions, salesTypeOptions, storeTypeOptions } from '@constants/artwork.constant';
 import axios from '@contexts/axios';
 import {
   Artwork,
@@ -9,9 +11,7 @@ import {
   CommonBatchPartialUpdateById,
   Pagination,
 } from '@data-access/models';
-import { rangeRight } from 'lodash-es';
 
-import { assetsTypeOptions } from '@constants/artwork.constant';
 import { fetchCountryList } from './countries.api';
 
 export async function fetchSelectOptions() {
@@ -27,14 +27,14 @@ export async function fetchSelectOptions() {
     countryList,
     artistOptions,
     serialNumberOptions,
-    yearOptions,
+    yearAgeOptions,
     mediaOptions,
     agentGalleryOptions,
   ] = await Promise.all([
     fetchCountryList(),
     fetchArtistOptions(),
     fetchSerialNumberOptions(),
-    fetchYearOptions(),
+    fetchYearAgeOptions(),
     fetchMediaOptions(),
     fetchAgentGalleryOptions(),
   ]);
@@ -46,7 +46,7 @@ export async function fetchSelectOptions() {
     })),
     artists: artistOptions,
     serialNumbers: serialNumberOptions,
-    years: yearOptions,
+    yearAges: yearAgeOptions,
     mediums: mediaOptions,
     agentGalleries: agentGalleryOptions,
     storeTypes: [...storeTypeOptions],
@@ -70,13 +70,18 @@ export async function fetchSerialNumberOptions() {
     .map((serialNumber) => ({ label: serialNumber, value: serialNumber }));
 }
 
-export function fetchYearOptions() {
-  const options = rangeRight(new Date().getFullYear(), 1980).map((year) => ({
-    label: `${year}`,
-    value: year.toString(),
-  }));
+export async function fetchYearAgeOptions() {
+  try {
+    const res = await axios.get<string[]>('/api/Artworks/autoComplete/yearAge');
+    return res.data.filter(Boolean).map((yearAge) => ({ label: yearAge, value: yearAge }));
+  } catch {
+    const options = rangeRight(new Date().getFullYear(), 1980).map((year) => ({
+      label: `${year}`,
+      value: year.toString(),
+    }));
 
-  return Promise.resolve(options);
+    return Promise.resolve(options);
+  }
 }
 
 export async function fetchMediaOptions() {
