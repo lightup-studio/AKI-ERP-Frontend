@@ -24,6 +24,14 @@ import { useParams, useRouter } from 'next/navigation';
 
 const salesInfoDisplayed = true;
 
+const scrollToStoreInfo = () => {
+  // TODO: use refs to reference DOM elements instead of directly using document.querySelector or document.getElementById.
+  document?.querySelector('main')?.scrollTo({
+    top: document?.getElementById('store-information')?.getBoundingClientRect().top,
+    behavior: 'smooth',
+  });
+};
+
 const scrollToSalesInfo = () => {
   // TODO: use refs to reference DOM elements instead of directly using document.querySelector or document.getElementById.
   document?.querySelector('main')?.scrollTo({
@@ -248,7 +256,9 @@ const ArtworksDetail = (): JSX.Element => {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="bg-base-100 flex flex-col gap-5 rounded-md p-4 shadow-md">
             <div className="flex gap-3">
-              <button className="btn btn-outline">庫存資訊</button>
+              <button className="btn btn-outline" type="button" onClick={scrollToStoreInfo}>
+                庫存資訊
+              </button>
               {salesInfoDisplayed && (
                 <button className="btn btn-outline" type="button" onClick={scrollToSalesInfo}>
                   銷售資訊
@@ -757,7 +767,9 @@ const ArtworksDetail = (): JSX.Element => {
             </div>
 
             <div className="flex flex-col gap-5 py-5">
-              <h2 className="text-accent text-2xl font-bold">庫存資訊</h2>
+              <h2 id="store-information" className="text-accent text-2xl font-bold">
+                庫存資訊
+              </h2>
 
               <div className="flex flex-wrap items-center gap-2">
                 <label className="font-bold">在庫位置</label>
