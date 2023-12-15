@@ -85,8 +85,8 @@ const Collector = () => {
       fetchPartnerList({
         type: 'Customer',
         keyword: searchParams.get('keyword'),
-        offset: +(searchParams.get('pageIndex') || 0),
-        take: +(searchParams.get('pageSize') || 50),
+        pageIndex: +(searchParams.get('pageIndex') || 0),
+        pageSize: +(searchParams.get('pageSize') || 50),
       }),
     { keepPreviousData: true },
   );

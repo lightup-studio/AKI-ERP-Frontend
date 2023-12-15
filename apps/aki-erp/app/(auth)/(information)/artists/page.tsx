@@ -76,8 +76,8 @@ const Artists = () => {
       fetchPartnerList({
         type: 'Artist',
         keyword: params.get('keyword'),
-        offset: +(params.get('pageIndex') || 0),
-        take: +(params.get('pageSize') || 50),
+        pageIndex: +(params.get('pageIndex') || 0),
+        pageSize: +(params.get('pageSize') || 50),
       }),
     { keepPreviousData: true },
   );
