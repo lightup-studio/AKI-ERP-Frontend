@@ -104,7 +104,7 @@ const schema = yup.object().shape({
 const ArtworksDetail = (): JSX.Element => {
   const router = useRouter();
   const params = useParams();
-  params.id; //?
+
   const { isLoading, isSuccess, data, isInitialLoading } = useQuery(
     ['data', params.id],
     () => fetchArtworkDetailByDisplayId(params.id?.toString()),
