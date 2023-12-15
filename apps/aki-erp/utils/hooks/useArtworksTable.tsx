@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { Option as ComboboxOption } from '@components/shared/MyCombobox';
-import { fetchArtworkList2, patchArtwork } from '@data-access/apis/artworks.api';
+import { fetchArtworkList, patchArtwork } from '@data-access/apis/artworks.api';
 import { ArtworkDetail, Status } from '@data-access/models';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
@@ -93,7 +93,7 @@ const useArtworksTable = ({
 
   const dataQuery = useQuery({
     queryKey: ['artworks', status, params.toString()],
-    queryFn: () => fetchArtworkList2(status, params),
+    queryFn: () => fetchArtworkList(status, params),
     enabled: !!selectItems,
     keepPreviousData: true,
   });

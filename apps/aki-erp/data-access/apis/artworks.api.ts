@@ -5,7 +5,6 @@ import { Option as ComboboxOption } from '@components/shared/MyCombobox';
 import { assetsTypeOptions, salesTypeOptions, storeTypeOptions } from '@constants/artwork.constant';
 import axios from '@contexts/axios';
 import {
-  Artwork,
   ArtworkDetail,
   ArtworkMetadata,
   CommonBatchPartialUpdateById,
@@ -103,20 +102,7 @@ export async function fetchAgentGalleryOptions() {
   }));
 }
 
-export async function fetchArtworkList(searchParams: URLSearchParams) {
-  const queryString = (searchParams.toString() || '')
-    .replace(/artists=/g, 'artistId=')
-    .replace(/storeTypes=/g, 'storeTypeId=')
-    .replace(/salesTypes=/g, 'salesStatusId=')
-    .replace(/assetsTypes=/g, 'assetsTypeId=')
-    .replace(/pageIndex=/g, 'offset=')
-    .replace(/pageSize=/g, 'take=');
-  const res = await axios.get<Pagination<Artwork>>(`/api/artworks?${queryString}`);
-  res.data.pageCount = Math.ceil(res.data.totalCount / res.data.take);
-  return res.data;
-}
-
-export async function fetchArtworkList2(
+export async function fetchArtworkList(
   status: 'Enabled' | 'Disabled' | 'Draft' = 'Enabled',
   searchParams?: URLSearchParams,
 ) {
