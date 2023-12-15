@@ -6,13 +6,13 @@ export async function fetchPartnerList<
 >({
   type,
   keyword,
-  offset = 0,
-  take = 50,
+  pageIndex = 0,
+  pageSize = 50,
 }: {
   type?: TPartnerType;
   keyword?: string | null;
-  offset?: number;
-  take?: number;
+  pageIndex?: number;
+  pageSize?: number;
 } = {}): Promise<Pagination<Partner<TPartnerType>>> {
   const res = await axios.get<Partner<TPartnerType>[]>(`/api/partners`, {
     params: {
@@ -23,10 +23,10 @@ export async function fetchPartnerList<
   return {
     data: res.data
       .sort((a, b) => new Date(a.createTime).getTime() - new Date(b.createTime).getTime())
-      .slice(offset, take),
-    offset,
-    take,
-    pageCount: Math.ceil(res.data.length / take),
+      .slice(pageIndex * pageSize, pageSize),
+    offset: pageIndex * pageSize,
+    take: pageSize,
+    pageCount: Math.ceil(res.data.length / pageSize),
     totalCount: res.data.length,
   };
 }

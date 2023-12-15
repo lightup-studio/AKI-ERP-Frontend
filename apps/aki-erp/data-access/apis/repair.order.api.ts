@@ -22,7 +22,11 @@ export const fetchRepairOrder = async (
     if (key === 'salesTypes') return query.append('metadatas', `{"salesType":"${value}"}`);
     if (key === 'assetsTypes') return query.append('metadatas', `{"assetsType":"${value}"}`);
     if (key === 'serialNumbers') return query.append('metadatas', `{"serialNumber":"${value}"}`);
-    if (key === 'pageIndex') return query.append('offset', value);
+    if (key === 'pageIndex') {
+      const pageIndex = +(params.get('pageIndex') || 0);
+      const pageSize = +(params.get('pageSize') || 50);
+      return query.append('offset', `${pageIndex * pageSize}`);
+    }
     if (key === 'pageSize') return query.append('take', value);
     query.append(key, value);
   });

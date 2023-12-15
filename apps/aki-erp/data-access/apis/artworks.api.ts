@@ -128,7 +128,11 @@ export async function fetchArtworkList2(
       if (key === 'salesTypes') return `metadatas={"salesType":"${value}"}`;
       if (key === 'assetsTypes') return `metadatas={"assetsType":"${value}"}`;
       if (key === 'serialNumbers') return `metadatas={"serialNumber":"${value}"}`;
-      if (key === 'pageIndex') return `offset=${value}`;
+      if (key === 'pageIndex') {
+        const pageIndex = +(searchParams?.get('pageIndex') || 0);
+        const pageSize = +(searchParams?.get('pageSize') || 50);
+        return `offset=${pageIndex * pageSize}`;
+      }
       if (key === 'pageSize') return `take=${value}`;
       return `${key}=${value}`;
     })
