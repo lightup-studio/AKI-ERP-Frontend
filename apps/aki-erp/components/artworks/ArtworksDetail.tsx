@@ -247,23 +247,38 @@ const ArtworksDetail = (): JSX.Element => {
             <label className="font-bold" role="label">
               作品圖片
             </label>
-            <div className="relative">
-              <input
-                type="file"
-                className={classNames('file-input file-input-bordered max-w-xs', {
-                  'border-error': errors.imageUrl?.message,
-                })}
-                onChange={handleFileChange}
-              />
-              {errors.imageUrl && (
-                <p className="text-error absolute bottom-0 translate-y-full text-xs italic">
-                  {errors.imageUrl.message}
-                </p>
+            <div className="flex items-center justify-between">
+              <div className="relative">
+                <input
+                  type="file"
+                  className={classNames('file-input file-input-bordered max-w-xs', {
+                    'border-error': errors.imageUrl?.message,
+                  })}
+                  onChange={handleFileChange}
+                />
+                {errors.imageUrl && (
+                  <p className="text-error absolute bottom-0 translate-y-full text-xs italic">
+                    {errors.imageUrl.message}
+                  </p>
+                )}
+              </div>
+              {watch('imageUrl') && (
+                <div className="text-right">
+                  <a
+                    href={watch('imageUrl')}
+                    className="text-primary text-lg"
+                    target="blank"
+                    rel="noreferrer"
+                  >
+                    另開原圖
+                  </a>
+                  <p className="text-error text-sm">圖片載入過慢，請先另開原圖 🙏</p>
+                </div>
               )}
             </div>
 
-            {(watch('imageUrl') || previewImage) && (
-              <img src={watch('imageUrl') || previewImage} className="w-full" alt="作品圖片" />
+            {(watch('thumbnailUrl') || previewImage) && (
+              <img src={watch('thumbnailUrl') || previewImage} className="w-full" alt="作品圖片" />
             )}
 
             <label className="font-bold" role="label">
