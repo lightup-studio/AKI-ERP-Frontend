@@ -22,7 +22,15 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { useParams, useRouter } from 'next/navigation';
 
-const salesInfoDisplayed = false;
+const salesInfoDisplayed = true;
+
+const scrollToSalesInfo = () => {
+  // TODO: use refs to reference DOM elements instead of directly using document.querySelector or document.getElementById.
+  document?.querySelector('main')?.scrollTo({
+    top: document?.getElementById('sales-information')?.getBoundingClientRect().top,
+    behavior: 'smooth',
+  });
+};
 
 const schema = yup.object().shape({
   warehouseId: yup.number().required('庫存位置為必填項目'),
@@ -241,7 +249,11 @@ const ArtworksDetail = (): JSX.Element => {
           <div className="bg-base-100 flex flex-col gap-5 rounded-md p-4 shadow-md">
             <div className="flex gap-3">
               <button className="btn btn-outline">庫存資訊</button>
-              {salesInfoDisplayed && <button className="btn btn-outline">銷售資訊</button>}
+              {salesInfoDisplayed && (
+                <button className="btn btn-outline" type="button" onClick={scrollToSalesInfo}>
+                  銷售資訊
+                </button>
+              )}
             </div>
 
             <label className="font-bold" role="label">
