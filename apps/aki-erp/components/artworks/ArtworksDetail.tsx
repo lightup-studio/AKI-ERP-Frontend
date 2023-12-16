@@ -21,6 +21,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { useParams, useRouter } from 'next/navigation';
+import { fetchCountryList } from '@data-access/apis/countries.api';
 
 const salesInfoDisplayed = true;
 
@@ -93,30 +94,6 @@ const schema = yup.object().shape({
   }),
 });
 
-/**
- * Renders a form for displaying and editing artwork details.
- *
- * This component uses React hooks, react-query, and react-hook-form for managing state and handling form validation.
- * The form includes fields for inputting artwork information such as name, image, artist, dimensions, and inventory details.
- * Form validation is implemented using the yup library.
- *
- * Example Usage:
- * ```javascript
- * import ArtworksDetail from './ArtworksDetail';
- *
- * const App = () => {
- *   return (
- *     <div>
- *       <ArtworksDetail />
- *     </div>
- *   );
- * };
- *
- * export default App;
- * ```
- *
- * @returns {JSX.Element} The rendered form for displaying and editing artwork details.
- */
 const ArtworksDetail = (): JSX.Element => {
   const router = useRouter();
   const params = useParams();
@@ -128,6 +105,10 @@ const ArtworksDetail = (): JSX.Element => {
       enabled: !!params.id, // only run the query if the id exists
     },
   );
+
+  const { data: countryList } = useQuery(['fetchCountryList'], () => fetchCountryList(), {
+    keepPreviousData: true,
+  });
 
   const mutation = useMutation({
     mutationFn: (data: ArtworkDetail) => createOrUpdateArtworkDetail(data),
@@ -472,9 +453,11 @@ const ArtworksDetail = (): JSX.Element => {
                   <option value="" disabled>
                     請選擇
                   </option>
-                  <option value="TWD">Taiwan</option>
-                  <option value="USA">USA</option>
-                  <option value="JPN">Japan</option>
+                  {countryList?.map((item) => (
+                    <option key={item.alpha3Code} value={item.alpha3Code}>
+                      {item.zhName}
+                    </option>
+                  ))}
                 </select>
                 {errors.countryCode && (
                   <p className="text-error absolute text-xs italic">{errors.countryCode.message}</p>
