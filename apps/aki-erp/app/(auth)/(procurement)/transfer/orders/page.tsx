@@ -125,7 +125,7 @@ const TransferOrders = () => {
           <div className="flex flex-col justify-between gap-2">
             <div className="flex gap-2 md:flex-col">
               <button aria-label="export excel file" className="btn btn-accent flex-1 truncate">
-                Excel 匯出
+                PDF 匯出
               </button>
               <button aria-label="export pdf file" className="btn btn-accent flex-1">
                 表格匯出
