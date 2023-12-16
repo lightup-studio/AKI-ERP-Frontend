@@ -72,7 +72,7 @@ export async function fetchSerialNumberOptions() {
 export async function fetchYearAgeOptions() {
   try {
     const res = await axios.get<string[]>('/api/Artworks/autoComplete/yearAge');
-    return res.data.filter(Boolean).map((yearAge) => ({ label: yearAge, value: yearAge }));
+    return res.data.sort((a, b) => +b - +a).map((yearAge) => ({ label: yearAge, value: yearAge }));
   } catch {
     const options = rangeRight(new Date().getFullYear(), 1980).map((year) => ({
       label: `${year}`,
