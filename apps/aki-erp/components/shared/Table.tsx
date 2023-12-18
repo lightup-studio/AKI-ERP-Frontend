@@ -10,7 +10,7 @@ interface TableProps<T = any> {
 
 const AkiTable: React.FC<TableProps> = ({ table, isLoading }) => {
   return (
-    <section className="overflow-x-auto w-full">
+    <section className="w-full overflow-x-auto">
       <table className="table w-full">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -22,7 +22,7 @@ const AkiTable: React.FC<TableProps> = ({ table, isLoading }) => {
                     colSpan={header.colSpan}
                     className={classNames('p-2', {
                       'min-w-[10rem]': !['select', 'storeType', 'salesType', 'assetsType'].includes(
-                        header.id
+                        header.id,
                       ),
                       'min-w-[3rem]': ['storeType', 'salesType', 'assetsType'].includes(header.id),
                       'text-center': ['assetsType'].includes(header.id),
@@ -53,7 +53,7 @@ const AkiTable: React.FC<TableProps> = ({ table, isLoading }) => {
           {!isLoading && table.getRowModel().rows.length === 0 ? (
             <tr>
               <td colSpan={table.getHeaderGroups()[0].headers.length}>
-                <div className="flex justify-center items-center min-h-[3rem]">No Data.</div>
+                <div className="flex min-h-[3rem] items-center justify-center">No Data.</div>
               </td>
             </tr>
           ) : (

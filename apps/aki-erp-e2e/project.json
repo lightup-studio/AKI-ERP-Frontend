@@ -23,6 +23,14 @@
       "options": {
         "lintFilePatterns": ["apps/aki-erp-e2e/**/*.{js,ts}"]
       }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc -p tsconfig.json --noEmit"],
+        "cwd": "apps/aki-erp-e2e",
+        "forwardAllArgs": false
+      }
     }
   },
   "tags": [],

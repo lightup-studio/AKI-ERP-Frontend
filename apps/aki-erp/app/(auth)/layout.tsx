@@ -26,7 +26,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
 
   if (isFetching)
     return (
-      <div className="h-[100vh] flex items-center justify-center">
+      <div className="flex h-[100vh] items-center justify-center">
         <span className="loading loading-bars loading-lg"></span>
       </div>
     );

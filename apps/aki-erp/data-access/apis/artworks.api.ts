@@ -1,17 +1,16 @@
+import { rangeRight } from 'lodash-es';
+
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Option as ComboboxOption } from '@components/shared/MyCombobox';
-import { salesTypeOptions, storeTypeOptions } from '@constants/artwork.constant';
+import { assetsTypeOptions, salesTypeOptions, storeTypeOptions } from '@constants/artwork.constant';
 import axios from '@contexts/axios';
 import {
-  Artwork,
   ArtworkDetail,
   ArtworkMetadata,
   CommonBatchPartialUpdateById,
   Pagination,
 } from '@data-access/models';
-import { rangeRight } from 'lodash-es';
 
-import { assetsTypeOptions } from '@constants/artwork.constant';
 import { fetchCountryList } from './countries.api';
 
 export async function fetchSelectOptions() {
@@ -27,14 +26,14 @@ export async function fetchSelectOptions() {
     countryList,
     artistOptions,
     serialNumberOptions,
-    yearOptions,
+    yearAgeOptions,
     mediaOptions,
     agentGalleryOptions,
   ] = await Promise.all([
     fetchCountryList(),
     fetchArtistOptions(),
     fetchSerialNumberOptions(),
-    fetchYearOptions(),
+    fetchYearAgeOptions(),
     fetchMediaOptions(),
     fetchAgentGalleryOptions(),
   ]);
@@ -46,7 +45,7 @@ export async function fetchSelectOptions() {
     })),
     artists: artistOptions,
     serialNumbers: serialNumberOptions,
-    years: yearOptions,
+    yearAges: yearAgeOptions,
     mediums: mediaOptions,
     agentGalleries: agentGalleryOptions,
     storeTypes: [...storeTypeOptions],
@@ -70,13 +69,18 @@ export async function fetchSerialNumberOptions() {
     .map((serialNumber) => ({ label: serialNumber, value: serialNumber }));
 }
 
-export function fetchYearOptions() {
-  const options = rangeRight(new Date().getFullYear(), 1980).map((year) => ({
-    label: `${year}`,
-    value: year.toString(),
-  }));
+export async function fetchYearAgeOptions() {
+  try {
+    const res = await axios.get<string[]>('/api/Artworks/autoComplete/yearAge');
+    return res.data.sort((a, b) => +b - +a).map((yearAge) => ({ label: yearAge, value: yearAge }));
+  } catch {
+    const options = rangeRight(new Date().getFullYear(), 1980).map((year) => ({
+      label: `${year}`,
+      value: year.toString(),
+    }));
 
-  return Promise.resolve(options);
+    return Promise.resolve(options);
+  }
 }
 
 export async function fetchMediaOptions() {
@@ -98,22 +102,9 @@ export async function fetchAgentGalleryOptions() {
   }));
 }
 
-export async function fetchArtworkList(searchParams: URLSearchParams) {
-  const queryString = (searchParams.toString() || '')
-    .replace(/artists=/g, 'artistId=')
-    .replace(/storeTypes=/g, 'storeTypeId=')
-    .replace(/salesTypes=/g, 'salesStatusId=')
-    .replace(/assetsTypes=/g, 'assetsTypeId=')
-    .replace(/pageIndex=/g, 'offset=')
-    .replace(/pageSize=/g, 'take=');
-  const res = await axios.get<Pagination<Artwork>>(`/api/artworks?${queryString}`);
-  res.data.pageCount = Math.ceil(res.data.totalCount / res.data.take);
-  return res.data;
-}
-
-export async function fetchArtworkList2(
+export async function fetchArtworkList(
   status: 'Enabled' | 'Disabled' | 'Draft' = 'Enabled',
-  searchParams?: URLSearchParams
+  searchParams?: URLSearchParams,
 ) {
   const queryString = (searchParams ? [...searchParams.entries()] : [])
     .map(([key, value]) => {
@@ -123,7 +114,11 @@ export async function fetchArtworkList2(
       if (key === 'salesTypes') return `metadatas={"salesType":"${value}"}`;
       if (key === 'assetsTypes') return `metadatas={"assetsType":"${value}"}`;
       if (key === 'serialNumbers') return `metadatas={"serialNumber":"${value}"}`;
-      if (key === 'pageIndex') return `offset=${value}`;
+      if (key === 'pageIndex') {
+        const pageIndex = +(searchParams?.get('pageIndex') || 0);
+        const pageSize = +(searchParams?.get('pageSize') || 50);
+        return `offset=${pageIndex * pageSize}`;
+      }
       if (key === 'pageSize') return `take=${value}`;
       return `${key}=${value}`;
     })
@@ -158,14 +153,14 @@ export async function createOrUpdateArtworkDetail(artwork: ArtworkDetail) {
 
 export async function patchArtworks(
   ids: number[],
-  data: Partial<ArtworkDetail<Partial<ArtworkMetadata>>>
+  data: Partial<ArtworkDetail<Partial<ArtworkMetadata>>>,
 ) {
   return Promise.all(ids.map((id) => patchArtwork(id, data)));
 }
 
 export async function patchArtwork(
   id: number,
-  data: Partial<ArtworkDetail<Partial<ArtworkMetadata>>>
+  data: Partial<ArtworkDetail<Partial<ArtworkMetadata>>>,
 ) {
   const res = await axios.patch(`/api/Artworks/${id}`, data);
   return res.data;
@@ -181,7 +176,7 @@ export async function deleteArtwork(id: number) {
 }
 
 export async function patchArtworksBatchId(
-  data?: CommonBatchPartialUpdateById
+  data?: CommonBatchPartialUpdateById,
 ): Promise<Array<ArtworkDetail>> {
   const res = await axios.patch(`/api/Artworks/batch/id`, data);
   return res.data;

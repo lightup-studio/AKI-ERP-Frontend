@@ -216,11 +216,11 @@ const LeftSidebar = () => {
       <label htmlFor="left-sidebar-drawer" className="drawer-overlay"></label>
 
       <ul
-        className="menu gap-2 pt-2 w-80 bg-base-100 text-base-content h-full flex-nowrap"
+        className="menu bg-base-100 text-base-content h-full w-80 flex-nowrap gap-2 pt-2"
         ref={targetRef}
       >
         {dragNode}
-        <li className="py-2 font-semibold text-xl">
+        <li className="py-2 text-xl font-semibold">
           <div className="p-0">
             <Image
               priority
@@ -235,7 +235,7 @@ const LeftSidebar = () => {
         {routes.map((route, k) => (
           <li className="" key={k}>
             {route.groupName ? (
-              <div className="px-4 py-2 font-bold text-lg bg-accent hover:bg-accent tracking-widest text-base-100">
+              <div className="bg-accent hover:bg-accent text-base-100 px-4 py-2 text-lg font-bold tracking-widest">
                 {route.groupName}
               </div>
             ) : route.submenu ? (
@@ -245,7 +245,7 @@ const LeftSidebar = () => {
                 {route?.icon} {route.name}
                 {route.path && pathName.startsWith(route.path) ? (
                   <span
-                    className="absolute inset-y-0 left-0 w-1 rounded-tr-md rounded-br-md bg-primary "
+                    className="bg-primary absolute inset-y-0 left-0 w-1 rounded-tr-md rounded-br-md "
                     aria-hidden="true"
                   ></span>
                 ) : null}

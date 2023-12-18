@@ -13,6 +13,14 @@ const config: Config = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/apps/aki-erp',
+  coverageThreshold: {
+    global: {
+      branches: 20,
+      functions: 20,
+      lines: 20,
+      statements: 20,
+    },
+  },
 };
 
 export default config;

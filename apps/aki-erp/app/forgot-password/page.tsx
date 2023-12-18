@@ -38,21 +38,21 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen bg-base-200 flex items-center">
+    <div className="bg-base-200 flex min-h-screen items-center">
       <div className="card mx-auto w-full max-w-md shadow-xl">
-        <div className="grid md:grid-cols-1 p-10 bg-base-100 rounded-xl">
-          <h2 className="text-2xl font-semibold mb-2 text-center">Forgot Password</h2>
+        <div className="bg-base-100 grid rounded-xl p-10 md:grid-cols-1">
+          <h2 className="mb-2 text-center text-2xl font-semibold">Forgot Password</h2>
 
           {linkSent && (
             <>
-              <div className="text-center mt-8">
-                <CheckCircleIcon className="inline-block w-32 text-success" />
+              <div className="mt-8 text-center">
+                <CheckCircleIcon className="text-success inline-block w-32" />
               </div>
-              <p className="my-4 text-xl font-bold text-center">Link Sent</p>
-              <p className="mt-4 mb-8 font-semibold text-center">
+              <p className="my-4 text-center text-xl font-bold">Link Sent</p>
+              <p className="mt-4 mb-8 text-center font-semibold">
                 Check your email to reset password
               </p>
-              <div className="text-center mt-4">
+              <div className="mt-4 text-center">
                 <Link href="/login">
                   <button className="btn btn-block btn-primary">Login</button>
                 </Link>
@@ -62,7 +62,7 @@ const ForgotPassword = () => {
 
           {!linkSent && (
             <>
-              <p className="my-8 font-semibold text-center">
+              <p className="my-8 text-center font-semibold">
                 We will send password reset link on your email Id
               </p>
 
@@ -71,15 +71,15 @@ const ForgotPassword = () => {
 
                 <button
                   type="submit"
-                  className={'btn mt-2 w-full btn-primary' + (loading ? ' loading' : '')}
+                  className={'btn btn-primary mt-2 w-full' + (loading ? ' loading' : '')}
                 >
                   Send Reset Link
                 </button>
 
-                <div className="text-center mt-4">
+                <div className="mt-4 text-center">
                   Don't have an account yet?{' '}
                   <Link href="/register">
-                    <button className="inline-block hover:text-primary hover:underline hover:cursor-pointer transition duration-200">
+                    <button className="hover:text-primary inline-block transition duration-200 hover:cursor-pointer hover:underline">
                       Register
                     </button>
                   </Link>

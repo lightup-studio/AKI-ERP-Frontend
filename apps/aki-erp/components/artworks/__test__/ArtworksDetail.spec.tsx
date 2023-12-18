@@ -31,7 +31,7 @@ describe('Creating a new Artwork via ArtworksDetail', () => {
     });
 
     const labels = screen.getAllByRole('label');
-    expect(labels).toHaveLength(11);
+    expect(labels).toHaveLength(16);
 
     expect(screen.getByText('作品圖片')).toBeInTheDocument();
     expect(screen.getByText('藝術家')).toBeInTheDocument();
@@ -47,6 +47,11 @@ describe('Creating a new Artwork via ArtworksDetail', () => {
     expect(screen.getByText('版次 ed.')).toBeInTheDocument();
     expect(screen.getByText('其他資訊')).toBeInTheDocument();
     expect(screen.getByText('庫存狀態')).toBeInTheDocument();
+    expect(screen.getByText('購買人')).toBeInTheDocument();
+    expect(screen.getByText('收件者')).toBeInTheDocument();
+    expect(screen.getByText('電話')).toBeInTheDocument();
+    expect(screen.getByText('地址')).toBeInTheDocument();
+    expect(screen.getByText('售出日期')).toBeInTheDocument();
   });
 
   // User can select the asset type from a dropdown menu.
@@ -58,7 +63,7 @@ describe('Creating a new Artwork via ArtworksDetail', () => {
     userEvent.selectOptions(screen.getByTestId('assetsType'), selectedValue);
 
     const selectOptionElement = screen.getByTestId(
-      `assetsType__option-${selectedValue}`
+      `assetsType__option-${selectedValue}`,
     ) as HTMLOptionElement;
 
     waitFor(() => {
@@ -111,7 +116,7 @@ describe('Editing an existing Artwork via ArtworksDetail', () => {
     });
 
     const labels = await screen.findAllByRole('label');
-    expect(labels).toHaveLength(11);
+    expect(labels).toHaveLength(16);
 
     expect(screen.getByText('作品圖片')).toBeInTheDocument();
     expect(screen.getByText('藝術家')).toBeInTheDocument();
@@ -127,5 +132,10 @@ describe('Editing an existing Artwork via ArtworksDetail', () => {
     expect(screen.getByText('版次 ed.')).toBeInTheDocument();
     expect(screen.getByText('其他資訊')).toBeInTheDocument();
     expect(screen.getByText('庫存狀態')).toBeInTheDocument();
+    expect(screen.getByText('購買人')).toBeInTheDocument();
+    expect(screen.getByText('收件者')).toBeInTheDocument();
+    expect(screen.getByText('電話')).toBeInTheDocument();
+    expect(screen.getByText('地址')).toBeInTheDocument();
+    expect(screen.getByText('售出日期')).toBeInTheDocument();
   });
 });

@@ -37,8 +37,8 @@ const ArtworksBatchUpdateDialog: React.FC<ArtworksBatchUpdateDialogProsp> = ({
           patchArtwork(artwork.id, {
             warehouseId: Number(artwork.warehouseId),
             metadata: artwork.metadata,
-          })
-        )
+          }),
+        ),
       );
     },
     onSuccess: async () => {
@@ -71,18 +71,18 @@ const ArtworksBatchUpdateDialog: React.FC<ArtworksBatchUpdateDialogProsp> = ({
         'modal-open': isOpen,
       })}
     >
-      <div className="modal-box max-w-none overflow-hidden flex flex-col p-0">
-        <div className="font-bold m-4 pb-2 mb-0 text-2xl border-b-base-content border-b flex justify-between items-baseline">
+      <div className="modal-box flex max-w-none flex-col overflow-hidden p-0">
+        <div className="border-b-base-content m-4 mb-0 flex items-baseline justify-between border-b pb-2 text-2xl font-bold">
           <h3>Batch Update Store Info</h3>
         </div>
 
-        <div className="my-3 mr-2 px-4 min-h-[60vh] overflow-y-auto">
+        <div className="my-3 mr-2 min-h-[60vh] overflow-y-auto px-4">
           <div className="relative flex flex-col gap-2">
             {list
               .filter((item) => item.artworks?.length)
               .map((item) => (
                 <div key={item.id}>
-                  <h4 className="font-bold text-xl sticky top-0 bg-base-content text-base-200 z-10 p-2 rounded-lg">
+                  <h4 className="bg-base-content text-base-200 sticky top-0 z-10 rounded-lg p-2 text-xl font-bold">
                     <PageTitle /> {item.id}
                   </h4>
                   <div className="overflow-x-auto">
@@ -93,7 +93,7 @@ const ArtworksBatchUpdateDialog: React.FC<ArtworksBatchUpdateDialogProsp> = ({
           </div>
         </div>
 
-        <div className="bg-base-100 mb-4 md:col-span-2 flex gap-2 justify-center">
+        <div className="bg-base-100 mb-4 flex justify-center gap-2 md:col-span-2">
           <Button
             className="btn btn-success"
             isLoading={updateMutation.isLoading}

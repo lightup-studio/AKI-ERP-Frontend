@@ -30,15 +30,15 @@ export function AnimatedCalendar() {
     <Calendar aria-label="Appointment date" className="w-fit pt-4">
       {(state) => (
         <>
-          <header className="flex items-center pb-4 px-3 sm:px-1 font-serif w-full">
-            <Heading className="flex-1 font-semibold text-2xl ml-2" />
+          <header className="flex w-full items-center px-3 pb-4 font-serif sm:px-1">
+            <Heading className="ml-2 flex-1 text-2xl font-semibold" />
             <Button
               slot="previous"
               onPress={() => {
                 state.focusPreviousPage();
                 setPageOffset(pageOffset - 1);
               }}
-              className="w-12 h-12 sm:w-9 sm:h-9 ml-4 outline-none cursor-default rounded-full flex items-center justify-center data-[hovered]:bg-gray-100 data-[pressed]:bg-gray-200 data-[focus-visible]:ring data-[focus-visible]:ring-black data-[focus-visible]:ring-offset-2"
+              className="ml-4 flex h-12 w-12 cursor-default items-center justify-center rounded-full outline-none data-[hovered]:bg-gray-100 data-[pressed]:bg-gray-200 data-[focus-visible]:ring data-[focus-visible]:ring-black data-[focus-visible]:ring-offset-2 sm:h-9 sm:w-9"
             >
               <ChevronLeftIcon className="h-6 w-6" />
             </Button>
@@ -48,7 +48,7 @@ export function AnimatedCalendar() {
                 state.focusNextPage();
                 setPageOffset(pageOffset + 1);
               }}
-              className="w-12 h-12 sm:w-9 sm:h-9 outline-none cursor-default rounded-full flex items-center justify-center data-[hovered]:bg-gray-100 data-[pressed]:bg-gray-200 data-[focus-visible]:ring data-[focus-visible]:ring-black data-[focus-visible]:ring-offset-2"
+              className="flex h-12 w-12 cursor-default items-center justify-center rounded-full outline-none data-[hovered]:bg-gray-100 data-[pressed]:bg-gray-200 data-[focus-visible]:ring data-[focus-visible]:ring-black data-[focus-visible]:ring-offset-2 sm:h-9 sm:w-9"
             >
               <ChevronRightIcon className="h-6 w-6" />
             </Button>
@@ -74,7 +74,7 @@ export function AnimatedCalendar() {
 
 function Month({ offset }: { offset: number }) {
   return (
-    <CalendarGrid offset={{ months: offset }} className="border-spacing-1 border-separate">
+    <CalendarGrid offset={{ months: offset }} className="border-separate border-spacing-1">
       <CalendarGridHeader>
         {(day) => <CalendarHeaderCell className="text-xs font-semibold">{day}</CalendarHeaderCell>}
       </CalendarGridHeader>
@@ -82,7 +82,7 @@ function Month({ offset }: { offset: number }) {
         {(date) => (
           <CalendarCell
             date={date}
-            className="w-12 h-12 sm:w-9 sm:h-9 outline-none cursor-default rounded-full text-md sm:text-sm flex items-center justify-center data-[outside-month]:text-base-content/20 data-[hovered]:bg-gray-100 data-[pressed]:bg-gray-200 data-[selected]:data-[hovered]:bg-black data-[selected]:bg-black data-[selected]:text-white data-[focus-visible]:ring data-[focus-visible]:ring-black data-[focus-visible]:ring-offset-2"
+            className="text-md data-[outside-month]:text-base-content/20 flex h-12 w-12 cursor-default items-center justify-center rounded-full outline-none data-[hovered]:bg-gray-100 data-[pressed]:bg-gray-200 data-[selected]:data-[hovered]:bg-black data-[selected]:bg-black data-[selected]:text-white data-[focus-visible]:ring data-[focus-visible]:ring-black data-[focus-visible]:ring-offset-2 sm:h-9 sm:w-9 sm:text-sm"
           />
         )}
       </CalendarGridBody>
@@ -127,10 +127,10 @@ function Carousel({ pageOffset, children, onNext, onPrevious }: CarouselProps) {
               min: pos,
               max: pos,
             }
-          : staticTransition
+          : staticTransition,
       );
     },
-    [x]
+    [x],
   );
 
   useEffect(() => {
@@ -142,7 +142,7 @@ function Carousel({ pageOffset, children, onNext, onPrevious }: CarouselProps) {
   const drag = useDragControls();
 
   return (
-    <div ref={ref} className="relative overflow-hidden touch-none">
+    <div ref={ref} className="relative touch-none overflow-hidden">
       <motion.div
         style={{ x }}
         drag="x"

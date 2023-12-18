@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { Option as ComboboxOption } from '@components/shared/MyCombobox';
-import { fetchArtworkList2, patchArtwork } from '@data-access/apis/artworks.api';
+import { fetchArtworkList, patchArtwork } from '@data-access/apis/artworks.api';
 import { ArtworkDetail, Status } from '@data-access/models';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
@@ -32,7 +32,7 @@ const inputColumn = ({
 
   return (
     <input
-      className="input px-1 w-full"
+      className="input w-full px-1"
       value={value as string}
       onChange={(e) => setValue(e.target.value)}
       onBlur={onBlur}
@@ -44,7 +44,7 @@ const inputColumn = ({
 const selectColumn = (
   { getValue, row: { index }, column: { id }, table }: CellContext<ArtworkDetail, any>,
   options: ComboboxOption[],
-  config?: { getValue?: () => any; onChange?: (value: string) => void }
+  config?: { getValue?: () => any; onChange?: (value: string) => void },
 ) => {
   const initialValue = config?.getValue?.() ?? getValue();
   // We need to keep and update the state of the cell normally
@@ -56,7 +56,7 @@ const selectColumn = (
 
   return (
     <select
-      className="input appearance-none p-0 text-center text-sm w-[3rem]"
+      className="input w-[3rem] appearance-none p-0 text-center text-sm"
       value={value as string}
       onChange={(e) => {
         setValue(e.target.value);
@@ -93,7 +93,7 @@ const useArtworksTable = ({
 
   const dataQuery = useQuery({
     queryKey: ['artworks', status, params.toString()],
-    queryFn: () => fetchArtworkList2(status, params),
+    queryFn: () => fetchArtworkList(status, params),
     enabled: !!selectItems,
     keepPreviousData: true,
   });
@@ -125,7 +125,7 @@ const useArtworksTable = ({
       updateColumnData: function <TColumnId extends keyof ArtworkDetail>(
         rowIndex: number,
         columnId: TColumnId,
-        value: ArtworkDetail[TColumnId]
+        value: ArtworkDetail[TColumnId],
       ) {
         const currentRow = table.getRowModel().rows[rowIndex];
         const id = currentRow.original.id;
@@ -139,7 +139,7 @@ const useArtworksTable = ({
               } as ArtworkDetail;
             }
             return row;
-          })
+          }),
         );
 
         columnMutation.mutate({

@@ -10,7 +10,7 @@ const url = '/api/Order/sales';
 
 export const fetchSalesOrder = async (
   status: Status,
-  queryString?: string
+  queryString?: string,
 ): Promise<Pagination<SalesOrder>> => {
   const params = new URLSearchParams(queryString);
   const query = new URLSearchParams();
@@ -22,27 +22,31 @@ export const fetchSalesOrder = async (
     if (key === 'salesTypes') return query.append('metadatas', `{"salesType":"${value}"}`);
     if (key === 'assetsTypes') return query.append('metadatas', `{"assetsType":"${value}"}`);
     if (key === 'serialNumbers') return query.append('metadatas', `{"serialNumber":"${value}"}`);
-    if (key === 'pageIndex') return query.append('offset', value);
+    if (key === 'pageIndex') {
+      const pageIndex = +(params.get('pageIndex') || 0);
+      const pageSize = +(params.get('pageSize') || 50);
+      return query.append('offset', `${pageIndex * pageSize}`);
+    }
     if (key === 'pageSize') return query.append('take', value);
     query.append(key, value);
   });
 
   const res = await axios.get<Pagination<SalesOrder>>(
-    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`
+    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`,
   );
 
   return res.data;
 };
 
 export const createSalesOrder = async (
-  body?: CreateOrUpdateSalesOrderRequest
+  body?: CreateOrUpdateSalesOrderRequest,
 ): Promise<SalesOrder> => {
   const res = await axios.post(url, body);
   return res.data;
 };
 
 export const updateSalesOrder = async (
-  body?: CreateOrUpdateSalesOrderRequest
+  body?: CreateOrUpdateSalesOrderRequest,
 ): Promise<SalesOrder> => {
   const res = await axios.put(url, body, { params: { allowCreate: true } });
   return res.data;

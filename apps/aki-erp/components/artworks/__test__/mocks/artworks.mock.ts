@@ -382,7 +382,8 @@ export const artworksApiResponseMock = {
   take: 1,
   totalCount: 8,
   hasNextPage: true,
-};const mockApiResponse = {
+};
+const mockApiResponse = {
   data: [
     {
       id: 1,

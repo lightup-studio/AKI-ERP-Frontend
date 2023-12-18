@@ -18,7 +18,7 @@ const ArtworksPreviewBtn: React.FC<ArtworksPreviewBtnProps> = ({ artworks }) => 
 
       <dialog ref={dialogRef} className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-lg mb-4">藝術品</h3>
+          <h3 className="mb-4 text-lg font-bold">藝術品</h3>
           <div className="flex flex-wrap gap-4">
             {artworks?.map((item) => (
               <img

@@ -70,16 +70,16 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ data }) => {
   });
 
   return (
-    <div className="card w-full min-h-full p-6 bg-base-100 shadow-xl">
-      <h1 className="text-2xl font-semibold ml-2">Profile Settings</h1>
+    <div className="card bg-base-100 min-h-full w-full p-6 shadow-xl">
+      <h1 className="ml-2 text-2xl font-semibold">Profile Settings</h1>
 
       <div className="divider"></div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">{fieldForm.slice(0, 4)}</div>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">{fieldForm.slice(0, 4)}</div>
 
       <div className="divider"></div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">{fieldForm.slice(4)}</div>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">{fieldForm.slice(4)}</div>
 
       <div className="mt-16">
         <button className="btn btn-primary float-right">Update</button>

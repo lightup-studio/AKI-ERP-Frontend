@@ -10,7 +10,7 @@ const url = '/api/Order/repairReturn';
 
 export const fetchRepairReturnOrder = async (
   status: Status,
-  queryString?: string
+  queryString?: string,
 ): Promise<Pagination<RepairReturnOrder>> => {
   const params = new URLSearchParams(queryString);
   const query = new URLSearchParams();
@@ -22,20 +22,24 @@ export const fetchRepairReturnOrder = async (
     if (key === 'salesTypes') return query.append('metadatas', `{"salesType":"${value}"}`);
     if (key === 'assetsTypes') return query.append('metadatas', `{"assetsType":"${value}"}`);
     if (key === 'serialNumbers') return query.append('metadatas', `{"serialNumber":"${value}"}`);
-    if (key === 'pageIndex') return query.append('offset', value);
+    if (key === 'pageIndex') {
+      const pageIndex = +(params.get('pageIndex') || 0);
+      const pageSize = +(params.get('pageSize') || 50);
+      return query.append('offset', `${pageIndex * pageSize}`);
+    }
     if (key === 'pageSize') return query.append('take', value);
     query.append(key, value);
   });
 
   const res = await axios.get<Pagination<RepairReturnOrder>>(
-    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`
+    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`,
   );
 
   return res.data;
 };
 
 export const createRepairReturnOrder = async (
-  body?: CreateOrUpdateRepairReturnOrderRequest
+  body?: CreateOrUpdateRepairReturnOrderRequest,
 ): Promise<RepairReturnOrder> => {
   const url = '/api/Order/repairReturn';
 
@@ -44,7 +48,7 @@ export const createRepairReturnOrder = async (
 };
 
 export const updateRepairReturnOrder = async (
-  body?: CreateOrUpdateRepairReturnOrderRequest
+  body?: CreateOrUpdateRepairReturnOrderRequest,
 ): Promise<RepairReturnOrder> => {
   const res = await axios.put(url, body, { params: { allowCreate: true } });
   return res.data;
@@ -66,7 +70,7 @@ export const exportRepairReturnOrderById = async (id: number) => {
 };
 
 export const fetchRepairReturnOrderDIDdisplayId = async (
-  displayId: string
+  displayId: string,
 ): Promise<RepairReturnOrder> => {
   const res = await axios.get(`${url}/DID:${displayId}`);
   return res.data;
