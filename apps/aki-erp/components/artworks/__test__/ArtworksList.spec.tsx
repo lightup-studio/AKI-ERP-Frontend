@@ -1,5 +1,3 @@
-// import '@testing-library/jest-dom';
-
 import MockAdapter from 'axios-mock-adapter';
 import * as NextNavigation from 'next/navigation';
 import { createTestWrapper } from 'test-utils/index';
@@ -65,10 +63,10 @@ describe('ArtworksList', () => {
     // Locate the "Framed" option within the menu and click it, which will trigger the corresponding action.
     fireEvent.click((await screen.findByText('裱框')).parentElement!);
     // We expect a route navigation to be triggered, with the query parameter "otherInfos=framed" appended.
-    expect(routerPushSpy).toBeCalledTimes(1);
+    expect(routerPushSpy).toHaveBeenCalledTimes(1);
     expect(routerPushSpy).toHaveBeenLastCalledWith(expect.stringContaining('otherInfos=framed'));
 
     fireEvent.click(firstArtworkLink);
-    expect(routerPushSpy).toBeCalledTimes(2);
+    expect(routerPushSpy).toHaveBeenCalledTimes(2);
   });
 });
