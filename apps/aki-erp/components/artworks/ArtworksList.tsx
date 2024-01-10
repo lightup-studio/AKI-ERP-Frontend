@@ -20,7 +20,7 @@ import { useMutation } from '@tanstack/react-query';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
-import useArtworksTable, { inputColumn, selectColumn } from '@utils/hooks/useArtworksTable';
+import useArtworksTable, { selectColumn } from '@utils/hooks/useArtworksTable';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ArtworksTitleProps } from './ArtworksTitle';
@@ -66,8 +66,9 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
     },
     {
       header: '作品名稱',
-      accessorKey: 'enName',
-      cell: inputColumn,
+      cell: ({ cell, row }) => (
+        <div className="flex items-center">{row.original.zhName || row.original.enName}</div>
+      ),
     },
     {
       header: '作品圖',

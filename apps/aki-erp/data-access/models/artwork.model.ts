@@ -96,6 +96,13 @@ export interface ArtworkMetadata {
   /** 銷售狀態 */
   salesType?: (typeof salesTypeOptions)[number]['value'];
   salesOrder?: SalesOrder;
+
+  /** 銷售資訊 */
+  salesName?: string;
+  salseReciver?: string;
+  salesPhone?: string;
+  salesAddress?: string;
+  salesDate?: string;
 }
 
 interface AgentGallery {

@@ -20,8 +20,8 @@ import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { useParams, useRouter } from 'next/navigation';
 import { fetchCountryList } from '@data-access/apis/countries.api';
+import { useParams, useRouter } from 'next/navigation';
 
 const salesInfoDisplayed = true;
 
@@ -390,6 +390,9 @@ const ArtworksDetail = (): JSX.Element => {
                   <option value="" disabled>
                     請選擇
                   </option>
+                  <option value="攝影">攝影</option>
+                  <option value="版畫">版畫</option>
+                  <option value="裝置作品">裝置作品</option>
                   <option value="繪畫">繪畫</option>
                   <option value="雕塑">雕塑</option>
                   <option value="公仔">公仔</option>
@@ -493,23 +496,23 @@ const ArtworksDetail = (): JSX.Element => {
                   <div className="flex flex-wrap items-center gap-1 p-1">
                     <input
                       className={classNames('input input-bordered w-full max-w-xs', {
-                        'input-error': errors.enName,
-                      })}
-                      placeholder="英文名稱"
-                      {...register('enName', { onChange: () => trigger(['enName', 'zhName']) })}
-                    />
-                    <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
                         'input-error': errors.zhName,
                       })}
                       placeholder="中文名稱"
                       {...register('zhName', { onChange: () => trigger(['enName', 'zhName']) })}
                     />
+                    <input
+                      className={classNames('input input-bordered w-full max-w-xs', {
+                        'input-error': errors.enName,
+                      })}
+                      placeholder="英文名稱"
+                      {...register('enName', { onChange: () => trigger(['enName', 'zhName']) })}
+                    />
                   </div>
-                  {errors.enName ? (
-                    <p className="text-error absolute text-xs italic">{errors.enName.message}</p>
-                  ) : errors.zhName ? (
+                  {errors.zhName ? (
                     <p className="text-error absolute text-xs italic">{errors.zhName.message}</p>
+                  ) : errors.enName ? (
+                    <p className="text-error absolute text-xs italic">{errors.enName.message}</p>
                   ) : (
                     <></>
                   )}
@@ -621,15 +624,6 @@ const ArtworksDetail = (): JSX.Element => {
                   <div className="flex flex-wrap items-center gap-1 p-1">
                     <input
                       className={classNames('input input-bordered w-full max-w-xs', {
-                        'input-error': errors.metadata?.media,
-                      })}
-                      placeholder="英文名稱"
-                      {...register('metadata.media', {
-                        onChange: () => trigger(['metadata.media', 'metadata.zhMedia']),
-                      })}
-                    />
-                    <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.zhMedia,
                       })}
                       placeholder="中文名稱"
@@ -637,14 +631,23 @@ const ArtworksDetail = (): JSX.Element => {
                         onChange: () => trigger(['metadata.media', 'metadata.zhMedia']),
                       })}
                     />
+                    <input
+                      className={classNames('input input-bordered w-full max-w-xs', {
+                        'input-error': errors.metadata?.media,
+                      })}
+                      placeholder="英文名稱"
+                      {...register('metadata.media', {
+                        onChange: () => trigger(['metadata.media', 'metadata.zhMedia']),
+                      })}
+                    />
                   </div>
-                  {errors.metadata?.media ? (
-                    <p className="text-error absolute text-xs italic">
-                      {errors.metadata?.media.message}
-                    </p>
-                  ) : errors.metadata?.zhMedia ? (
+                  {errors.metadata?.zhMedia ? (
                     <p className="text-error absolute text-xs italic">
                       {errors.metadata?.zhMedia.message}
+                    </p>
+                  ) : errors.metadata?.media ? (
+                    <p className="text-error absolute text-xs italic">
+                      {errors.metadata?.media.message}
                     </p>
                   ) : (
                     <></>
@@ -907,45 +910,100 @@ const ArtworksDetail = (): JSX.Element => {
                   <label className="font-bold" role="label">
                     購買人
                   </label>
-                  <span className="input input-bordered flex items-center">
-                    這是都是從建立銷售單的帶過來的欄位嗎?
-                  </span>
+                  <div className="relative flex-1">
+                    <input
+                      className={classNames('input input-bordered w-full max-w-xs', {
+                        'input-error': errors.metadata?.salesName,
+                      })}
+                      data-testid="salesName"
+                      {...register('metadata.salesName')}
+                    />
+                    {errors.metadata?.salesName && (
+                      <p className="text-error absolute text-xs italic">
+                        {errors.metadata?.salesName.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <label className="font-bold" role="label">
                     收件者
                   </label>
-                  <span className="input input-bordered flex items-center">
-                    這是都是從建立銷售單的帶過來的欄位嗎?
-                  </span>
+                  <div className="relative flex-1">
+                    <input
+                      className={classNames('input input-bordered w-full max-w-xs', {
+                        'input-error': errors.metadata?.salseReciver,
+                      })}
+                      data-testid="salseReciver"
+                      {...register('metadata.salseReciver')}
+                    />
+                    {errors.metadata?.salseReciver && (
+                      <p className="text-error absolute text-xs italic">
+                        {errors.metadata?.salseReciver.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <label className="font-bold" role="label">
                     電話
                   </label>
-                  <span className="input input-bordered flex items-center">
-                    這是都是從建立銷售單的帶過來的欄位嗎?
-                  </span>
+                  <div className="relative flex-1">
+                    <input
+                      className={classNames('input input-bordered w-full max-w-xs', {
+                        'input-error': errors.metadata?.salesPhone,
+                      })}
+                      data-testid="salesPhone"
+                      {...register('metadata.salesPhone')}
+                    />
+                    {errors.metadata?.salesPhone && (
+                      <p className="text-error absolute text-xs italic">
+                        {errors.metadata?.salesPhone.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <label className="font-bold" role="label">
                     地址
                   </label>
-                  <span className="input input-bordered flex items-center">
-                    這是都是從建立銷售單的帶過來的欄位嗎?
-                  </span>
+                  <div className="relative flex-1">
+                    <input
+                      className={classNames('input input-bordered w-full max-w-xs', {
+                        'input-error': errors.metadata?.salesAddress,
+                      })}
+                      data-testid="salesAddress"
+                      {...register('metadata.salesAddress')}
+                    />
+                    {errors.metadata?.salesAddress && (
+                      <p className="text-error absolute text-xs italic">
+                        {errors.metadata?.salesAddress.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <label className="font-bold" role="label">
                     售出日期
                   </label>
-                  <span className="input input-bordered flex items-center">
-                    這是都是從建立銷售單的帶過來的欄位嗎?
-                  </span>
+                  <div className="relative flex-1">
+                    <input
+                      className={classNames('input input-bordered w-full max-w-xs', {
+                        'input-error': errors.metadata?.salesDate,
+                      })}
+                      data-testid="salesDate"
+                      {...register('metadata.salesDate')}
+                    />
+                    {errors.metadata?.salesDate && (
+                      <p className="text-error absolute text-xs italic">
+                        {errors.metadata?.salesDate.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             )}

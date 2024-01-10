@@ -9,6 +9,7 @@ export enum StoreType {
 }
 
 export const assetsTypeOptions = [
+  { label: '無', value: '無' },
   { label: 'A', value: 'A' },
   { label: 'B', value: 'B' },
   { label: 'C', value: 'C' },
