@@ -40,10 +40,10 @@ describe('Purchase order', () => {
     const labels = screen.getAllByRole('label');
     expect(labels).toHaveLength(4);
 
-    await waitFor(() => expect(screen.getByText('進貨單位')).toBeInTheDocument());
-    await waitFor(() => expect(screen.getByText('進貨日期')).toBeInTheDocument());
-    await waitFor(() => expect(screen.getByText('聯絡人')).toBeInTheDocument());
-    await waitFor(() => expect(screen.getByText('聯絡人電話')).toBeInTheDocument());
+    await waitFor(async () => expect(await screen.findByText('進貨單位')).toBeInTheDocument());
+    await waitFor(async () => expect(await screen.findByText('進貨日期')).toBeInTheDocument());
+    await waitFor(async () => expect(await screen.findByText('聯絡人')).toBeInTheDocument());
+    await waitFor(async () => expect(await screen.findByText('聯絡人電話')).toBeInTheDocument());
   });
 
   it('should render data', async () => {
