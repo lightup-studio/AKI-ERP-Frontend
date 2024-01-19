@@ -451,7 +451,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 <label className="font-bold" role="label">
                   進貨單位
                 </label>
-                <div className="relative flex-1">
+                <div className="relative flex-1 p-1">
                   <input
                     className={classNames('input input-bordered w-full max-w-xs', {
                       'input-error': errors.metadata?.purchasingUnit,
@@ -467,7 +467,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 </div>
               </div>
 
-              <div className="md:flex-no-wrap flex flex-wrap items-center gap-4">
+              <div className="md:flex-no-wrap flex flex-wrap items-center gap-2">
                 <label className="font-bold">作品名稱</label>
                 <div className="relative flex-1">
                   <div className="flex flex-wrap items-center gap-1 p-1">
@@ -496,7 +496,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 </div>
               </div>
 
-              <div className="md:flex-no-wrap flex flex-wrap items-center gap-4">
+              <div className="md:flex-no-wrap flex flex-wrap items-center gap-2">
                 <label className="font-bold" role="label">
                   尺寸
                 </label>
@@ -595,7 +595,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 </div>
               </div>
 
-              <div className="md:flex-no-wrap flex flex-wrap items-center gap-4">
+              <div className="md:flex-no-wrap flex flex-wrap items-center gap-2">
                 <label className="font-bold">媒材</label>
                 <div className="relative flex-1">
                   <div className="flex flex-wrap items-center gap-1 p-1">
@@ -634,7 +634,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
 
               <div className="flex items-center gap-2">
                 <label className="font-bold">年代</label>
-                <div className="relative flex-1">
+                <div className="relative flex-1 p-1">
                   <input
                     className={classNames('input input-bordered w-full max-w-xs', {
                       'input-error': errors.yearAge,
