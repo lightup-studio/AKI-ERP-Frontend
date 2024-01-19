@@ -101,13 +101,13 @@ const schema = yup.object().shape({
  *
  * @returns {JSX.Element} The rendered form for displaying and editing artwork details.
  */
-const ArtworksDetail = (): JSX.Element => {
+const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
   const router = useRouter();
-  const params = useParams();
-  params.id; //?
+  const params = useParams<{ id?: string }>();
+
   const { isLoading, isSuccess, data, isInitialLoading } = useQuery(
     ['data', params.id],
-    () => fetchArtworkDetailByDisplayId(params.id?.toString()),
+    () => fetchArtworkDetailByDisplayId(params.id!),
     {
       enabled: !!params.id, // only run the query if the id exists
     },
@@ -166,7 +166,7 @@ const ArtworksDetail = (): JSX.Element => {
           woodenBox: false,
         },
         warehouseLocation: '',
-        storeType: StoreType.IN_STOCK,
+        storeType: status === Status.Disabled ? StoreType.NONE : StoreType.IN_STOCK,
       },
     },
     resolver: yupResolver<any>(schema),
@@ -870,6 +870,16 @@ const ArtworksDetail = (): JSX.Element => {
                     disabled={watch('metadata.storeType') !== StoreType.RETURNED_SHIPPING}
                     {...register('metadata.returnedShippingDepartment')}
                   />
+
+                  <label className="label gap-2">
+                    <input
+                      type="radio"
+                      className="radio radio-secondary"
+                      value={StoreType.NONE}
+                      {...register('metadata.storeType')}
+                    />
+                    <span className="label-text">非庫存</span>
+                  </label>
                 </div>
               </div>
             </div>

@@ -1,7 +1,8 @@
 import { ArtworksDetail } from '@components/artworks';
+import { Status } from '@data-access/models';
 
 const DraftArtworksId = () => {
-  return <ArtworksDetail />;
+  return <ArtworksDetail status={Status.Draft} />;
 };
 
 export default DraftArtworksId;

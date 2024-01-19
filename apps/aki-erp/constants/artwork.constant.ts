@@ -5,7 +5,7 @@ export enum StoreType {
   REPAIR = 'repair',
   RETURNED_LEND_OR_RETURNED_REPAIR = 'returnedLend_or_returnedRepair',
   SHIPPING = 'shipping',
-  RETURNED_SHIPPING = 'returnedShipping',
+  RETURNED_SHIPPING = 'returnedShipping'
 }
 
 export const assetsTypeOptions = [
