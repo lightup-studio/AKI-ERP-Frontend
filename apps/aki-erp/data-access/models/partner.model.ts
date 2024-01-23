@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-interface */
 export interface Partner<TPartnerType extends PartnerType | undefined | null = PartnerType> {
   id: number;
   type: TPartnerType;

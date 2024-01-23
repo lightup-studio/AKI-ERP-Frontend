@@ -137,7 +137,6 @@ export async function fetchArtworkDetail(id: string) {
 }
 
 export async function fetchArtworkDetailByDisplayId(displayId: string) {
-  displayId; //?
   const res = await axios.get<ArtworkDetail>(`/api/Artworks/DID:${displayId}`);
   return res.data;
 }

@@ -94,13 +94,37 @@ const schema = yup.object().shape({
   }),
 });
 
-const ArtworksDetail = (): JSX.Element => {
+/**
+ * Renders a form for displaying and editing artwork details.
+ *
+ * This component uses React hooks, react-query, and react-hook-form for managing state and handling form validation.
+ * The form includes fields for inputting artwork information such as name, image, artist, dimensions, and inventory details.
+ * Form validation is implemented using the yup library.
+ *
+ * Example Usage:
+ * ```javascript
+ * import ArtworksDetail from './ArtworksDetail';
+ *
+ * const App = () => {
+ *   return (
+ *     <div>
+ *       <ArtworksDetail />
+ *     </div>
+ *   );
+ * };
+ *
+ * export default App;
+ * ```
+ *
+ * @returns {JSX.Element} The rendered form for displaying and editing artwork details.
+ */
+const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
   const router = useRouter();
-  const params = useParams();
+  const params = useParams<{ id?: string }>();
 
   const { isLoading, isSuccess, data, isInitialLoading } = useQuery(
     ['data', params.id],
-    () => fetchArtworkDetailByDisplayId(params.id?.toString()),
+    () => fetchArtworkDetailByDisplayId(params.id!),
     {
       enabled: !!params.id, // only run the query if the id exists
     },
@@ -163,7 +187,7 @@ const ArtworksDetail = (): JSX.Element => {
           woodenBox: false,
         },
         warehouseLocation: '',
-        storeType: StoreType.IN_STOCK,
+        storeType: status === Status.Disabled ? StoreType.NONE : StoreType.IN_STOCK,
       },
     },
     resolver: yupResolver<any>(schema),
@@ -474,7 +498,7 @@ const ArtworksDetail = (): JSX.Element => {
                 <label className="font-bold" role="label">
                   進貨單位
                 </label>
-                <div className="relative flex-1">
+                <div className="relative flex-1 p-1">
                   <input
                     className={classNames('input input-bordered w-full max-w-xs', {
                       'input-error': errors.metadata?.purchasingUnit,
@@ -490,7 +514,7 @@ const ArtworksDetail = (): JSX.Element => {
                 </div>
               </div>
 
-              <div className="md:flex-no-wrap flex flex-wrap items-center gap-4">
+              <div className="md:flex-no-wrap flex flex-wrap items-center gap-2">
                 <label className="font-bold">作品名稱</label>
                 <div className="relative flex-1">
                   <div className="flex flex-wrap items-center gap-1 p-1">
@@ -519,7 +543,7 @@ const ArtworksDetail = (): JSX.Element => {
                 </div>
               </div>
 
-              <div className="md:flex-no-wrap flex flex-wrap items-center gap-4">
+              <div className="md:flex-no-wrap flex flex-wrap items-center gap-2">
                 <label className="font-bold" role="label">
                   尺寸
                 </label>
@@ -618,7 +642,7 @@ const ArtworksDetail = (): JSX.Element => {
                 </div>
               </div>
 
-              <div className="md:flex-no-wrap flex flex-wrap items-center gap-4">
+              <div className="md:flex-no-wrap flex flex-wrap items-center gap-2">
                 <label className="font-bold">媒材</label>
                 <div className="relative flex-1">
                   <div className="flex flex-wrap items-center gap-1 p-1">
@@ -657,7 +681,7 @@ const ArtworksDetail = (): JSX.Element => {
 
               <div className="flex items-center gap-2">
                 <label className="font-bold">年代</label>
-                <div className="relative flex-1">
+                <div className="relative flex-1 p-1">
                   <input
                     className={classNames('input input-bordered w-full max-w-xs', {
                       'input-error': errors.yearAge,
@@ -895,6 +919,16 @@ const ArtworksDetail = (): JSX.Element => {
                     disabled={watch('metadata.storeType') !== StoreType.RETURNED_SHIPPING}
                     {...register('metadata.returnedShippingDepartment')}
                   />
+
+                  <label className="label gap-2">
+                    <input
+                      type="radio"
+                      className="radio radio-secondary"
+                      value={StoreType.NONE}
+                      {...register('metadata.storeType')}
+                    />
+                    <span className="label-text">非庫存</span>
+                  </label>
                 </div>
               </div>
             </div>

@@ -52,7 +52,7 @@ const useFieldForm = <TFieldValues extends FieldValues = FieldValues, TContext =
 
     return (
       <section key={name} className="flex flex-col gap-2">
-        <label className="font-bold" htmlFor={name}>
+        <label className="font-bold" role="label" htmlFor={name}>
           {config.label}
         </label>
         {controller}

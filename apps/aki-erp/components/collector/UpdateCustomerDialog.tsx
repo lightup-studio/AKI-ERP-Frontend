@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
 
-import { formSchema } from '@constants/collector.formSchema';
-import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useMutation } from '@tanstack/react-query';
 import cx from 'classnames';
 import { updatePartner } from 'data-access/apis/partners.api';
 import { CustomerPartner } from 'data-access/models';
 import { useForm } from 'react-hook-form';
+
+import { formSchema } from '@constants/collector.formSchema';
+import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useMutation } from '@tanstack/react-query';
 
 const UpdateCustomerDialog = ({
   isOpen = false,
@@ -23,7 +24,7 @@ const UpdateCustomerDialog = ({
     if (!mainElement) {
       return;
     }
-    mainElement.scrollTo(0, 0);
+    mainElement.scrollTo?.(0, 0);
     mainElement.style.overflow = isOpen ? 'hidden' : 'auto';
 
     return () => {
@@ -48,16 +49,11 @@ const UpdateCustomerDialog = ({
     }
   }, [data, reset]);
 
-  const updateMutation = useMutation(
-    (updatedData: CustomerPartner) => {
-      return updatePartner(updatedData);
+  const updateMutation = useMutation((updatedData: CustomerPartner) => updatePartner(updatedData), {
+    onSuccess: (data) => {
+      onClose?.(data);
     },
-    {
-      onSuccess: (data) => {
-        onClose?.(data);
-      },
-    },
-  );
+  });
 
   const onSubmit = (data: CustomerPartner) => {
     updateMutation.mutateAsync(data);
@@ -80,22 +76,28 @@ const UpdateCustomerDialog = ({
         <div className="my-3 mr-2 px-4 py-2">
           <div className="flex items-end gap-3">
             <div className="flex flex-col gap-1">
-              <label className="font-bold">藏家姓名</label>
+              <label className="font-bold" htmlFor="zhName">
+                藏家姓名
+              </label>
               <div className="relative flex-1">
                 <input
+                  id="zhName"
                   className={cx('input input-bordered w-32 rounded-r-none text-center', {
                     'input-error': errors.zhName,
                   })}
                   placeholder="中文姓名"
                   {...register('zhName')}
+                  data-testid="zhName"
                   onBlur={() => trigger(['zhName', 'enName'])}
                 />
                 <input
+                  id="enName"
                   className={cx('input input-bordered w-56 rounded-l-none text-center', {
                     'input-error': errors.enName,
                   })}
                   placeholder="英文姓名"
                   {...register('enName')}
+                  data-testid="enName"
                   onBlur={() => trigger(['zhName', 'enName'])}
                 />
                 {(errors.zhName || errors.enName) && (
@@ -106,9 +108,12 @@ const UpdateCustomerDialog = ({
               </div>
             </div>
             <div className="flex flex-col gap-1">
-              <label className="font-bold">電話</label>
+              <label className="font-bold" htmlFor="telephone">
+                電話
+              </label>
               <div className="relative flex-1">
                 <input
+                  id="telephone"
                   className={cx('input input-bordered w-full text-center', {
                     'input-error': errors.telephone,
                   })}
@@ -121,9 +126,12 @@ const UpdateCustomerDialog = ({
               </div>
             </div>
             <div className="flex flex-col gap-1">
-              <label className="font-bold">Email</label>
+              <label className="font-bold" htmlFor="email">
+                Email
+              </label>
               <div className="relative flex-1">
                 <input
+                  id="email"
                   className={cx('input input-bordered w-full text-center', {
                     'input-error': errors?.metadata?.email,
                   })}
@@ -138,18 +146,18 @@ const UpdateCustomerDialog = ({
               </div>
             </div>
             <div className="flex flex-col gap-1">
-              <label className="font-bold">地址</label>
+              <label className="font-bold" htmlFor="address">
+                地址
+              </label>
               <div className="relative flex-1">
                 <input
+                  id="address"
                   className={cx('input input-bordered w-full text-center', {
                     'input-error': errors.address,
                   })}
                   placeholder="請輸入地址"
                   {...register('address')}
                 />
-                {errors.address && (
-                  <p className="text-error absolute text-xs italic">{errors.address?.message}</p>
-                )}
               </div>
             </div>
           </div>
@@ -164,7 +172,11 @@ const UpdateCustomerDialog = ({
           </button>
         </div>
       </form>
-      <label className="modal-backdrop" onClick={() => onClose?.()}>
+      <label
+        className="modal-backdrop"
+        data-testid="customer-modal-backdrop"
+        onClick={() => onClose?.()}
+      >
         Close
       </label>
     </div>
