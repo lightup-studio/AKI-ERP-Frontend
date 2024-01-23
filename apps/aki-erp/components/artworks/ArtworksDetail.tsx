@@ -20,9 +20,26 @@ import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
+import { fetchCountryList } from '@data-access/apis/countries.api';
 import { useParams, useRouter } from 'next/navigation';
 
-const salesInfoDisplayed = false;
+const salesInfoDisplayed = true;
+
+const scrollToStoreInfo = () => {
+  // TODO: use refs to reference DOM elements instead of directly using document.querySelector or document.getElementById.
+  document?.querySelector('main')?.scrollTo({
+    top: document?.getElementById('store-information')?.getBoundingClientRect().top,
+    behavior: 'smooth',
+  });
+};
+
+const scrollToSalesInfo = () => {
+  // TODO: use refs to reference DOM elements instead of directly using document.querySelector or document.getElementById.
+  document?.querySelector('main')?.scrollTo({
+    top: document?.getElementById('sales-information')?.getBoundingClientRect().top,
+    behavior: 'smooth',
+  });
+};
 
 const schema = yup.object().shape({
   warehouseId: yup.number().required('庫存位置為必填項目'),
@@ -112,6 +129,10 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
       enabled: !!params.id, // only run the query if the id exists
     },
   );
+
+  const { data: countryList } = useQuery(['fetchCountryList'], () => fetchCountryList(), {
+    keepPreviousData: true,
+  });
 
   const mutation = useMutation({
     mutationFn: (data: ArtworkDetail) => createOrUpdateArtworkDetail(data),
@@ -240,30 +261,51 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="bg-base-100 flex flex-col gap-5 rounded-md p-4 shadow-md">
             <div className="flex gap-3">
-              <button className="btn btn-outline">庫存資訊</button>
-              {salesInfoDisplayed && <button className="btn btn-outline">銷售資訊</button>}
+              <button className="btn btn-outline" type="button" onClick={scrollToStoreInfo}>
+                庫存資訊
+              </button>
+              {salesInfoDisplayed && (
+                <button className="btn btn-outline" type="button" onClick={scrollToSalesInfo}>
+                  銷售資訊
+                </button>
+              )}
             </div>
 
             <label className="font-bold" role="label">
               作品圖片
             </label>
-            <div className="relative">
-              <input
-                type="file"
-                className={classNames('file-input file-input-bordered max-w-xs', {
-                  'border-error': errors.imageUrl?.message,
-                })}
-                onChange={handleFileChange}
-              />
-              {errors.imageUrl && (
-                <p className="text-error absolute bottom-0 translate-y-full text-xs italic">
-                  {errors.imageUrl.message}
-                </p>
+            <div className="flex items-center justify-between">
+              <div className="relative">
+                <input
+                  type="file"
+                  className={classNames('file-input file-input-bordered max-w-xs', {
+                    'border-error': errors.imageUrl?.message,
+                  })}
+                  onChange={handleFileChange}
+                />
+                {errors.imageUrl && (
+                  <p className="text-error absolute bottom-0 translate-y-full text-xs italic">
+                    {errors.imageUrl.message}
+                  </p>
+                )}
+              </div>
+              {watch('imageUrl') && (
+                <div className="text-right">
+                  <a
+                    href={watch('imageUrl')}
+                    className="text-primary text-lg"
+                    target="blank"
+                    rel="noreferrer"
+                  >
+                    另開原圖
+                  </a>
+                  <p className="text-error text-sm">圖片載入過慢，請先另開原圖 🙏</p>
+                </div>
               )}
             </div>
 
-            {(watch('imageUrl') || previewImage) && (
-              <img src={watch('imageUrl') || previewImage} className="w-full" alt="作品圖片" />
+            {(watch('thumbnailUrl') || previewImage) && (
+              <img src={watch('thumbnailUrl') || previewImage} className="w-full" alt="作品圖片" />
             )}
 
             <label className="font-bold" role="label">
@@ -372,6 +414,9 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   <option value="" disabled>
                     請選擇
                   </option>
+                  <option value="攝影">攝影</option>
+                  <option value="版畫">版畫</option>
+                  <option value="裝置作品">裝置作品</option>
                   <option value="繪畫">繪畫</option>
                   <option value="雕塑">雕塑</option>
                   <option value="公仔">公仔</option>
@@ -435,9 +480,11 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   <option value="" disabled>
                     請選擇
                   </option>
-                  <option value="TWD">Taiwan</option>
-                  <option value="USA">USA</option>
-                  <option value="JPN">Japan</option>
+                  {countryList?.map((item) => (
+                    <option key={item.alpha3Code} value={item.alpha3Code}>
+                      {item.zhName}
+                    </option>
+                  ))}
                 </select>
                 {errors.countryCode && (
                   <p className="text-error absolute text-xs italic">{errors.countryCode.message}</p>
@@ -473,23 +520,23 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   <div className="flex flex-wrap items-center gap-1 p-1">
                     <input
                       className={classNames('input input-bordered w-full max-w-xs', {
-                        'input-error': errors.enName,
-                      })}
-                      placeholder="英文名稱"
-                      {...register('enName', { onChange: () => trigger(['enName', 'zhName']) })}
-                    />
-                    <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
                         'input-error': errors.zhName,
                       })}
                       placeholder="中文名稱"
                       {...register('zhName', { onChange: () => trigger(['enName', 'zhName']) })}
                     />
+                    <input
+                      className={classNames('input input-bordered w-full max-w-xs', {
+                        'input-error': errors.enName,
+                      })}
+                      placeholder="英文名稱"
+                      {...register('enName', { onChange: () => trigger(['enName', 'zhName']) })}
+                    />
                   </div>
-                  {errors.enName ? (
-                    <p className="text-error absolute text-xs italic">{errors.enName.message}</p>
-                  ) : errors.zhName ? (
+                  {errors.zhName ? (
                     <p className="text-error absolute text-xs italic">{errors.zhName.message}</p>
+                  ) : errors.enName ? (
+                    <p className="text-error absolute text-xs italic">{errors.enName.message}</p>
                   ) : (
                     <></>
                   )}
@@ -601,15 +648,6 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   <div className="flex flex-wrap items-center gap-1 p-1">
                     <input
                       className={classNames('input input-bordered w-full max-w-xs', {
-                        'input-error': errors.metadata?.media,
-                      })}
-                      placeholder="英文名稱"
-                      {...register('metadata.media', {
-                        onChange: () => trigger(['metadata.media', 'metadata.zhMedia']),
-                      })}
-                    />
-                    <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.zhMedia,
                       })}
                       placeholder="中文名稱"
@@ -617,14 +655,23 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                         onChange: () => trigger(['metadata.media', 'metadata.zhMedia']),
                       })}
                     />
+                    <input
+                      className={classNames('input input-bordered w-full max-w-xs', {
+                        'input-error': errors.metadata?.media,
+                      })}
+                      placeholder="英文名稱"
+                      {...register('metadata.media', {
+                        onChange: () => trigger(['metadata.media', 'metadata.zhMedia']),
+                      })}
+                    />
                   </div>
-                  {errors.metadata?.media ? (
-                    <p className="text-error absolute text-xs italic">
-                      {errors.metadata?.media.message}
-                    </p>
-                  ) : errors.metadata?.zhMedia ? (
+                  {errors.metadata?.zhMedia ? (
                     <p className="text-error absolute text-xs italic">
                       {errors.metadata?.zhMedia.message}
+                    </p>
+                  ) : errors.metadata?.media ? (
+                    <p className="text-error absolute text-xs italic">
+                      {errors.metadata?.media.message}
                     </p>
                   ) : (
                     <></>
@@ -730,7 +777,9 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
             </div>
 
             <div className="flex flex-col gap-5 py-5">
-              <h2 className="text-accent text-2xl font-bold">庫存資訊</h2>
+              <h2 id="store-information" className="text-accent text-2xl font-bold">
+                庫存資訊
+              </h2>
 
               <div className="flex flex-wrap items-center gap-2">
                 <label className="font-bold">在庫位置</label>
@@ -895,45 +944,100 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   <label className="font-bold" role="label">
                     購買人
                   </label>
-                  <span className="input input-bordered flex items-center">
-                    這是都是從建立銷售單的帶過來的欄位嗎?
-                  </span>
+                  <div className="relative flex-1">
+                    <input
+                      className={classNames('input input-bordered w-full max-w-xs', {
+                        'input-error': errors.metadata?.salesName,
+                      })}
+                      data-testid="salesName"
+                      {...register('metadata.salesName')}
+                    />
+                    {errors.metadata?.salesName && (
+                      <p className="text-error absolute text-xs italic">
+                        {errors.metadata?.salesName.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <label className="font-bold" role="label">
                     收件者
                   </label>
-                  <span className="input input-bordered flex items-center">
-                    這是都是從建立銷售單的帶過來的欄位嗎?
-                  </span>
+                  <div className="relative flex-1">
+                    <input
+                      className={classNames('input input-bordered w-full max-w-xs', {
+                        'input-error': errors.metadata?.salseReciver,
+                      })}
+                      data-testid="salseReciver"
+                      {...register('metadata.salseReciver')}
+                    />
+                    {errors.metadata?.salseReciver && (
+                      <p className="text-error absolute text-xs italic">
+                        {errors.metadata?.salseReciver.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <label className="font-bold" role="label">
                     電話
                   </label>
-                  <span className="input input-bordered flex items-center">
-                    這是都是從建立銷售單的帶過來的欄位嗎?
-                  </span>
+                  <div className="relative flex-1">
+                    <input
+                      className={classNames('input input-bordered w-full max-w-xs', {
+                        'input-error': errors.metadata?.salesPhone,
+                      })}
+                      data-testid="salesPhone"
+                      {...register('metadata.salesPhone')}
+                    />
+                    {errors.metadata?.salesPhone && (
+                      <p className="text-error absolute text-xs italic">
+                        {errors.metadata?.salesPhone.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <label className="font-bold" role="label">
                     地址
                   </label>
-                  <span className="input input-bordered flex items-center">
-                    這是都是從建立銷售單的帶過來的欄位嗎?
-                  </span>
+                  <div className="relative flex-1">
+                    <input
+                      className={classNames('input input-bordered w-full max-w-xs', {
+                        'input-error': errors.metadata?.salesAddress,
+                      })}
+                      data-testid="salesAddress"
+                      {...register('metadata.salesAddress')}
+                    />
+                    {errors.metadata?.salesAddress && (
+                      <p className="text-error absolute text-xs italic">
+                        {errors.metadata?.salesAddress.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <label className="font-bold" role="label">
                     售出日期
                   </label>
-                  <span className="input input-bordered flex items-center">
-                    這是都是從建立銷售單的帶過來的欄位嗎?
-                  </span>
+                  <div className="relative flex-1">
+                    <input
+                      className={classNames('input input-bordered w-full max-w-xs', {
+                        'input-error': errors.metadata?.salesDate,
+                      })}
+                      data-testid="salesDate"
+                      {...register('metadata.salesDate')}
+                    />
+                    {errors.metadata?.salesDate && (
+                      <p className="text-error absolute text-xs italic">
+                        {errors.metadata?.salesDate.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             )}

@@ -172,7 +172,11 @@ const UpdateCustomerDialog = ({
           </button>
         </div>
       </form>
-      <label className="modal-backdrop" data-testid="customer-modal-backdrop" onClick={() => onClose?.()}>
+      <label
+        className="modal-backdrop"
+        data-testid="customer-modal-backdrop"
+        onClick={() => onClose?.()}
+      >
         Close
       </label>
     </div>
