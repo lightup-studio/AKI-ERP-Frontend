@@ -76,10 +76,6 @@ const routes = [
     ],
   },
   {
-    groupName: '周邊/器材',
-  },
-
-  {
     groupName: '通用資訊',
   },
   {
@@ -93,6 +89,13 @@ const routes = [
   {
     path: '/company',
     name: '廠商',
+  },
+  {
+    groupName: '管理者',
+  },
+  {
+    path: '/admins',
+    name: '帳號管理',
   },
   // {
   //   path: '/dashboard',
