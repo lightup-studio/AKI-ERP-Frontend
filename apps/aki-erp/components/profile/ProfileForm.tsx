@@ -1,16 +1,13 @@
 import { User } from '@data-access/models';
+import { formatDateTime } from '@utils/format';
 import { useFieldForm } from '@utils/hooks';
 import { FieldConfig } from '@utils/hooks/useFieldForm';
 import React from 'react';
 
 type FormData = {
   name?: string;
-  email?: string;
-  title?: string;
-  place?: string;
-  about?: string;
-  language?: string;
-  timezone?: string;
+  account?: string;
+  createTime?: string;
 };
 
 interface ProfileFormProps {
@@ -25,33 +22,13 @@ const configs: FieldConfig[] = [
   },
   {
     type: 'TEXT',
-    name: 'email',
-    label: 'Email',
+    name: 'account',
+    label: '帳號',
   },
   {
     type: 'TEXT',
-    name: 'title',
-    label: 'Title',
-  },
-  {
-    type: 'TEXT',
-    name: 'place',
-    label: 'Place',
-  },
-  {
-    type: 'TEXT',
-    name: 'about',
-    label: 'About',
-  },
-  {
-    type: 'TEXT',
-    name: 'language',
-    label: 'Language',
-  },
-  {
-    type: 'TEXT',
-    name: 'timezone',
-    label: 'Timezone',
+    name: 'createTime',
+    label: '創建時間',
   },
 ];
 
@@ -59,29 +36,21 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ data }) => {
   const { fieldForm } = useFieldForm<FormData>({
     configs: configs,
     defaultValues: {
-      name: data?.name,
-      email: 'alex@dashwind.com',
-      title: 'UI/UX Designer',
-      place: 'California',
-      about: 'Doing what I love, part time traveller',
-      language: 'English',
-      timezone: 'IST',
+      name: data.name,
+      account: data.account,
+      createTime: formatDateTime(data.createTime),
     },
   });
 
   return (
     <div className="card bg-base-100 min-h-full w-full p-6 shadow-xl">
-      <h1 className="ml-2 text-2xl font-semibold">Profile Settings</h1>
+      <h1 className="text-2xl font-semibold">Profile Settings</h1>
 
       <div className="divider"></div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">{fieldForm.slice(0, 4)}</div>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">{fieldForm}</div>
 
-      <div className="divider"></div>
-
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">{fieldForm.slice(4)}</div>
-
-      <div className="mt-16">
+      <div className="my-16">
         <button className="btn btn-primary float-right">Update</button>
       </div>
     </div>
