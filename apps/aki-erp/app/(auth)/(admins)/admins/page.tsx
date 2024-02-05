@@ -1,6 +1,6 @@
 'use client';
 
-import { createUser, deleteUserId, fetchUsers } from '@data-access/apis';
+import { createUser, deleteUser, fetchUsers } from '@data-access/apis';
 import { User } from '@data-access/models';
 import { PlusIcon } from '@heroicons/react/20/solid';
 import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
@@ -91,7 +91,7 @@ const Admins = () => {
 
   const deleteMutation = useMutation(
     (users: User[]) => {
-      return Promise.all(users.map((item) => deleteUserId(item.id)));
+      return Promise.all(users.map((item) => deleteUser(item.id)));
     },
     {
       onSuccess: () => {

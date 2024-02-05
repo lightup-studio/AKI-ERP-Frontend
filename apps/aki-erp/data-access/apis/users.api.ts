@@ -29,7 +29,12 @@ export const createUser = async (body?: User): Promise<User> => {
   return res.data;
 };
 
-export const deleteUserId = async (id?: number): Promise<void> => {
+export const updateUser = async (id?: number, body?: User): Promise<User> => {
+  const res = await axios.patch(`${url}/${id}`, body);
+  return res.data;
+};
+
+export const deleteUser = async (id?: number): Promise<void> => {
   const res = await axios.delete(`${url}/${id}`);
   return res.data;
 };
