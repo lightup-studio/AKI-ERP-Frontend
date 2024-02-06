@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { formatDateTime } from '@utils/format';
 import { useFieldForm } from '@utils/hooks';
 import { FieldConfig } from '@utils/hooks/useFieldForm';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 type FormData = {
   name?: string;
@@ -46,22 +46,20 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ data, refetch }) => {
     },
   });
 
-  const updateMutation = useMutation(
-    (formData: FormData) =>
-      updateUser(data.id, {
-        name: formData.name,
-        account: formData.account,
-      }),
-    {
-      onSuccess: () => {
-        refetch();
-      },
-    },
+  const updateMutation = useMutation((formData: FormData) =>
+    updateUser(data.id, {
+      name: formData.name,
+      account: formData.account,
+    }),
   );
 
   const onSubmit = (formData: FormData) => {
     updateMutation.mutateAsync(formData);
   };
+
+  useEffect(() => {
+    if (updateMutation.data) refetch();
+  }, [updateMutation.data]);
 
   return (
     <div className="card bg-base-100 min-h-full w-full p-6 shadow-xl">

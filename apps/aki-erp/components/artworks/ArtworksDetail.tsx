@@ -138,7 +138,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
       imageUrl: '',
       thumbnailUrl: '',
       countryCode: '',
-      status: status,
+      status,
       artists: [{ enName: '', zhName: '' }],
       yearAge: null,
       metadata: {
