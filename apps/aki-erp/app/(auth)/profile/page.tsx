@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 const ProfileSettings = () => {
   const [userId, setUserId] = useState<string | null>();
 
-  const { data } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: ['fetchUsersId'],
     queryFn: () => fetchUsersId(userId || ''),
     enabled: !!userId,
@@ -19,7 +19,7 @@ const ProfileSettings = () => {
     setUserId(userId);
   }, []);
 
-  return <>{data && <ProfileForm data={data} />}</>;
+  return <>{data && <ProfileForm data={data} refetch={refetch} />}</>;
 };
 
 export default ProfileSettings;
