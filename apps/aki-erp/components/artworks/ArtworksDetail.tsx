@@ -94,30 +94,6 @@ const schema = yup.object().shape({
   }),
 });
 
-/**
- * Renders a form for displaying and editing artwork details.
- *
- * This component uses React hooks, react-query, and react-hook-form for managing state and handling form validation.
- * The form includes fields for inputting artwork information such as name, image, artist, dimensions, and inventory details.
- * Form validation is implemented using the yup library.
- *
- * Example Usage:
- * ```javascript
- * import ArtworksDetail from './ArtworksDetail';
- *
- * const App = () => {
- *   return (
- *     <div>
- *       <ArtworksDetail />
- *     </div>
- *   );
- * };
- *
- * export default App;
- * ```
- *
- * @returns {JSX.Element} The rendered form for displaying and editing artwork details.
- */
 const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
   const router = useRouter();
   const params = useParams<{ id?: string }>();
@@ -162,7 +138,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
       imageUrl: '',
       thumbnailUrl: '',
       countryCode: '',
-      status: Status.Draft,
+      status,
       artists: [{ enName: '', zhName: '' }],
       yearAge: null,
       metadata: {
