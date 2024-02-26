@@ -1,15 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { ArtworksBatchUpdateDialog, ArtworksPreviewBtn } from '@components/artworks';
 import { SearchField } from '@components/shared/field';
-import { fetchPurchaseReturnOrder } from '@data-access/apis';
+import {
+  deletePurchaseReturnOrderId,
+  exportPurchaseReturnOrdersByIds,
+  fetchPurchaseReturnOrder,
+  patchArtworksBatchId,
+} from '@data-access/apis';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 import { formatDateTime } from '@utils/format';
 import { useTable } from '@utils/hooks';
@@ -17,6 +22,8 @@ import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtw
 import { PurchaseReturnOrder, Status } from 'data-access/models';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
+import { StoreType } from '@constants/artwork.constant';
+import { showConfirm, showWarning } from '@utils/swalUtil';
 
 const PurchaseReturnOrders = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -81,7 +88,7 @@ const PurchaseReturnOrders = () => {
   ];
 
   const params = new URLSearchParams(searchParams);
-  const { data, isFetching } = useQuery({
+  const { data, isFetching, refetch } = useQuery({
     queryKey: ['PurchaseReturnOrder', params.toString()],
     queryFn: () => fetchPurchaseReturnOrder(Status.Enabled, params.toString()),
     enabled: !!selectItems,
@@ -95,6 +102,66 @@ const PurchaseReturnOrders = () => {
       columns: columns,
       isLoading: isFetching,
     });
+
+  const deleteMutation = useMutation(
+    (purchaseReturnOrders: PurchaseReturnOrder[]) => {
+      const artworkIds = purchaseReturnOrders.flatMap(
+        (item) => item.artworks?.map((item) => item.id),
+      );
+      return Promise.all([
+        ...purchaseReturnOrders.map((item) => deletePurchaseReturnOrderId(item.id)),
+        patchArtworksBatchId({
+          idList: artworkIds.filter((item) => typeof item === 'number') as number[],
+          properties: {
+            status: Status.Disabled,
+            metadata: {
+              storeType: StoreType.NONE,
+              lendDepartment: undefined,
+            },
+          },
+        }),
+      ]);
+    },
+    {
+      onSuccess: () => {
+        clearRowSelection();
+        refetch();
+      },
+    },
+  );
+
+  const handleDelete = async () => {
+    const { isConfirmed } = await showConfirm({
+      title: '確定刪除進貨歸還單嗎？',
+      icon: 'warning',
+    });
+
+    if (!isConfirmed) return;
+    deleteMutation.mutate(selectedRows);
+  };
+
+  const exportOrdersMutation = useMutation({
+    mutationKey: ['exportPurchaseReturnOrders'],
+    mutationFn: exportPurchaseReturnOrdersByIds,
+  });
+
+  const onExportOrders = () => {
+    if (selectedRowsCount === 0) {
+      showWarning('請至少選擇1筆進貨歸還單！');
+      return;
+    }
+    exportOrdersMutation.mutate(selectedRows.map((item) => item.id));
+  };
+
+  useEffect(() => {
+    if (!exportOrdersMutation.data) return;
+    const { downloadPageUrl } = exportOrdersMutation.data;
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', downloadPageUrl);
+    linkElement.setAttribute('target', '_blank');
+    linkElement.click();
+    linkElement.remove();
+  }, [exportOrdersMutation.data]);
 
   return (
     <>
@@ -111,11 +178,12 @@ const PurchaseReturnOrders = () => {
 
           <div className="flex flex-col justify-between gap-2">
             <div className="flex gap-2 md:flex-col">
-              <button aria-label="export excel file" className="btn btn-accent flex-1 truncate">
+              <button
+                aria-label="export pdf file"
+                className="btn btn-accent flex-1 truncate"
+                onClick={onExportOrders}
+              >
                 PDF 匯出
-              </button>
-              <button aria-label="export pdf file" className="btn btn-accent flex-1">
-                表格匯出
               </button>
             </div>
             <i className="flex-grow"></i>
@@ -147,7 +215,11 @@ const PurchaseReturnOrders = () => {
             <PencilIcon className="h-5 w-5"></PencilIcon>
             編輯
           </button>
-          <button className="btn btn-error" disabled={selectedRowsCount === 0}>
+          <button
+            className="btn btn-error"
+            onClick={handleDelete}
+            disabled={selectedRowsCount === 0}
+          >
             <TrashIcon className="h-5 w-5"></TrashIcon>
             刪除
           </button>

@@ -67,6 +67,11 @@ export const exportRepairOrderById = async (id: number) => {
   return res.data;
 };
 
+export const exportRepairOrdersByIds = async (ids: number[]) => {
+  const res = await axios.get<{ downloadPageUrl: string }>(`${url}/exports`);
+  return res.data;
+};
+
 export const fetchRepairOrderDIDdisplayId = async (displayId: string): Promise<RepairOrder> => {
   const res = await axios.get(`${url}/DID:${displayId}`);
   return res.data;

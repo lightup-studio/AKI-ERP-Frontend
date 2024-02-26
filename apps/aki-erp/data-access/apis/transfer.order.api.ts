@@ -67,6 +67,11 @@ export const exportTransferOrderById = async (id: number) => {
   return res.data;
 };
 
+export const exportTransferOrdersByIds = async (ids: number[]) => {
+  const res = await axios.post<{ downloadPageUrl: string }>(`${url}/exports`, ids);
+  return res.data;
+};
+
 export const fetchTransferOrderDIDdisplayId = async (displayId: string): Promise<TransferOrder> => {
   const res = await axios.get(`${url}/DID:${displayId}`);
   return res.data;

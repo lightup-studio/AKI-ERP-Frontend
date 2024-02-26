@@ -3,7 +3,12 @@
 import { ArtworksBatchUpdateDialog, ArtworksPreviewBtn } from '@components/artworks';
 import { SearchField } from '@components/shared/field';
 import { StoreType } from '@constants/artwork.constant';
-import { deleteRepairOrderId, fetchRepairOrder, patchArtworksBatchId } from '@data-access/apis';
+import {
+  deleteRepairOrderId,
+  exportRepairOrdersByIds,
+  fetchRepairOrder,
+  patchArtworksBatchId,
+} from '@data-access/apis';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -11,11 +16,11 @@ import { ColumnDef } from '@tanstack/react-table';
 import { formatDateTime } from '@utils/format';
 import { useTable } from '@utils/hooks';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
-import { showConfirm } from '@utils/swalUtil';
+import { showConfirm, showWarning } from '@utils/swalUtil';
 import { RepairOrder, Status } from 'data-access/models';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const RepairOrders = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -135,6 +140,29 @@ const RepairOrders = () => {
     deleteMutation.mutate(selectedRows);
   };
 
+  const exportOrdersMutation = useMutation({
+    mutationKey: ['exportRepairReturnOrders'],
+    mutationFn: exportRepairOrdersByIds,
+  });
+
+  const onExportOrders = () => {
+    if (selectedRowsCount === 0) {
+      showWarning('請至少選擇1筆維修單！');
+      return;
+    }
+    exportOrdersMutation.mutate(selectedRows.map((item) => item.id));
+  };
+
+  useEffect(() => {
+    if (!exportOrdersMutation.data) return;
+    const { downloadPageUrl } = exportOrdersMutation.data;
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', downloadPageUrl);
+    linkElement.setAttribute('target', '_blank');
+    linkElement.click();
+    linkElement.remove();
+  }, [exportOrdersMutation.data]);
+
   return (
     <>
       <div className="card bg-base-100 min-h-full w-full p-6 shadow-xl">
@@ -150,11 +178,12 @@ const RepairOrders = () => {
 
           <div className="flex flex-col justify-between gap-2">
             <div className="flex gap-2 md:flex-col">
-              <button aria-label="export excel file" className="btn btn-accent flex-1 truncate">
+              <button
+                aria-label="export pdf file"
+                className="btn btn-accent flex-1 truncate"
+                onClick={onExportOrders}
+              >
                 PDF 匯出
-              </button>
-              <button aria-label="export pdf file" className="btn btn-accent flex-1">
-                表格匯出
               </button>
             </div>
             <i className="flex-grow"></i>

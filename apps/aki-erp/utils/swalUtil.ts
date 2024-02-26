@@ -17,6 +17,14 @@ export const showSuccess = (message: string) => {
   });
 };
 
+export const showWarning = (message: string) => {
+  return alertSwal.fire({
+    icon: 'warning',
+    title: message,
+    confirmButtonText: '確認',
+  });
+};
+
 export const showError = (message: string) => {
   return alertSwal.fire({
     icon: 'error',
