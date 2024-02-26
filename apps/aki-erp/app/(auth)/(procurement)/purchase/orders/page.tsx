@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
+import cx from 'classnames';
 import { ArtworksBatchUpdateDialog, ArtworksPreviewBtn } from '@components/artworks';
 import { SearchField } from '@components/shared/field';
 import {
@@ -159,10 +160,19 @@ const PurchaseOrders = () => {
             <div className="flex gap-2 md:flex-col">
               <button
                 aria-label="export pdf file"
-                className="btn btn-accent flex-1 truncate"
+                className={cx('btn btn-accent flex-1', {
+                  'flex-nowrap whitespace-nowrap': exportOrdersMutation.isLoading,
+                })}
                 onClick={onExportOrders}
+                disabled={exportOrdersMutation.isLoading}
               >
-                PDF 匯出
+                {exportOrdersMutation.isLoading ? (
+                  <>
+                    處理中 <span className="loading loading-ring loading-sm"></span>
+                  </>
+                ) : (
+                  <>PDF 匯出</>
+                )}
               </button>
             </div>
             <i className="flex-grow"></i>

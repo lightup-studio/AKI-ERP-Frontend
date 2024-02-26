@@ -1,5 +1,12 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
+import cx from 'classnames';
+import { RepairOrder, Status } from 'data-access/models';
+import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
+
 import { ArtworksBatchUpdateDialog, ArtworksPreviewBtn } from '@components/artworks';
 import { SearchField } from '@components/shared/field';
 import { StoreType } from '@constants/artwork.constant';
@@ -17,10 +24,6 @@ import { formatDateTime } from '@utils/format';
 import { useTable } from '@utils/hooks';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import { showConfirm, showWarning } from '@utils/swalUtil';
-import { RepairOrder, Status } from 'data-access/models';
-import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
 const RepairOrders = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -180,10 +183,19 @@ const RepairOrders = () => {
             <div className="flex gap-2 md:flex-col">
               <button
                 aria-label="export pdf file"
-                className="btn btn-accent flex-1 truncate"
+                className={cx('btn btn-accent flex-1', {
+                  'flex-nowrap whitespace-nowrap': exportOrdersMutation.isLoading,
+                })}
                 onClick={onExportOrders}
+                disabled={exportOrdersMutation.isLoading}
               >
-                PDF 匯出
+                {exportOrdersMutation.isLoading ? (
+                  <>
+                    處理中 <span className="loading loading-ring loading-sm"></span>
+                  </>
+                ) : (
+                  <>PDF 匯出</>
+                )}
               </button>
             </div>
             <i className="flex-grow"></i>
