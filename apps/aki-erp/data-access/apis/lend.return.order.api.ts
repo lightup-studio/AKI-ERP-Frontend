@@ -67,8 +67,8 @@ export const exportLendReturnOrderById = async (id: number) => {
   return res.data;
 };
 
-export const exportLendReturnOrdersByIds = async (ids: number[]) => {
-  const res = await axios.post<{ downloadPageUrl: string }>(`${url}/exports`, { ids });
+export const exportLendReturnOrdersByIds = async (idList: number[]) => {
+  const res = await axios.post<{ downloadPageUrl: string }>(`${url}/exports`, { idList });
   return res.data;
 };
 

@@ -69,8 +69,8 @@ export const exportRepairReturnOrderById = async (id: number) => {
   return res.data;
 };
 
-export const exportRepairReturnOrdersByIds = async (ids: number[]) => {
-  const res = await axios.post<{ downloadPageUrl: string }>(`${url}/exports`, { ids });
+export const exportRepairReturnOrdersByIds = async (idList: number[]) => {
+  const res = await axios.post<{ downloadPageUrl: string }>(`${url}/exports`, { idList });
   return res.data;
 };
 
