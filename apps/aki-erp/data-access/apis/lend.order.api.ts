@@ -63,7 +63,9 @@ export const exportLendOrderById = async (id: number) => {
 };
 
 export const exportLendOrdersByIds = async (ids: number[]) => {
-  const res = await axios.post<{ downloadPageUrl: string }>(`${url}/exports`, ids);
+  const res = await axios.post<{ downloadPageUrl: string }>(
+    `${url}/exports?${ids.map((id) => `ids=${id}`).join('&')}`,
+  );
   return res.data;
 };
 
