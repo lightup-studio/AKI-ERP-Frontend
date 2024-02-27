@@ -1,10 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import cx from 'classnames';
+import { PurchaseReturnOrder, Status } from 'data-access/models';
+import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
+
 import { ArtworksBatchUpdateDialog, ArtworksPreviewBtn } from '@components/artworks';
 import { SearchField } from '@components/shared/field';
+import { StoreType } from '@constants/artwork.constant';
 import {
   deletePurchaseReturnOrderId,
   exportPurchaseReturnOrdersByIds,
@@ -20,10 +25,6 @@ import { ColumnDef } from '@tanstack/react-table';
 import { formatDateTime } from '@utils/format';
 import { useTable } from '@utils/hooks';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
-import { PurchaseReturnOrder, Status } from 'data-access/models';
-import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { StoreType } from '@constants/artwork.constant';
 import { showConfirm, showWarning } from '@utils/swalUtil';
 
 const PurchaseReturnOrders = () => {
@@ -146,23 +147,24 @@ const PurchaseReturnOrders = () => {
     mutationFn: exportPurchaseReturnOrdersByIds,
   });
 
-  const onExportOrders = () => {
+  const onExportOrders = async () => {
     if (selectedRowsCount === 0) {
       showWarning('請至少選擇1筆進貨歸還單！');
       return;
     }
-    exportOrdersMutation.mutate(selectedRows.map((item) => item.id));
-  };
 
-  useEffect(() => {
-    if (!exportOrdersMutation.data) return;
-    const { downloadPageUrl } = exportOrdersMutation.data;
+    const { downloadPageUrl } = await exportOrdersMutation.mutateAsync(
+      selectedRows.map((item) => item.id),
+    );
+
+    if (!downloadPageUrl) return;
+
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', downloadPageUrl);
     linkElement.setAttribute('target', '_blank');
     linkElement.click();
     linkElement.remove();
-  }, [exportOrdersMutation.data]);
+  };
 
   return (
     <>

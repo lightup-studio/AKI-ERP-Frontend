@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import cx from 'classnames';
 import { LendOrder, Status } from 'data-access/models';
@@ -147,23 +147,24 @@ const LendOrders = () => {
     mutationFn: exportLendOrdersByIds,
   });
 
-  const onExportOrders = () => {
+  const onExportOrders = async () => {
     if (selectedRowsCount === 0) {
       showWarning('請至少選擇1筆借出單！');
       return;
     }
-    exportOrdersMutation.mutate(selectedRows.map((item) => item.id));
-  };
 
-  useEffect(() => {
-    if (!exportOrdersMutation.data) return;
-    const { downloadPageUrl } = exportOrdersMutation.data;
+    const { downloadPageUrl } = await exportOrdersMutation.mutateAsync(
+      selectedRows.map((item) => item.id),
+    );
+
+    if (!downloadPageUrl) return;
+
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', downloadPageUrl);
     linkElement.setAttribute('target', '_blank');
     linkElement.click();
     linkElement.remove();
-  }, [exportOrdersMutation.data]);
+  };
 
   return (
     <>
