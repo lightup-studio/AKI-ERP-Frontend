@@ -214,10 +214,10 @@ const ShipmentReturnOrderDetail: React.FC<ShipmentReturnOrderDetailProps> = ({ d
         <div className="flex flex-col gap-4 md:flex-row">
           <form className="grid w-full grid-cols-2 gap-4">{fieldForm}</form>
 
-          <div className="flex flex-col justify-between gap-4">
+          <div className="flex flex-col justify-between gap-4 mt-8">
             <div className="flex gap-2 md:flex-col">
               <button
-                aria-label="export table"
+                aria-label="export pdf file"
                 className={cx('btn btn-accent flex-1', {
                   'flex-nowrap whitespace-nowrap': exportOrderMutation.isLoading,
                 })}
@@ -229,7 +229,7 @@ const ShipmentReturnOrderDetail: React.FC<ShipmentReturnOrderDetailProps> = ({ d
                     處理中 <span className="loading loading-ring loading-sm"></span>
                   </>
                 ) : (
-                  <>表格匯出</>
+                  <>PDF 匯出</>
                 )}
               </button>
             </div>

@@ -1,10 +1,18 @@
 'use client';
 
+import { useState } from 'react';
+
+import cx from 'classnames';
+import { SalesReturnOrder, Status } from 'data-access/models';
+import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
+
 import { ArtworksBatchUpdateDialog, ArtworksPreviewBtn } from '@components/artworks';
 import { SearchField } from '@components/shared/field';
 import { StoreType } from '@constants/artwork.constant';
 import {
   deleteSalesReturnOrderId,
+  exportSalesReturnOrdersByIds,
   fetchSalesReturnOrder,
   patchArtworksBatchId,
 } from '@data-access/apis';
@@ -15,11 +23,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { formatDateTime } from '@utils/format';
 import { useTable } from '@utils/hooks';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
-import { showConfirm } from '@utils/swalUtil';
-import { SalesReturnOrder, Status } from 'data-access/models';
-import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { showConfirm, showWarning } from '@utils/swalUtil';
 
 const ShipmentReturnOrders = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -141,6 +145,30 @@ const ShipmentReturnOrders = () => {
     deleteMutation.mutate(selectedRows);
   };
 
+  const exportOrdersMutation = useMutation({
+    mutationKey: ['exportSalesReturnOrders'],
+    mutationFn: exportSalesReturnOrdersByIds,
+  });
+
+  const onExportOrders = async () => {
+    if (selectedRowsCount === 0) {
+      showWarning('請至少選擇1筆退貨單！');
+      return;
+    }
+
+    const { downloadPageUrl } = await exportOrdersMutation.mutateAsync(
+      selectedRows.map((item) => item.id),
+    );
+
+    if (!downloadPageUrl) return;
+
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', downloadPageUrl);
+    linkElement.setAttribute('target', '_blank');
+    linkElement.click();
+    linkElement.remove();
+  };
+
   return (
     <>
       <div className="card bg-base-100 min-h-full w-full p-6 shadow-xl">
@@ -156,11 +184,21 @@ const ShipmentReturnOrders = () => {
 
           <div className="flex flex-col justify-between gap-2">
             <div className="flex gap-2 md:flex-col">
-              <button aria-label="export excel file" className="btn btn-accent flex-1 truncate">
-                PDF 匯出
-              </button>
-              <button aria-label="export pdf file" className="btn btn-accent flex-1">
-                表格匯出
+              <button
+                aria-label="export pdf file"
+                className={cx('btn btn-accent flex-1', {
+                  'flex-nowrap whitespace-nowrap': exportOrdersMutation.isLoading,
+                })}
+                onClick={onExportOrders}
+                disabled={exportOrdersMutation.isLoading}
+              >
+                {exportOrdersMutation.isLoading ? (
+                  <>
+                    處理中 <span className="loading loading-ring loading-sm"></span>
+                  </>
+                ) : (
+                  <>PDF 匯出</>
+                )}
               </button>
             </div>
             <i className="flex-grow"></i>

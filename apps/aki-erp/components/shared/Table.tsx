@@ -53,7 +53,7 @@ const AkiTable: React.FC<TableProps> = ({ table, isLoading }) => {
           {!isLoading && table.getRowModel().rows.length === 0 ? (
             <tr>
               <td colSpan={table.getHeaderGroups()[0].headers.length}>
-                <div className="flex min-h-[3rem] items-center justify-center">No Data.</div>
+              <div className="flex min-h-[3rem] items-center justify-center">No Data.</div>
               </td>
             </tr>
           ) : (
