@@ -67,6 +67,11 @@ export const exportSalesOrderById = async (id: number) => {
   return res.data;
 };
 
+export const exportSalesOrdersByIds = async (idList: number[]) => {
+  const res = await axios.post<{ downloadPageUrl: string }>(`${url}/exports`, { idList });
+  return res.data;
+};
+
 export const fetchSalesOrderDIDdisplayId = async (displayId: string): Promise<SalesOrder> => {
   const res = await axios.get(`${url}/DID:${displayId}`);
   return res.data;

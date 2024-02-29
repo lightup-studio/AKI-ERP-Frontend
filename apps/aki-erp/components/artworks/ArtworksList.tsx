@@ -266,10 +266,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
         </div>
         <div className="flex flex-col justify-between gap-2">
           <div className="flex gap-2 md:flex-col">
-            <button aria-label="export excel file" className="btn btn-accent flex-1 truncate">
-              PDF 匯出
-            </button>
-            <button aria-label="export pdf file" className="btn btn-accent flex-1">
+            <button aria-label="export table file" className="btn btn-accent flex-1" disabled>
               表格匯出
             </button>
           </div>
