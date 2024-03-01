@@ -7,9 +7,10 @@ import Table from '@components/shared/Table';
 import IndeterminateCheckbox from '@components/shared/field/IndeterminateCheckbox';
 import SearchField from '@components/shared/field/SearchField';
 import { formSchema } from '@constants/company.formSchema';
+import { usefetchPartnerList } from '@data-access/hooks';
 import { PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import {
   ColumnDef,
   PaginationState,
@@ -19,7 +20,7 @@ import {
 } from '@tanstack/react-table';
 import usePagination, { DOTS } from '@utils/hooks/usePagination';
 import cx from 'classnames';
-import { createPartner, deletePartnerList, fetchPartnerList } from 'data-access/apis/partners.api';
+import { createPartner, deletePartnerList } from 'data-access/apis/partners.api';
 import { CompanyPartner } from 'data-access/models';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -70,17 +71,7 @@ const Company = () => {
     router.push(`${pathname}?${searchParams.toString()}`);
   }, [pageIndex, pageSize, searchParams]);
 
-  const dataQuery = useQuery(
-    ['company', searchParams.toString()],
-    () =>
-      fetchPartnerList({
-        type: 'Company',
-        keyword: searchParams.get('keyword'),
-        pageIndex: +(searchParams.get('pageIndex') || 0),
-        pageSize: +(searchParams.get('pageSize') || 50),
-      }),
-    { keepPreviousData: true },
-  );
+  const dataQuery = usefetchPartnerList('Company');
 
   const createMutation = useMutation((data: CompanyPartner) => createPartner(data), {
     onSuccess: () => {
