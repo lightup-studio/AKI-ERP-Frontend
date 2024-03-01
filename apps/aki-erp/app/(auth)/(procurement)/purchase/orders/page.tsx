@@ -173,7 +173,7 @@ const PurchaseOrders = () => {
                     處理中 <span className="loading loading-ring loading-sm"></span>
                   </>
                 ) : (
-                  <>PDF 匯出</>
+                  <>表格匯出</>
                 )}
               </button>
             </div>
