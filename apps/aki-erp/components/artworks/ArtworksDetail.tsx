@@ -43,7 +43,6 @@ const scrollToSalesInfo = () => {
 };
 
 const schema = yup.object().shape({
-  warehouseId: yup.number().required('庫存位置為必填項目'),
   enName: yup.string().test('artwork name', '作品名稱為必填項目', (value, context) => {
     return value || context.parent?.zhName ? true : false;
   }),
@@ -235,6 +234,11 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
 
     if (data.metadata?.storeType === StoreType.NONE) data.status = Status.Disabled;
     if (data.metadata?.storeType === StoreType.IN_STOCK) data.status = Status.Enabled;
+
+    if (data.metadata && data.metadata.storeType !== StoreType.IN_STOCK) {
+      data.warehouseId = -1;
+      data.metadata.warehouseLocation = '';
+    }
 
     mutation.mutate(data);
   };
@@ -830,7 +834,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                           ),
                       })}
                     >
-                      <option disabled>請選擇</option>
+                      <option value={-1}>請選擇</option>
                       <option value={0}>A</option>
                       <option value={1}>B</option>
                       <option value={2}>C</option>
