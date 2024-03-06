@@ -49,7 +49,7 @@ const schema = yup.object().shape({
   zhName: yup.string().test('artwork name', '作品名稱為必填項目', (value, context) => {
     return value || context.parent?.enName ? true : false;
   }),
-  // imageUrl: yup.string().required('請確認圖片是否已上傳？'),
+  imageUrl: yup.string().required('請確認圖片是否已上傳？'),
   thumbnailUrl: yup.string(),
   countryCode: yup.string().nonNullable().required('國籍為必填項目'),
   artists: yup.array().of(
