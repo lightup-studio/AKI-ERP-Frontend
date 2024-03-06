@@ -1,4 +1,5 @@
 import MockAdapter from 'axios-mock-adapter';
+import * as NextNavigation from 'next/navigation';
 import { useParams } from 'next/navigation';
 
 import axios from '@contexts/axios';
@@ -11,6 +12,9 @@ import ArtworksDetail from '../ArtworksDetail';
 jest.mock('next/navigation', () => ({
   ...jest.requireActual('next/navigation'),
   useParams: jest.fn(),
+  useSearchParams: jest
+    .fn()
+    .mockReturnValue(new URLSearchParams() as NextNavigation.ReadonlyURLSearchParams),
 }));
 
 const { mockRouter, wrapper } = createTestWrapper();
