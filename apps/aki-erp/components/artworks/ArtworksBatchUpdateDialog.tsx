@@ -9,7 +9,7 @@ import { ArtworkDetail, TransferOrder } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { useMutation } from '@tanstack/react-query';
 import { showError, showSuccess } from '@utils/swalUtil';
-import classnames from 'classnames';
+import cx from 'classnames';
 import { useForm } from 'react-hook-form';
 import ArtworksBatchUpdateTable from './ArtworksBatchUpdateTable';
 
@@ -67,7 +67,7 @@ const ArtworksBatchUpdateDialog: React.FC<ArtworksBatchUpdateDialogProsp> = ({
 
   return (
     <div
-      className={classnames('modal absolute z-10', {
+      className={cx('modal absolute z-10', {
         'modal-open': isOpen,
       })}
     >

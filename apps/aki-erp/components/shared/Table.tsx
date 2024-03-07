@@ -1,5 +1,5 @@
 import { Table, flexRender } from '@tanstack/react-table';
-import classNames from 'classnames';
+import cx from 'classnames';
 import React from 'react';
 import Skeleton from './Skeleton';
 
@@ -20,7 +20,7 @@ const AkiTable: React.FC<TableProps> = ({ table, isLoading }) => {
                   <td
                     key={header.id}
                     colSpan={header.colSpan}
-                    className={classNames('p-2', {
+                    className={cx('p-2', {
                       'min-w-[10rem]': !['select', 'storeType', 'salesType', 'assetsType'].includes(
                         header.id,
                       ),
@@ -53,7 +53,7 @@ const AkiTable: React.FC<TableProps> = ({ table, isLoading }) => {
           {!isLoading && table.getRowModel().rows.length === 0 ? (
             <tr>
               <td colSpan={table.getHeaderGroups()[0].headers.length}>
-              <div className="flex min-h-[3rem] items-center justify-center">No Data.</div>
+                <div className="flex min-h-[3rem] items-center justify-center">No Data.</div>
               </td>
             </tr>
           ) : (

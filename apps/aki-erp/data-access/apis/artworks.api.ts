@@ -110,10 +110,12 @@ export async function fetchArtworkList(
     .map(([key, value]) => {
       if (key === 'nationalities') return `countryCode=${value}`;
       if (key === 'artists') return `artistName=${value}`;
+      if (key === 'otherInfos') return `metadatas={"otherInfo":"{'${value}':'true'}"}`;
       if (key === 'storeTypes') return `metadatas={"storeType":"${value}"}`;
       if (key === 'salesTypes') return `metadatas={"salesType":"${value}"}`;
       if (key === 'assetsTypes') return `metadatas={"assetsType":"${value}"}`;
       if (key === 'serialNumbers') return `metadatas={"serialNumber":"${value}"}`;
+      if (key === 'agentGalleries') return `metadatas={"agentGalleries":"[{'name':'${value}'}]"}`;
       if (key === 'pageIndex') {
         const pageIndex = +(searchParams?.get('pageIndex') || 0);
         const pageSize = +(searchParams?.get('pageSize') || 50);

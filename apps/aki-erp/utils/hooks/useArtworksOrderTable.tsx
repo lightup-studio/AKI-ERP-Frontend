@@ -8,7 +8,9 @@ import {
   salesTypeOptionMap,
   storeTypeOptionMap,
 } from '@constants/artwork.constant';
+import { createOrUpdateArtworkDetail } from '@data-access/apis';
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/20/solid';
+import { useMutation } from '@tanstack/react-query';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { useTable } from '@utils/hooks';
 import { ArtworkDetail } from 'data-access/models';
@@ -27,6 +29,10 @@ const useArtworksOrderTable = ({
   isLoading,
 }: useArtworksOrderTableProps) => {
   const [selectedArtworks, setSelectedArtworks] = useState<ArtworkDetail[]>([]);
+
+  const mutation = useMutation({
+    mutationFn: (data: ArtworkDetail) => createOrUpdateArtworkDetail(data),
+  });
 
   const columns: ColumnDef<ArtworkDetail, any>[] = [
     {
@@ -129,6 +135,32 @@ const useArtworksOrderTable = ({
         if (cardboardBox) return '紙箱';
         if (woodenBox) return '木箱';
         return '無';
+      },
+    },
+    {
+      header: '在庫位置',
+      accessorKey: 'warehouseId',
+      cell: ({ row }) => {
+        const data = row.original;
+        const [value, setValue] = useState(data.warehouseId);
+
+        return (
+          <select
+            className="input w-[3rem] appearance-none p-0 text-center text-sm"
+            value={value}
+            onChange={(e) => {
+              data.warehouseId = +e.target.value;
+              setValue(+e.target.value);
+              mutation.mutate(data);
+            }}
+          >
+            <option value={0}>A</option>
+            <option value={1}>B</option>
+            <option value={2}>C</option>
+            <option value={3}>D</option>
+            <option value={4}>E</option>
+          </select>
+        );
       },
     },
     {

@@ -3,7 +3,6 @@
 import React, { ChangeEvent, useState } from 'react';
 
 import { StoreType, assetsTypeOptions } from '@constants/artwork.constant';
-import classNames from 'classnames';
 import {
   createOrUpdateArtworkDetail,
   fetchArtworkDetailByDisplayId,
@@ -21,6 +20,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { fetchCountryList } from '@data-access/apis/countries.api';
+import { usefetchPartnerList } from '@data-access/hooks';
+import cx from 'classnames';
 import { useParams, useRouter } from 'next/navigation';
 
 const salesInfoDisplayed = true;
@@ -42,7 +43,6 @@ const scrollToSalesInfo = () => {
 };
 
 const schema = yup.object().shape({
-  warehouseId: yup.number().required('庫存位置為必填項目'),
   enName: yup.string().test('artwork name', '作品名稱為必填項目', (value, context) => {
     return value || context.parent?.zhName ? true : false;
   }),
@@ -110,6 +110,9 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
     keepPreviousData: true,
   });
 
+  const { data: artistList } = usefetchPartnerList('Artist');
+  const { data: companyList } = usefetchPartnerList('Company');
+
   const mutation = useMutation({
     mutationFn: (data: ArtworkDetail) => createOrUpdateArtworkDetail(data),
     onSuccess: async () => {
@@ -144,7 +147,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
       metadata: {
         artworkType: '',
         assetsType: 'A',
-        agentGalleries: [],
+        agentGalleries: [{ name: '' }],
         purchasingUnit: '',
         length: '',
         width: '',
@@ -220,6 +223,23 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
   };
 
   const onSubmit = (data: ArtworkDetail) => {
+    if (
+      data.metadata?.salesName ||
+      data.metadata?.salesPhone ||
+      data.metadata?.salesAddress ||
+      data.metadata?.salesDate
+    ) {
+      data.metadata.salesType = 'sold';
+    }
+
+    if (data.metadata?.storeType === StoreType.NONE) data.status = Status.Disabled;
+    if (data.metadata?.storeType === StoreType.IN_STOCK) data.status = Status.Enabled;
+
+    if (data.metadata && data.metadata.storeType !== StoreType.IN_STOCK) {
+      data.warehouseId = -1;
+      data.metadata.warehouseLocation = '';
+    }
+
     mutation.mutate(data);
   };
 
@@ -254,7 +274,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
               <div className="relative">
                 <input
                   type="file"
-                  className={classNames('file-input file-input-bordered max-w-xs', {
+                  className={cx('file-input file-input-bordered max-w-xs', {
                     'border-error': errors.imageUrl?.message,
                   })}
                   onChange={handleFileChange}
@@ -292,28 +312,53 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 <div className="form-control relative" key={field.id}>
                   <div className="input-group border-base-200 rounded-lg border ">
                     <div className="bg-base-200 flex flex-wrap items-center gap-1 p-1">
-                      <input
-                        className={classNames('input flex-1 rounded-r-none text-center', {
-                          'border-error':
-                            errors.artists?.at?.(index)?.message &&
-                            watch(`artists.${index}.zhName`)?.trim() === '',
-                        })}
-                        placeholder="中文名稱"
-                        {...register(`artists.${index}.zhName`, {
-                          onChange: () => trigger('artists'),
-                        })}
-                      />
-                      <input
-                        className={classNames('input flex-1 rounded-l-none text-center', {
-                          'border-error':
-                            errors.artists?.at?.(index)?.message &&
-                            watch(`artists.${index}.enName`)?.trim() === '',
-                        })}
-                        placeholder="英文名稱"
-                        {...register(`artists.${index}.enName`, {
-                          onChange: () => trigger('artists'),
-                        })}
-                      />
+                      <div>
+                        <select
+                          className={cx('select select-bordered w-full max-w-xs text-lg', {
+                            'select-error': errors.artists,
+                          })}
+                          {...register(`artists.${index}.zhName`, {
+                            onChange: () => trigger('artists'),
+                          })}
+                        >
+                          <option value="" disabled>
+                            請選擇中文名稱
+                          </option>
+                          {artistList?.data.map((item) => (
+                            <option
+                              key={`artist__option-${item.id}`}
+                              data-testid={`artist__option-${item.id}`}
+                              value={item.zhName}
+                            >
+                              {item.zhName}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <select
+                          className={cx('select select-bordered w-full max-w-xs text-lg', {
+                            'select-error': errors.artists,
+                          })}
+                          {...register(`artists.${index}.enName`, {
+                            onChange: () => trigger('artists'),
+                          })}
+                        >
+                          <option value="" disabled>
+                            請選擇英文名稱
+                          </option>
+                          {artistList?.data.map((item) => (
+                            <option
+                              key={`artist__option-${item.id}`}
+                              data-testid={`artist__option-${item.id}`}
+                              value={item.enName}
+                            >
+                              {item.enName}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                       {errors.artists?.at?.(index) && (
                         <p className="text-error absolute bottom-0 translate-y-full text-xs italic">
                           {errors.artists?.at?.(index)?.message}
@@ -349,7 +394,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
               </label>
               <div className="relative">
                 <select
-                  className={classNames('select select-bordered w-full max-w-xs text-lg', {
+                  className={cx('select select-bordered w-full max-w-xs text-lg', {
                     'select-error': errors.metadata?.assetsType,
                   })}
                   data-testid="assetsType"
@@ -382,7 +427,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
               </label>
               <div className="relative">
                 <select
-                  className={classNames('select select-bordered w-full max-w-xs text-lg', {
+                  className={cx('select select-bordered w-full max-w-xs text-lg', {
                     'select-error': errors.metadata?.artworkType,
                   })}
                   {...register('metadata.artworkType')}
@@ -414,11 +459,23 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   <div className="form-control" key={field.id}>
                     <div className="input-group border-base-200 rounded-lg border">
                       <div className="bg-base-200 flex flex-wrap items-center gap-2 p-1">
-                        <input
-                          className="input flex-1 rounded-r-none text-center"
-                          placeholder="藝廊名稱"
+                        <select
+                          className={cx('select select-bordered w-full max-w-xs text-lg')}
                           {...register(`metadata.agentGalleries.${index}.name`)}
-                        />
+                        >
+                          <option value="" disabled>
+                            請選擇
+                          </option>
+                          {companyList?.data.map((item) => (
+                            <option
+                              key={`company__option-${item.id}`}
+                              data-testid={`company__option-${item.id}`}
+                              value={item.zhName}
+                            >
+                              {item.zhName}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                       <button
                         type="button"
@@ -447,7 +504,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
               </label>
               <div className="relative">
                 <select
-                  className={classNames('select select-bordered w-full max-w-xs text-lg', {
+                  className={cx('select select-bordered w-full max-w-xs text-lg', {
                     'select-error': errors.countryCode,
                   })}
                   data-testid="countryCode"
@@ -476,7 +533,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 </label>
                 <div className="relative flex-1 p-1">
                   <input
-                    className={classNames('input input-bordered w-full max-w-xs', {
+                    className={cx('input input-bordered w-full max-w-xs', {
                       'input-error': errors.metadata?.purchasingUnit,
                     })}
                     data-testid="purchasingUnit"
@@ -495,14 +552,14 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 <div className="relative flex-1">
                   <div className="flex flex-wrap items-center gap-1 p-1">
                     <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
+                      className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.zhName,
                       })}
                       placeholder="中文名稱"
                       {...register('zhName', { onChange: () => trigger(['enName', 'zhName']) })}
                     />
                     <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
+                      className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.enName,
                       })}
                       placeholder="英文名稱"
@@ -528,7 +585,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     <label>長</label>
                     <div className="relative flex-1">
                       <input
-                        className={classNames('input input-bordered w-full max-w-xs', {
+                        className={cx('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.length,
                         })}
                         data-testid="length"
@@ -540,12 +597,13 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                         </p>
                       )}
                     </div>
+                    <label>cm</label>
                   </div>
                   <div className="flex items-center gap-2">
                     <label>寬</label>
                     <div className="relative flex-1">
                       <input
-                        className={classNames('input input-bordered w-full max-w-xs', {
+                        className={cx('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.width,
                         })}
                         data-testid="width"
@@ -557,12 +615,13 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                         </p>
                       )}
                     </div>
+                    <label>cm</label>
                   </div>
                   <div className="flex items-center gap-2">
                     <label>高</label>
                     <div className="relative flex-1">
                       <input
-                        className={classNames('input input-bordered w-full max-w-xs', {
+                        className={cx('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.height,
                         })}
                         data-testid="height"
@@ -574,12 +633,13 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                         </p>
                       )}
                     </div>
+                    <label>cm</label>
                   </div>
                   <div className="flex items-center gap-2">
                     <label className="whitespace-nowrap">自定義尺寸</label>
                     <div className="relative flex-1">
                       <input
-                        className={classNames('input input-bordered w-full max-w-xs', {
+                        className={cx('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.customSize,
                         })}
                         data-testid="customSize"
@@ -599,7 +659,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     <label className="whitespace-nowrap">號數</label>
                     <div className="relative flex-1">
                       <input
-                        className={classNames('input input-bordered w-full max-w-xs', {
+                        className={cx('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.serialNumber,
                         })}
                         data-testid="serialNumber"
@@ -623,7 +683,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 <div className="relative flex-1">
                   <div className="flex flex-wrap items-center gap-1 p-1">
                     <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
+                      className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.zhMedia,
                       })}
                       placeholder="中文名稱"
@@ -632,7 +692,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                       })}
                     />
                     <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
+                      className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.media,
                       })}
                       placeholder="英文名稱"
@@ -659,7 +719,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 <label className="font-bold">年代</label>
                 <div className="relative flex-1 p-1">
                   <input
-                    className={classNames('input input-bordered w-full max-w-xs', {
+                    className={cx('input input-bordered w-full max-w-xs', {
                       'input-error': errors.yearAge,
                     })}
                     data-testid="yearAge"
@@ -677,7 +737,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 </label>
                 <div className="relative flex-1">
                   <input
-                    className={classNames('input input-bordered w-full max-w-xs', {
+                    className={cx('input input-bordered w-full max-w-xs', {
                       'input-error': errors.metadata?.edition,
                     })}
                     data-testid="edition"
@@ -762,7 +822,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 <div className="flex flex-row gap-2">
                   <div className="relative">
                     <select
-                      className={classNames('select select-bordered text-lg', {
+                      className={cx('select select-bordered text-lg', {
                         'select-error': errors.warehouseId,
                       })}
                       data-testid="warehouseId"
@@ -774,7 +834,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                           ),
                       })}
                     >
-                      <option disabled>請選擇</option>
+                      <option value={-1}>請選擇</option>
                       <option value={0}>A</option>
                       <option value={1}>B</option>
                       <option value={2}>C</option>
@@ -922,7 +982,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
+                      className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salesName,
                       })}
                       data-testid="salesName"
@@ -942,7 +1002,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
+                      className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salseReciver,
                       })}
                       data-testid="salseReciver"
@@ -962,7 +1022,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
+                      className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salesPhone,
                       })}
                       data-testid="salesPhone"
@@ -982,7 +1042,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
+                      className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salesAddress,
                       })}
                       data-testid="salesAddress"
@@ -1002,7 +1062,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
+                      className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salesDate,
                       })}
                       data-testid="salesDate"
