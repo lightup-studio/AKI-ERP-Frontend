@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 
-import cx from 'classnames';
 import dateFnsFormat from 'date-fns/format';
 import { useParams, useRouter } from 'next/navigation';
 import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
@@ -207,9 +206,9 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
         <div className="flex flex-col gap-4 md:flex-row">
           <form className="grid w-full grid-cols-2 gap-4">{fieldForm}</form>
 
-          <div className="flex flex-col justify-between gap-4 mt-8">
+          <div className="mt-8 flex flex-col justify-between gap-4">
             <div className="flex gap-2 md:flex-col">
-              <button
+              {/* <button
                 aria-label="export pdf file"
                 className={cx('btn btn-accent flex-1', {
                   'flex-nowrap whitespace-nowrap': exportOrderMutation.isLoading,
@@ -224,7 +223,7 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
                 ) : (
                   <>PDF 匯出</>
                 )}
-              </button>
+              </button> */}
             </div>
             <select
               className="select select-bordered"

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import cx from 'classnames';
 import React from 'react';
 
 interface TextFieldProps
@@ -18,7 +18,7 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(function Te
       id={name}
       ref={ref}
       value={value || ''}
-      className={classNames('input input-bordered w-full', { 'input-error': errorMsg })}
+      className={cx('input input-bordered w-full', { 'input-error': errorMsg })}
     />
   );
 });

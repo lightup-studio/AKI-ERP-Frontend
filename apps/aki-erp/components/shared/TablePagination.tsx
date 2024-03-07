@@ -1,6 +1,6 @@
 import { Table } from '@tanstack/react-table';
 import usePagination, { DOTS } from '@utils/hooks/usePagination';
-import classnames from 'classnames';
+import cx from 'classnames';
 
 function TablePagination<T>({
   table,
@@ -51,7 +51,7 @@ function TablePagination<T>({
         return (
           <button
             key={key}
-            className={classnames('join-item btn hidden w-14 md:block', {
+            className={cx('join-item btn hidden w-14 md:block', {
               'btn-active': Number(pageNumber) - 1 === pageIndex,
             })}
             onClick={() => table.setPageIndex(Number(pageNumber) - 1)}

@@ -208,7 +208,7 @@ const ShipmentOrderDetail: React.FC<ShipmentOrderDetailProps> = ({ disabled }) =
         <div className="flex flex-col gap-4 md:flex-row">
           <form className="grid w-full grid-cols-2 gap-4">{fieldForm}</form>
 
-          <div className="flex flex-col justify-between gap-4 mt-8">
+          <div className="mt-8 flex flex-col justify-between gap-4">
             <div className="flex gap-2 md:flex-col">
               <button
                 aria-label="export pdf file"

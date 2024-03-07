@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import classNames from 'classnames';
+import cx from 'classnames';
 import './SidebarSubmenu.scss';
 
 export interface SubMenuItem {
@@ -38,7 +38,7 @@ const SidebarSubmenu = ({ submenu, path, name, icon }: SidebarSubmenuProps) => {
   return (
     <details open={isExpanded}>
       <summary
-        className={classNames('flex py-0 pl-0', {
+        className={cx('flex py-0 pl-0', {
           'bg-base-200': pathname.startsWith(path || ''),
         })}
       >
