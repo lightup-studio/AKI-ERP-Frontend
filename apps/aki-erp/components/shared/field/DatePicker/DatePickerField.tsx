@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
-import classNames from 'classnames';
+import cx from 'classnames';
 import React from 'react';
 import {
   Button,
@@ -34,7 +34,7 @@ const DatePickerField = React.forwardRef<HTMLDivElement, DatePickerFieldProps>(
         value={value || null}
         aria-label={name}
         isDisabled={disabled}
-        className={classNames({
+        className={cx({
           'border-error rounded-lg border': errorMsg,
         })}
       >

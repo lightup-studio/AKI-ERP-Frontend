@@ -3,7 +3,6 @@
 import React, { ChangeEvent, useState } from 'react';
 
 import { StoreType, assetsTypeOptions } from '@constants/artwork.constant';
-import classNames from 'classnames';
 import {
   createOrUpdateArtworkDetail,
   fetchArtworkDetailByDisplayId,
@@ -22,6 +21,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { fetchCountryList } from '@data-access/apis/countries.api';
 import { usefetchPartnerList } from '@data-access/hooks';
+import cx from 'classnames';
 import { useParams, useRouter } from 'next/navigation';
 
 const salesInfoDisplayed = true;
@@ -274,7 +274,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
               <div className="relative">
                 <input
                   type="file"
-                  className={classNames('file-input file-input-bordered max-w-xs', {
+                  className={cx('file-input file-input-bordered max-w-xs', {
                     'border-error': errors.imageUrl?.message,
                   })}
                   onChange={handleFileChange}
@@ -314,7 +314,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     <div className="bg-base-200 flex flex-wrap items-center gap-1 p-1">
                       <div>
                         <select
-                          className={classNames('select select-bordered w-full max-w-xs text-lg', {
+                          className={cx('select select-bordered w-full max-w-xs text-lg', {
                             'select-error': errors.artists,
                           })}
                           {...register(`artists.${index}.zhName`, {
@@ -338,7 +338,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
 
                       <div>
                         <select
-                          className={classNames('select select-bordered w-full max-w-xs text-lg', {
+                          className={cx('select select-bordered w-full max-w-xs text-lg', {
                             'select-error': errors.artists,
                           })}
                           {...register(`artists.${index}.enName`, {
@@ -394,7 +394,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
               </label>
               <div className="relative">
                 <select
-                  className={classNames('select select-bordered w-full max-w-xs text-lg', {
+                  className={cx('select select-bordered w-full max-w-xs text-lg', {
                     'select-error': errors.metadata?.assetsType,
                   })}
                   data-testid="assetsType"
@@ -427,7 +427,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
               </label>
               <div className="relative">
                 <select
-                  className={classNames('select select-bordered w-full max-w-xs text-lg', {
+                  className={cx('select select-bordered w-full max-w-xs text-lg', {
                     'select-error': errors.metadata?.artworkType,
                   })}
                   {...register('metadata.artworkType')}
@@ -460,7 +460,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     <div className="input-group border-base-200 rounded-lg border">
                       <div className="bg-base-200 flex flex-wrap items-center gap-2 p-1">
                         <select
-                          className={classNames('select select-bordered w-full max-w-xs text-lg')}
+                          className={cx('select select-bordered w-full max-w-xs text-lg')}
                           {...register(`metadata.agentGalleries.${index}.name`)}
                         >
                           <option value="" disabled>
@@ -504,7 +504,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
               </label>
               <div className="relative">
                 <select
-                  className={classNames('select select-bordered w-full max-w-xs text-lg', {
+                  className={cx('select select-bordered w-full max-w-xs text-lg', {
                     'select-error': errors.countryCode,
                   })}
                   data-testid="countryCode"
@@ -533,7 +533,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 </label>
                 <div className="relative flex-1 p-1">
                   <input
-                    className={classNames('input input-bordered w-full max-w-xs', {
+                    className={cx('input input-bordered w-full max-w-xs', {
                       'input-error': errors.metadata?.purchasingUnit,
                     })}
                     data-testid="purchasingUnit"
@@ -552,14 +552,14 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 <div className="relative flex-1">
                   <div className="flex flex-wrap items-center gap-1 p-1">
                     <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
+                      className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.zhName,
                       })}
                       placeholder="中文名稱"
                       {...register('zhName', { onChange: () => trigger(['enName', 'zhName']) })}
                     />
                     <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
+                      className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.enName,
                       })}
                       placeholder="英文名稱"
@@ -585,7 +585,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     <label>長</label>
                     <div className="relative flex-1">
                       <input
-                        className={classNames('input input-bordered w-full max-w-xs', {
+                        className={cx('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.length,
                         })}
                         data-testid="length"
@@ -603,7 +603,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     <label>寬</label>
                     <div className="relative flex-1">
                       <input
-                        className={classNames('input input-bordered w-full max-w-xs', {
+                        className={cx('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.width,
                         })}
                         data-testid="width"
@@ -621,7 +621,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     <label>高</label>
                     <div className="relative flex-1">
                       <input
-                        className={classNames('input input-bordered w-full max-w-xs', {
+                        className={cx('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.height,
                         })}
                         data-testid="height"
@@ -639,7 +639,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     <label className="whitespace-nowrap">自定義尺寸</label>
                     <div className="relative flex-1">
                       <input
-                        className={classNames('input input-bordered w-full max-w-xs', {
+                        className={cx('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.customSize,
                         })}
                         data-testid="customSize"
@@ -659,7 +659,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     <label className="whitespace-nowrap">號數</label>
                     <div className="relative flex-1">
                       <input
-                        className={classNames('input input-bordered w-full max-w-xs', {
+                        className={cx('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.serialNumber,
                         })}
                         data-testid="serialNumber"
@@ -683,7 +683,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 <div className="relative flex-1">
                   <div className="flex flex-wrap items-center gap-1 p-1">
                     <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
+                      className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.zhMedia,
                       })}
                       placeholder="中文名稱"
@@ -692,7 +692,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                       })}
                     />
                     <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
+                      className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.media,
                       })}
                       placeholder="英文名稱"
@@ -719,7 +719,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 <label className="font-bold">年代</label>
                 <div className="relative flex-1 p-1">
                   <input
-                    className={classNames('input input-bordered w-full max-w-xs', {
+                    className={cx('input input-bordered w-full max-w-xs', {
                       'input-error': errors.yearAge,
                     })}
                     data-testid="yearAge"
@@ -737,7 +737,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 </label>
                 <div className="relative flex-1">
                   <input
-                    className={classNames('input input-bordered w-full max-w-xs', {
+                    className={cx('input input-bordered w-full max-w-xs', {
                       'input-error': errors.metadata?.edition,
                     })}
                     data-testid="edition"
@@ -822,7 +822,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 <div className="flex flex-row gap-2">
                   <div className="relative">
                     <select
-                      className={classNames('select select-bordered text-lg', {
+                      className={cx('select select-bordered text-lg', {
                         'select-error': errors.warehouseId,
                       })}
                       data-testid="warehouseId"
@@ -982,7 +982,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
+                      className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salesName,
                       })}
                       data-testid="salesName"
@@ -1002,7 +1002,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
+                      className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salseReciver,
                       })}
                       data-testid="salseReciver"
@@ -1022,7 +1022,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
+                      className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salesPhone,
                       })}
                       data-testid="salesPhone"
@@ -1042,7 +1042,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
+                      className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salesAddress,
                       })}
                       data-testid="salesAddress"
@@ -1062,7 +1062,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
-                      className={classNames('input input-bordered w-full max-w-xs', {
+                      className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salesDate,
                       })}
                       data-testid="salesDate"

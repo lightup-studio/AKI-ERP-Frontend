@@ -12,7 +12,7 @@ import { CheckIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/20/soli
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import useArtworksTable, { inputColumn, selectColumn } from '@utils/hooks/useArtworksTable';
-import classnames from 'classnames';
+import cx from 'classnames';
 import { ArtworkDetail, Status } from 'data-access/models';
 import Link from 'next/link';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
@@ -235,7 +235,7 @@ const ArtworksSelector = ({
 
   return (
     <div
-      className={classnames('modal absolute z-10', {
+      className={cx('modal absolute z-10', {
         'modal-open': isOpen,
       })}
     >
