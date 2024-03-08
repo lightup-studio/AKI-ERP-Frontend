@@ -122,17 +122,17 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
         const widthText = width && `寬 ${width}`;
         const heightText = height && `高 ${height}`;
         return lengthText && widthText && heightText
-          ? `${lengthText} x ${widthText} x ${heightText}`
+          ? `${lengthText} cm x ${widthText} cm x ${heightText} cm`
           : widthText && heightText
-            ? `${widthText} x ${heightText}`
+            ? `${widthText} cm x ${heightText} cm`
             : lengthText && widthText
-              ? `${lengthText} x ${widthText}`
+              ? `${lengthText} cm x ${widthText} cm`
               : lengthText
-                ? `${lengthText}`
+                ? `${lengthText} cm`
                 : widthText
-                  ? `${widthText}`
+                  ? `${widthText} cm`
                   : heightText
-                    ? `${heightText}`
+                    ? `${heightText} cm`
                     : '無';
       },
     },
