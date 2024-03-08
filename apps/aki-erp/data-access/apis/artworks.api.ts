@@ -16,10 +16,10 @@ import { fetchCountryList } from './countries.api';
 export async function fetchSelectOptions() {
   const artworkOtherInfoOptions: ComboboxOption[] = [
     { label: '無', value: 'none' },
-    { label: '裱框', value: 'framed' },
+    { label: '裱框', value: 'frame' },
     { label: '台座', value: 'pedestal' },
-    { label: '紙箱', value: 'carton' },
-    { label: '木箱', value: 'wooden_box' },
+    { label: '紙箱', value: 'cardboardBox' },
+    { label: '木箱', value: 'woodenBox' },
   ];
 
   const [
