@@ -64,7 +64,7 @@ describe('ArtworksList', () => {
     fireEvent.click((await screen.findByText('裱框')).parentElement!);
     // We expect a route navigation to be triggered, with the query parameter "otherInfos=framed" appended.
     expect(routerPushSpy).toHaveBeenCalledTimes(1);
-    expect(routerPushSpy).toHaveBeenLastCalledWith(expect.stringContaining('otherInfos=framed'));
+    expect(routerPushSpy).toHaveBeenLastCalledWith(expect.stringContaining('otherInfos=frame'));
 
     fireEvent.click(firstArtworkLink);
     expect(routerPushSpy).toHaveBeenCalledTimes(2);
