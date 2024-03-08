@@ -324,15 +324,17 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                           <option value="" disabled>
                             請選擇中文名稱
                           </option>
-                          {artistList?.data.map((item) => (
-                            <option
-                              key={`artist__option-${item.id}`}
-                              data-testid={`artist__option-${item.id}`}
-                              value={item.zhName}
-                            >
-                              {item.zhName}
-                            </option>
-                          ))}
+                          {artistList?.data
+                            .filter((item) => item.zhName)
+                            .map((item) => (
+                              <option
+                                key={`artist__option-${item.id}`}
+                                data-testid={`artist__option-${item.id}`}
+                                value={item.zhName}
+                              >
+                                {item.zhName}
+                              </option>
+                            ))}
                         </select>
                       </div>
 
@@ -348,15 +350,17 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                           <option value="" disabled>
                             請選擇英文名稱
                           </option>
-                          {artistList?.data.map((item) => (
-                            <option
-                              key={`artist__option-${item.id}`}
-                              data-testid={`artist__option-${item.id}`}
-                              value={item.enName}
-                            >
-                              {item.enName}
-                            </option>
-                          ))}
+                          {artistList?.data
+                            .filter((item) => item.enName)
+                            .map((item) => (
+                              <option
+                                key={`artist__option-${item.id}`}
+                                data-testid={`artist__option-${item.id}`}
+                                value={item.enName}
+                              >
+                                {item.enName}
+                              </option>
+                            ))}
                         </select>
                       </div>
                       {errors.artists?.at?.(index) && (
