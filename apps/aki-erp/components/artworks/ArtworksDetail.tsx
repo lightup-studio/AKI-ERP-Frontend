@@ -67,11 +67,6 @@ const schema = yup.object().shape({
   metadata: yup.object().shape({
     artworkType: yup.string().required('作品類型為必填項目'),
     assetsType: yup.string().required('資產類別為必填項目'),
-    agentGalleries: yup.array().of(
-      yup.object().shape({
-        name: yup.string().required('代理畫廊名稱為必填項目'),
-      }),
-    ),
     media: yup.string().test('media name', '媒材為必填項目', (value, context) => {
       return value || context.parent?.zhMedia ? true : false;
     }),
@@ -166,7 +161,12 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
           woodenBox: false,
         },
         warehouseLocation: '',
-        storeType: status === Status.Disabled ? StoreType.NONE : StoreType.IN_STOCK,
+        storeType:
+          status === Status.Draft
+            ? undefined
+            : Status.Disabled
+              ? StoreType.NONE
+              : StoreType.IN_STOCK,
       },
     },
     resolver: yupResolver<any>(schema),
