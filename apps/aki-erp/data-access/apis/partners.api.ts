@@ -20,11 +20,14 @@ export async function fetchPartnerList<
       ...(keyword && { keyword }),
     },
   });
+
+  const offset = pageIndex * pageSize;
+
   return {
     data: res.data
       .sort((a, b) => new Date(a.createTime).getTime() - new Date(b.createTime).getTime())
-      .slice(pageIndex * pageSize, pageSize),
-    offset: pageIndex * pageSize,
+      .slice(offset, offset + pageSize),
+    offset: offset,
     take: pageSize,
     pageCount: Math.ceil(res.data.length / pageSize),
     totalCount: res.data.length,
