@@ -227,7 +227,8 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
       data.metadata?.salesName ||
       data.metadata?.salesPhone ||
       data.metadata?.salesAddress ||
-      data.metadata?.salesDate
+      data.metadata?.salesDate ||
+      data.metadata?.storeType === StoreType.SHIPPING
     ) {
       data.metadata.salesType = 'sold';
     }
