@@ -50,7 +50,9 @@ const useArtworksOrderTable = ({
     },
     {
       header: '作品名稱',
-      accessorKey: 'enName',
+      cell: ({ row }) => (
+        <div className="flex items-center">{row.original.zhName || row.original.enName}</div>
+      ),
     },
     {
       header: '作品圖',

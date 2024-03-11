@@ -11,7 +11,7 @@ import {
 import { CheckIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
-import useArtworksTable, { inputColumn, selectColumn } from '@utils/hooks/useArtworksTable';
+import useArtworksTable, { selectColumn } from '@utils/hooks/useArtworksTable';
 import cx from 'classnames';
 import { ArtworkDetail, Status } from 'data-access/models';
 import Link from 'next/link';
@@ -64,8 +64,9 @@ const ArtworksSelector = ({
     },
     {
       header: '作品名稱',
-      accessorKey: 'enName',
-      cell: inputColumn,
+      cell: ({ row }) => (
+        <div className="flex items-center">{row.original.zhName || row.original.enName}</div>
+      ),
     },
     {
       header: '作品圖',

@@ -66,7 +66,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
     },
     {
       header: '作品名稱',
-      cell: ({ cell, row }) => (
+      cell: ({ row }) => (
         <div className="flex items-center">{row.original.zhName || row.original.enName}</div>
       ),
     },
