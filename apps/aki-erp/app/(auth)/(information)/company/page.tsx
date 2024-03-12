@@ -30,6 +30,8 @@ const Company = () => {
   const searchParams = useSearchParams();
 
   const params = new URLSearchParams(searchParams);
+  const pageIndex = +(params.get('pageIndex') || 0);
+  const pageSize = +(params.get('pageSize') || 50);
 
   const [keyword, setKeyword] = useState(searchParams.get('keyword'));
 
@@ -43,7 +45,7 @@ const Company = () => {
     setKeyword(keyword || '');
   };
 
-  const dataQuery = usefetchPartnerList('Company');
+  const dataQuery = usefetchPartnerList({ type: 'Company', keyword, pageIndex, pageSize });
 
   const createMutation = useMutation((data: CompanyPartner) => createPartner(data), {
     onSuccess: () => {

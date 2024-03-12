@@ -30,6 +30,8 @@ const Collector = () => {
   const searchParams = useSearchParams();
 
   const params = new URLSearchParams(searchParams);
+  const pageIndex = +(params.get('pageIndex') || 0);
+  const pageSize = +(params.get('pageSize') || 50);
 
   const [keyword, setKeyword] = useState(params.get('keyword'));
 
@@ -43,7 +45,7 @@ const Collector = () => {
     setKeyword(keyword || '');
   };
 
-  const dataQuery = usefetchPartnerList('Customer');
+  const dataQuery = usefetchPartnerList({ type: 'Customer', keyword, pageIndex, pageSize });
 
   const createMutation = useMutation((data: CustomerPartner) => createPartner(data), {
     onSuccess: () => {

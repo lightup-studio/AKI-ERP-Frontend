@@ -105,8 +105,8 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
     keepPreviousData: true,
   });
 
-  const { data: artistList } = usefetchPartnerList('Artist');
-  const { data: companyList } = usefetchPartnerList('Company');
+  const { data: artistList } = usefetchPartnerList({ type: 'Artist', pageSize: 100000 });
+  const { data: companyList } = usefetchPartnerList({ type: 'Company', pageSize: 100000 });
 
   const mutation = useMutation({
     mutationFn: (data: ArtworkDetail) => createOrUpdateArtworkDetail(data),

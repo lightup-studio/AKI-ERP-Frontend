@@ -30,6 +30,8 @@ const Artists = () => {
   const searchParams = useSearchParams();
 
   const params = new URLSearchParams(searchParams);
+  const pageIndex = +(params.get('pageIndex') || 0);
+  const pageSize = +(params.get('pageSize') || 50);
 
   const [keyword, setKeyword] = useState(params.get('keyword'));
 
@@ -43,7 +45,7 @@ const Artists = () => {
     setKeyword(keyword || '');
   };
 
-  const dataQuery = usefetchPartnerList('Artist');
+  const dataQuery = usefetchPartnerList({ type: 'Artist', keyword, pageIndex, pageSize });
 
   const createMutation = useMutation((data: ArtistPartner) => createPartner(data), {
     onSuccess: () => {
