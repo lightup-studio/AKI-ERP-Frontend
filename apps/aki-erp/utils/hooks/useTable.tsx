@@ -12,7 +12,7 @@ import {
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
-const useTable = <T = any,>({
+const useTable = <T = any>({
   data = [],
   meta,
   columns,
