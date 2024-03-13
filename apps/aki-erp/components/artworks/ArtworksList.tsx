@@ -118,22 +118,11 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
       accessorKey: 'metadata',
       cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
         const { length, width, height } = cell.getValue<ArtworkDetail['metadata']>() || {};
-        const lengthText = length && `長 ${length}`;
-        const widthText = width && `寬 ${width}`;
-        const heightText = height && `高 ${height}`;
-        return lengthText && widthText && heightText
-          ? `${lengthText} cm x ${widthText} cm x ${heightText} cm`
-          : widthText && heightText
-            ? `${widthText} cm x ${heightText} cm`
-            : lengthText && widthText
-              ? `${lengthText} cm x ${widthText} cm`
-              : lengthText
-                ? `${lengthText} cm`
-                : widthText
-                  ? `${widthText} cm`
-                  : heightText
-                    ? `${heightText} cm`
-                    : '無';
+        return length || width || height
+          ? `${length && `長 ${length} cm`} ${width && `x 寬 ${width} cm`} ${
+              height && `x 高 ${height} cm`
+            }`
+          : '無';
       },
     },
     {
