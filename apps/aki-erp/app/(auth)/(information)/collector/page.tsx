@@ -1,25 +1,18 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import UpdateCustomerDialog from '@components/collector/UpdateCustomerDialog';
-import Table from '@components/shared/Table';
-import IndeterminateCheckbox from '@components/shared/field/IndeterminateCheckbox';
 import SearchInput from '@components/shared/field/SearchField';
 import { formSchema } from '@constants/collector.formSchema';
+import { usefetchPartnerList } from '@data-access/hooks';
 import { PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import {
-  ColumnDef,
-  PaginationState,
-  Row,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-import usePagination, { DOTS } from '@utils/hooks/usePagination';
+import { useMutation } from '@tanstack/react-query';
+import { ColumnDef } from '@tanstack/react-table';
+import { useTable } from '@utils/hooks';
 import cx from 'classnames';
-import { createPartner, deletePartnerList, fetchPartnerList } from 'data-access/apis/partners.api';
+import { createPartner, deletePartnerList } from 'data-access/apis/partners.api';
 import { CustomerPartner } from 'data-access/models';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -37,6 +30,8 @@ const Collector = () => {
   const searchParams = useSearchParams();
 
   const params = new URLSearchParams(searchParams);
+  const pageIndex = +(params.get('pageIndex') || 0);
+  const pageSize = +(params.get('pageSize') || 50);
 
   const [keyword, setKeyword] = useState(params.get('keyword'));
 
@@ -48,141 +43,27 @@ const Collector = () => {
 
   const handleSearch = (keyword?: string | null) => {
     setKeyword(keyword || '');
-    setPagination(({ pageSize }) => ({ pageIndex: 0, pageSize }));
   };
 
-  const [{ pageIndex, pageSize }, setPagination] = React.useState<PaginationState>({
-    pageIndex: +(searchParams.get('pageIndex') || 0),
-    pageSize: +(searchParams.get('pageSize') || 50),
-  });
-  const pagination = useMemo(() => ({ pageIndex, pageSize }), [pageIndex, pageSize]);
-
-  useEffect(() => {
-    if (
-      pageIndex === +(searchParams.get('pageIndex') || 0) &&
-      pageSize === +(searchParams.get('pageSize') || 50)
-    ) {
-      return;
-    }
-  });
-
-  useEffect(() => {
-    if (
-      pageIndex === +(params.get('pageIndex') || 0) &&
-      pageSize === +(params.get('pageSize') || 50)
-    ) {
-      return;
-    }
-
-    pageIndex > 0 ? params.set('pageIndex', `${pageIndex}`) : params.delete('pageIndex');
-    pageSize !== 50 ? params.set('pageSize', `${pageSize}`) : params.delete('pageSize');
-    router.push(`${pathname}?${searchParams.toString()}`);
-  }, [pageIndex, pageSize, searchParams]);
-
-  const dataQuery = useQuery(
-    ['collector', searchParams.toString()],
-    () =>
-      fetchPartnerList({
-        type: 'Customer',
-        keyword: searchParams.get('keyword'),
-        pageIndex: +(searchParams.get('pageIndex') || 0),
-        pageSize: +(searchParams.get('pageSize') || 50),
-      }),
-    { keepPreviousData: true },
-  );
+  const dataQuery = usefetchPartnerList({ type: 'Customer', keyword, pageIndex, pageSize });
 
   const createMutation = useMutation((data: CustomerPartner) => createPartner(data), {
     onSuccess: () => {
-      if ([...searchParams.values()].length > 0) {
-        setKeyword('');
-        setPagination(() => ({ pageIndex: 0, pageSize: 50 }));
-      } else {
-        dataQuery.refetch();
-      }
+      dataQuery.refetch();
       reset();
     },
   });
+
   const deleteMutation = useMutation((ids: number[]) => deletePartnerList(ids), {
     onSuccess: () => {
-      if ([...searchParams.values()].length > 0) {
-        setKeyword('');
-        setPagination(() => ({ pageIndex: 0, pageSize: 50 }));
-      } else {
-        dataQuery.refetch();
-      }
-      setRowSelection({});
+      dataQuery.refetch();
+      clearRowSelection();
     },
   });
-
-  const [tableData, setTableData] = useState<CustomerPartner[]>([]);
-
-  useEffect(() => {
-    if (dataQuery.isSuccess) {
-      const tableData = structuredClone(dataQuery.data.data);
-      setTableData(tableData);
-    }
-  }, [dataQuery.isSuccess, dataQuery.data]);
-
-  const [rowSelection, setRowSelection] = React.useState<Record<string, CustomerPartner>>({});
-
-  const selectedRowCount = useMemo(() => Object.keys(rowSelection).length, [rowSelection]);
-
-  const handleAllRowSelectionChange = (rows: Row<CustomerPartner>[]) => {
-    const selectedRows = rows.filter((row) => row.original.id in rowSelection);
-    const isAnyRowSelected = selectedRows.length > 0;
-
-    if (isAnyRowSelected) {
-      selectedRows.forEach((row) => delete rowSelection[row.original.id]);
-    } else {
-      rows.forEach((row) => (rowSelection[row.original.id] = row.original));
-    }
-
-    setRowSelection(structuredClone(rowSelection));
-  };
-
-  const handleRowSelectionChange = (row: Row<CustomerPartner>) => {
-    const { id } = row.original;
-
-    if (id in rowSelection) {
-      delete rowSelection[id];
-    } else {
-      rowSelection[id] = row.original;
-    }
-
-    setRowSelection(structuredClone(rowSelection));
-  };
 
   const isLoading = dataQuery.isLoading || createMutation.isLoading || deleteMutation.isLoading;
 
   const columns: ColumnDef<CustomerPartner, any>[] = [
-    {
-      id: 'select',
-      header: ({ table }) => (
-        <div className="flex items-center">
-          <IndeterminateCheckbox
-            {...{
-              checked:
-                dataQuery.data?.totalCount !== 0 && selectedRowCount === dataQuery.data?.totalCount,
-              indeterminate:
-                selectedRowCount > 0 && selectedRowCount < (dataQuery.data?.totalCount || 0),
-              onChange: () => handleAllRowSelectionChange(table.getRowModel().rows),
-              disabled: dataQuery.data?.totalCount === 0 || isLoading,
-            }}
-          />
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className="flex items-center">
-          <IndeterminateCheckbox
-            {...{
-              checked: row.original.id in rowSelection,
-              indeterminate: false,
-              onChange: () => handleRowSelectionChange(row),
-            }}
-          />
-        </div>
-      ),
-    },
     {
       id: 'id',
       header: 'ID',
@@ -233,24 +114,13 @@ const Collector = () => {
     },
   ];
 
-  const table = useReactTable({
-    data: tableData,
-    columns,
-    pageCount: dataQuery.data?.pageCount ?? -1,
-    state: {
-      pagination,
-    },
-    getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
-    onPaginationChange: setPagination,
-  });
-
-  const paginationRange = usePagination({
-    currentPage: pageIndex,
-    totalCount: dataQuery.data?.totalCount ?? 0,
-    siblingCount: 1,
-    pageSize: pageSize,
-  });
+  const { table, tableBlock, selectedRows, selectedRowsCount, clearRowSelection } =
+    useTable<CustomerPartner>({
+      data: dataQuery.data?.data,
+      totalCount: dataQuery.data?.totalCount,
+      columns: columns,
+      isLoading: isLoading,
+    });
 
   const {
     register,
@@ -280,7 +150,7 @@ const Collector = () => {
   };
 
   const handleDelete = () => {
-    const ids = Object.keys(rowSelection).map((key) => +key);
+    const ids = selectedRows.map((item) => item.id);
     deleteMutation.mutateAsync(ids);
   };
 
@@ -410,11 +280,11 @@ const Collector = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <span>已選擇 {selectedRowCount} 筆</span>
+            <span>已選擇 {selectedRowsCount} 筆</span>
             <button
               className="btn btn-error"
+              disabled={selectedRowsCount === 0}
               onClick={handleDelete}
-              disabled={isLoading || selectedRowCount === 0}
             >
               <TrashIcon className="h-5 w-5"></TrashIcon>
               刪除
@@ -435,69 +305,7 @@ const Collector = () => {
             </select>
           </div>
 
-          <div className="bg-base-100 h-full w-full pb-6 text-center">
-            <Table table={table} isLoading={isLoading} />
-
-            <div className="divider" />
-
-            <div className="join">
-              <button
-                className="join-item btn"
-                onClick={() => table.setPageIndex(pageIndex - 5)}
-                disabled={!table.getCanPreviousPage()}
-              >
-                {'<<'}
-              </button>
-              <button
-                className="join-item btn"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-              >
-                {'<'}
-              </button>
-
-              <button className="join-item btn btn-active block md:hidden">
-                第 {pageIndex + 1} 頁
-              </button>
-
-              {paginationRange?.map((pageNumber, key) => {
-                if (pageNumber === DOTS) {
-                  return (
-                    <button key={key} className="join-item btn btn-disabled hidden md:block">
-                      {DOTS}
-                    </button>
-                  );
-                }
-
-                return (
-                  <button
-                    key={key}
-                    className={cx('join-item btn hidden w-14 md:block', {
-                      'btn-active': Number(pageNumber) - 1 === pageIndex,
-                    })}
-                    onClick={() => table.setPageIndex(Number(pageNumber) - 1)}
-                  >
-                    {pageNumber}
-                  </button>
-                );
-              })}
-
-              <button
-                className="join-item btn"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
-                {'>'}
-              </button>
-              <button
-                className="join-item btn"
-                onClick={() => table.setPageIndex(pageIndex + 5)}
-                disabled={!table.getCanNextPage()}
-              >
-                {'>>'}
-              </button>
-            </div>
-          </div>
+          <div className="bg-base-100 h-full w-full pb-6 text-center">{tableBlock}</div>
         </div>
       </div>
 

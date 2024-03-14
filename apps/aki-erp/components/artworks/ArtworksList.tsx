@@ -66,7 +66,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
     },
     {
       header: '作品名稱',
-      cell: ({ cell, row }) => (
+      cell: ({ row }) => (
         <div className="flex items-center">{row.original.zhName || row.original.enName}</div>
       ),
     },
@@ -118,22 +118,11 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
       accessorKey: 'metadata',
       cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
         const { length, width, height } = cell.getValue<ArtworkDetail['metadata']>() || {};
-        const lengthText = length && `長 ${length}`;
-        const widthText = width && `寬 ${width}`;
-        const heightText = height && `高 ${height}`;
-        return lengthText && widthText && heightText
-          ? `${lengthText} x ${widthText} x ${heightText}`
-          : widthText && heightText
-            ? `${widthText} x ${heightText}`
-            : lengthText && widthText
-              ? `${lengthText} x ${widthText}`
-              : lengthText
-                ? `${lengthText}`
-                : widthText
-                  ? `${widthText}`
-                  : heightText
-                    ? `${heightText}`
-                    : '無';
+        return length || width || height
+          ? `${length && `長 ${length} cm`} ${width && `x 寬 ${width} cm`} ${
+              height && `x 高 ${height} cm`
+            }`
+          : '無';
       },
     },
     {
