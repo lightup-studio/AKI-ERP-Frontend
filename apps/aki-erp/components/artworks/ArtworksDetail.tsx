@@ -67,11 +67,6 @@ const schema = yup.object().shape({
   metadata: yup.object().shape({
     artworkType: yup.string().required('作品類型為必填項目'),
     assetsType: yup.string().required('資產類別為必填項目'),
-    agentGalleries: yup.array().of(
-      yup.object().shape({
-        name: yup.string().required('代理畫廊名稱為必填項目'),
-      }),
-    ),
     media: yup.string().test('media name', '媒材為必填項目', (value, context) => {
       return value || context.parent?.zhMedia ? true : false;
     }),
@@ -110,8 +105,8 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
     keepPreviousData: true,
   });
 
-  const { data: artistList } = usefetchPartnerList('Artist');
-  const { data: companyList } = usefetchPartnerList('Company');
+  const { data: artistList } = usefetchPartnerList({ type: 'Artist', pageSize: 100000 });
+  const { data: companyList } = usefetchPartnerList({ type: 'Company', pageSize: 100000 });
 
   const mutation = useMutation({
     mutationFn: (data: ArtworkDetail) => createOrUpdateArtworkDetail(data),
@@ -166,7 +161,12 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
           woodenBox: false,
         },
         warehouseLocation: '',
-        storeType: status === Status.Disabled ? StoreType.NONE : StoreType.IN_STOCK,
+        storeType:
+          status === Status.Draft
+            ? undefined
+            : Status.Disabled
+              ? StoreType.NONE
+              : StoreType.IN_STOCK,
       },
     },
     resolver: yupResolver<any>(schema),
@@ -227,7 +227,8 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
       data.metadata?.salesName ||
       data.metadata?.salesPhone ||
       data.metadata?.salesAddress ||
-      data.metadata?.salesDate
+      data.metadata?.salesDate ||
+      data.metadata?.storeType === StoreType.SHIPPING
     ) {
       data.metadata.salesType = 'sold';
     }
@@ -324,15 +325,17 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                           <option value="" disabled>
                             請選擇中文名稱
                           </option>
-                          {artistList?.data.map((item) => (
-                            <option
-                              key={`artist__option-${item.id}`}
-                              data-testid={`artist__option-${item.id}`}
-                              value={item.zhName}
-                            >
-                              {item.zhName}
-                            </option>
-                          ))}
+                          {artistList?.data
+                            .filter((item) => item.zhName)
+                            .map((item) => (
+                              <option
+                                key={`artist__option-${item.id}`}
+                                data-testid={`artist__option-${item.id}`}
+                                value={item.zhName}
+                              >
+                                {item.zhName}
+                              </option>
+                            ))}
                         </select>
                       </div>
 
@@ -348,15 +351,17 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                           <option value="" disabled>
                             請選擇英文名稱
                           </option>
-                          {artistList?.data.map((item) => (
-                            <option
-                              key={`artist__option-${item.id}`}
-                              data-testid={`artist__option-${item.id}`}
-                              value={item.enName}
-                            >
-                              {item.enName}
-                            </option>
-                          ))}
+                          {artistList?.data
+                            .filter((item) => item.enName)
+                            .map((item) => (
+                              <option
+                                key={`artist__option-${item.id}`}
+                                data-testid={`artist__option-${item.id}`}
+                                value={item.enName}
+                              >
+                                {item.enName}
+                              </option>
+                            ))}
                         </select>
                       </div>
                       {errors.artists?.at?.(index) && (

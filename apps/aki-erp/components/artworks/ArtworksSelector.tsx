@@ -11,7 +11,7 @@ import {
 import { CheckIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
-import useArtworksTable, { inputColumn, selectColumn } from '@utils/hooks/useArtworksTable';
+import useArtworksTable, { selectColumn } from '@utils/hooks/useArtworksTable';
 import cx from 'classnames';
 import { ArtworkDetail, Status } from 'data-access/models';
 import Link from 'next/link';
@@ -64,8 +64,9 @@ const ArtworksSelector = ({
     },
     {
       header: '作品名稱',
-      accessorKey: 'enName',
-      cell: inputColumn,
+      cell: ({ row }) => (
+        <div className="flex items-center">{row.original.zhName || row.original.enName}</div>
+      ),
     },
     {
       header: '作品圖',
@@ -115,22 +116,11 @@ const ArtworksSelector = ({
       accessorKey: 'metadata',
       cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
         const { length, width, height } = cell.getValue<ArtworkDetail['metadata']>() || {};
-        const lengthText = length && `長 ${length}`;
-        const widthText = width && `寬 ${width}`;
-        const heightText = height && `高 ${height}`;
-        return lengthText && widthText && heightText
-          ? `${lengthText} x ${widthText} x ${heightText}`
-          : widthText && heightText
-            ? `${widthText} x ${heightText}`
-            : lengthText && widthText
-              ? `${lengthText} x ${widthText}`
-              : lengthText
-                ? `${lengthText}`
-                : widthText
-                  ? `${widthText}`
-                  : heightText
-                    ? `${heightText}`
-                    : '無';
+        return length || width || height
+          ? `${length && `長 ${length} cm`} ${width && `x 寬 ${width} cm`} ${
+              height && `x 高 ${height} cm`
+            }`
+          : '無';
       },
     },
     {

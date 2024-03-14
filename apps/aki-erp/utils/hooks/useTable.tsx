@@ -12,7 +12,7 @@ import {
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
-const useTable = <T = any,>({
+const useTable = <T = any>({
   data = [],
   meta,
   columns,
@@ -48,7 +48,7 @@ const useTable = <T = any,>({
     pageSize !== 50 ? params.set('pageSize', `${pageSize}`) : params.delete('pageSize');
     pageIndex > 0 ? params.set('pageIndex', `${pageIndex}`) : params.delete('pageIndex');
 
-    router.push(`${pathname}?${params.toString()}`);
+    router.push(`${pathname}?${params}`);
   }, [pageSize, pageIndex]);
 
   const [rowSelection, setRowSelection] = useState<Record<string, T>>({});

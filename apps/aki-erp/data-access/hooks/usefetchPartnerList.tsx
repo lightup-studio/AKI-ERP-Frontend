@@ -1,23 +1,28 @@
 import { fetchPartnerList } from '@data-access/apis/partners.api';
 import { PartnerType } from '@data-access/models';
 import { useQuery } from '@tanstack/react-query';
-import { useSearchParams } from 'next/navigation';
 
 export const usefetchPartnerList = <
   TPartnerType extends PartnerType | undefined | null = undefined | null,
->(
-  type: TPartnerType,
-) => {
-  const searchParams = useSearchParams();
-
+>({
+  type,
+  keyword,
+  pageIndex = 0,
+  pageSize = 50,
+}: {
+  type?: TPartnerType;
+  keyword?: string | null;
+  pageIndex?: number;
+  pageSize?: number;
+}) => {
   return useQuery(
-    [type, searchParams.toString()],
+    ['usefetchPartnerList', type, keyword, pageIndex, pageSize],
     () =>
       fetchPartnerList({
         type,
-        keyword: searchParams.get('keyword'),
-        pageIndex: +(searchParams.get('pageIndex') || 0),
-        pageSize: +(searchParams.get('pageSize') || 50),
+        keyword,
+        pageIndex,
+        pageSize,
       }),
     { keepPreviousData: true },
   );

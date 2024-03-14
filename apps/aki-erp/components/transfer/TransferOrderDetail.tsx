@@ -173,7 +173,7 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
                     處理中 <span className="loading loading-ring loading-sm"></span>
                   </>
                 ) : (
-                  <>表格匯出</>
+                  <>PDF 匯出</>
                 )}
               </button>
             </div>
