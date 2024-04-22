@@ -15,6 +15,7 @@ import {
   exportTransferOrderById,
   fetchTransferOrderId,
   patchArtworksBatchId,
+  updateTransferOrder,
 } from '@data-access/apis';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -126,6 +127,12 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (formData: FormData) => updateTransferOrder(formData),
+    onSuccess: async () => await showSuccess('更新成功！'),
+    onError: async () => await showError('更新失敗！'),
+  });
+
   const onSubmit = async (formData: FormData) => {
     const { isConfirmed } = await showConfirm({
       title: '確定新增調撥單？',
@@ -134,6 +141,10 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
 
     if (!isConfirmed) return;
     await createMutation.mutateAsync(formData);
+  };
+
+  const onUpdate = async (formData: FormData) => {
+    await updateMutation.mutateAsync(formData);
   };
 
   const exportOrderMutation = useMutation({
@@ -198,7 +209,7 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
         <div className="bg-base-100 h-full w-full text-center">
           {tableBlock}
 
-          {!disabled && (
+          {!disabled ? (
             <div className="bg-base-100 mt-4 flex justify-center gap-2 md:col-span-2">
               <Button
                 className="btn btn-success"
@@ -213,6 +224,12 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
                 onClick={() => router.back()}
               >
                 <XMarkIcon className="w-4"></XMarkIcon> 取消
+              </button>
+            </div>
+          ) : (
+            <div className="bg-base-100 my-4">
+              <button className="btn btn-warning" onClick={handleSubmit(onUpdate)}>
+                修改
               </button>
             </div>
           )}
