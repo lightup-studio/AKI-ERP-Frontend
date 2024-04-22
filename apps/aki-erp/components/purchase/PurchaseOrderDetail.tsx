@@ -15,6 +15,7 @@ import {
   fetchArtworkDetail,
   fetchPurchaseOrderId,
   patchArtworksBatchId,
+  updatePurchaseOrder,
 } from '@data-access/apis';
 import { ArtworkDetail, ArtworkMetadata, Status } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
@@ -31,6 +32,10 @@ type FormData = {
     name?: string;
     phone?: string;
   };
+  metadata?: {
+    memo?: string;
+    carrier?: string;
+  };
 };
 
 const schema = yup.object().shape({
@@ -38,6 +43,10 @@ const schema = yup.object().shape({
   purchaseTime: yup.date().required('必填項目'),
   salesInformation: yup.object({
     name: yup.string().required('必填項目'),
+  }),
+  metadata: yup.object({
+    memo: yup.string(),
+    carrier: yup.string(),
   }),
 });
 
@@ -77,6 +86,18 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
       label: '聯絡人電話',
       disabled: disabled,
     },
+    {
+      type: 'TEXT',
+      name: 'metadata.memo',
+      label: '備註',
+      disabled: disabled,
+    },
+    {
+      type: 'TEXT',
+      name: 'metadata.carrier',
+      label: '承運人',
+      disabled: disabled,
+    },
   ];
 
   const { fieldForm, setValue, handleSubmit } = useFieldForm<FormData>({
@@ -110,6 +131,7 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
     setValue('purchaseTime', purchaseTime);
     setValue('salesCompany', data.salesCompany);
     setValue('salesInformation', data.salesInformation);
+    setValue('metadata', data.metadata);
   }, [data]);
 
   const { table, tableBlock } = useArtworksOrderTable({
@@ -128,6 +150,10 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
           salesCompany: formData.salesCompany,
           purchaseTime: formData.purchaseTime,
           salesInformation: formData.salesInformation,
+          metadata: {
+            memo: formData.metadata?.memo,
+            carrier: formData.metadata?.carrier,
+          },
         }),
         patchArtworksBatchId({
           idList: artworkIdList,
@@ -149,6 +175,12 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (formData: FormData) => updatePurchaseOrder(formData),
+    onSuccess: async () => await showSuccess('更新成功！'),
+    onError: async () => await showError('更新失敗！'),
+  });
+
   const onSubmit = async (formData: FormData) => {
     const { isConfirmed } = await showConfirm({
       title: '確定新增進貨單？',
@@ -157,6 +189,10 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
 
     if (!isConfirmed) return;
     await createMutation.mutateAsync(formData);
+  };
+
+  const onUpdate = async (formData: FormData) => {
+    await updateMutation.mutateAsync(formData);
   };
 
   const exportOrderMutation = useMutation({
@@ -239,6 +275,12 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
               </button>
             </div>
           )}
+
+          <div className="bg-base-100 my-4">
+            <button className="btn btn-warning" onClick={handleSubmit(onUpdate)}>
+              修改
+            </button>
+          </div>
         </div>
       </div>
     </>
