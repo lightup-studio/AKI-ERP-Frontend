@@ -129,7 +129,6 @@ const Artists = () => {
       zhName: '',
       enName: '',
       address: '',
-      telephone: '',
       metadata: {
         email: '',
       },
@@ -189,9 +188,7 @@ const Artists = () => {
               <label className="font-bold">電話</label>
               <div className="relative flex-1">
                 <input
-                  className={cx('input input-bordered w-full text-center', {
-                    'input-error': errors.telephone,
-                  })}
+                  className="input input-bordered w-full text-center"
                   placeholder="請輸入電話"
                   {...register('telephone')}
                 />
