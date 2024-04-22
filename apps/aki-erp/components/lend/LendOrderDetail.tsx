@@ -14,6 +14,7 @@ import {
   exportLendOrderById,
   fetchLendOrderId,
   patchArtworksBatchId,
+  updateLendOrder,
 } from '@data-access/apis';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -34,7 +35,10 @@ type FormData = {
     phone?: string;
     address?: string;
   };
-  memo?: string;
+  memo?: any;
+  metadata?: {
+    carrier?: string;
+  };
 };
 
 const schema = yup.object().shape({
@@ -49,7 +53,10 @@ const schema = yup.object().shape({
     phone: yup.string().required('必填項目'),
     address: yup.string().required('必填項目'),
   }),
-  memo: yup.string(),
+  memo: yup.string().nullable(),
+  metadata: yup.object({
+    carrier: yup.string(),
+  }),
 });
 
 interface LendOrderDetailProps {
@@ -109,6 +116,12 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
       label: '備註',
       disabled: disabled,
     },
+    {
+      type: 'TEXT',
+      name: 'metadata.carrier',
+      label: '承運人',
+      disabled: disabled,
+    },
   ];
 
   const { fieldForm, setValue, handleSubmit } = useFieldForm<FormData>({
@@ -133,6 +146,7 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
     setValue('receiverInformation', data.receiverInformation);
     setValue('contactPersonInformation', data.contactPersonInformation);
     setValue('memo', data.memo);
+    setValue('metadata', data.metadata);
   }, [data]);
 
   const { table, tableBlock } = useArtworksOrderTable({
@@ -153,6 +167,7 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
           receiverInformation: formData.receiverInformation,
           contactPersonInformation: formData.contactPersonInformation,
           memo: formData.memo,
+          metadata: formData.metadata,
         }),
         patchArtworksBatchId({
           idList: artworkIdList,
@@ -174,6 +189,12 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (formData: FormData) => updateLendOrder(formData),
+    onSuccess: async () => await showSuccess('更新成功！'),
+    onError: async () => await showError('更新失敗！'),
+  });
+
   const onSubmit = async (formData: FormData) => {
     const { isConfirmed } = await showConfirm({
       title: '確定新增借出單？',
@@ -182,6 +203,10 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
 
     if (!isConfirmed) return;
     await createMutation.mutateAsync(formData);
+  };
+
+  const onUpdate = async (formData: FormData) => {
+    await updateMutation.mutateAsync(formData);
   };
 
   const exportOrderMutation = useMutation({
@@ -246,7 +271,7 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
         <div className="bg-base-100 h-full w-full text-center">
           {tableBlock}
 
-          {!disabled && (
+          {!disabled ? (
             <div className="bg-base-100 mt-4 flex justify-center gap-2 md:col-span-2">
               <Button
                 className="btn btn-success"
@@ -261,6 +286,12 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
                 onClick={() => router.back()}
               >
                 <XMarkIcon className="w-4"></XMarkIcon> 取消
+              </button>
+            </div>
+          ) : (
+            <div className="bg-base-100 my-4">
+              <button className="btn btn-warning" onClick={handleSubmit(onUpdate)}>
+                修改
               </button>
             </div>
           )}

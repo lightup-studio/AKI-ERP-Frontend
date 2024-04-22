@@ -103,6 +103,7 @@ export interface ArtworkMetadata {
   salesPhone?: string;
   salesAddress?: string;
   salesDate?: string;
+  carrier?: string;
 }
 
 interface AgentGallery {
