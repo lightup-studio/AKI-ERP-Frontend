@@ -150,10 +150,7 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
           salesCompany: formData.salesCompany,
           purchaseTime: formData.purchaseTime,
           salesInformation: formData.salesInformation,
-          metadata: {
-            memo: formData.metadata?.memo,
-            carrier: formData.metadata?.carrier,
-          },
+          metadata: formData.metadata,
         }),
         patchArtworksBatchId({
           idList: artworkIdList,
@@ -257,8 +254,8 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
         <div className="bg-base-100 h-full w-full text-center">
           {tableBlock}
 
-          {!disabled && (
-            <div className="bg-base-100 mt-4 flex justify-center gap-2 md:col-span-2">
+          {!disabled ? (
+            <div className="bg-base-100 my-4 flex justify-center gap-2 md:col-span-2">
               <Button
                 className="btn btn-success"
                 isLoading={createMutation.isLoading}
@@ -274,13 +271,13 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
                 <XMarkIcon className="w-4"></XMarkIcon> 取消
               </button>
             </div>
+          ) : (
+            <div className="bg-base-100 my-4">
+              <button className="btn btn-warning" onClick={handleSubmit(onUpdate)}>
+                修改
+              </button>
+            </div>
           )}
-
-          <div className="bg-base-100 my-4">
-            <button className="btn btn-warning" onClick={handleSubmit(onUpdate)}>
-              修改
-            </button>
-          </div>
         </div>
       </div>
     </>
