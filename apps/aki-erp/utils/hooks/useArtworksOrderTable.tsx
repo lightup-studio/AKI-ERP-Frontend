@@ -103,7 +103,7 @@ const useArtworksOrderTable = ({
       cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
         const { length, width, height } = cell.getValue<ArtworkDetail['metadata']>() || {};
         return length || width || height
-          ? `${length && `長 ${length} cm`} ${width && `x 寬 ${width} cm`} ${
+          ? `${length && `長 ${length}`} ${width && `x 寬 ${width}`} ${
               height && `x 高 ${height} cm`
             }`
           : '無';
