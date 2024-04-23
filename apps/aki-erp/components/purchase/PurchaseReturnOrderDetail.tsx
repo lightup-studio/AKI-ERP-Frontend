@@ -238,7 +238,7 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
                 table.setPageSize(Number(e.target.value));
               }}
             >
-              {[10, 30, 50, 80, 100].map((pageSize) => (
+              {[10, 20, 50, 100].map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   {pageSize} 筆
                 </option>

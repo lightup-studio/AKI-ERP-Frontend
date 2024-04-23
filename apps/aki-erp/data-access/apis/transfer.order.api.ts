@@ -24,7 +24,7 @@ export const fetchTransferOrder = async (
     if (key === 'serialNumbers') return query.append('metadatas', `{"serialNumber":"${value}"}`);
     if (key === 'pageIndex') {
       const pageIndex = +(params.get('pageIndex') || 0);
-      const pageSize = +(params.get('pageSize') || 50);
+      const pageSize = +(params.get('pageSize') || 20);
       return query.append('offset', `${pageIndex * pageSize}`);
     }
     if (key === 'pageSize') return query.append('take', value);

@@ -118,7 +118,7 @@ export async function fetchArtworkList(
       if (key === 'agentGalleries') return `metadatas={"agentGalleries":"[{'name':'${value}'}]"}`;
       if (key === 'pageIndex') {
         const pageIndex = +(searchParams?.get('pageIndex') || 0);
-        const pageSize = +(searchParams?.get('pageSize') || 50);
+        const pageSize = +(searchParams?.get('pageSize') || 20);
         return `offset=${pageIndex * pageSize}`;
       }
       if (key === 'pageSize') return `take=${value}`;

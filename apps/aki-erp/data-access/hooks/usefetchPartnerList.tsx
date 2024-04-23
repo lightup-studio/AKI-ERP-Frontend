@@ -8,7 +8,7 @@ export const usefetchPartnerList = <
   type,
   keyword,
   pageIndex = 0,
-  pageSize = 50,
+  pageSize = 20,
 }: {
   type?: TPartnerType;
   keyword?: string | null;

@@ -31,7 +31,7 @@ const Company = () => {
 
   const params = new URLSearchParams(searchParams);
   const pageIndex = +(params.get('pageIndex') || 0);
-  const pageSize = +(params.get('pageSize') || 50);
+  const pageSize = +(params.get('pageSize') || 20);
 
   const [keyword, setKeyword] = useState(searchParams.get('keyword'));
 
@@ -275,7 +275,7 @@ const Company = () => {
                 table.setPageSize(Number(e.target.value));
               }}
             >
-              {[10, 30, 50, 80, 100].map((pageSize) => (
+              {[10, 20, 50, 100].map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   {pageSize} 筆
                 </option>

@@ -6,7 +6,7 @@ const url = '/api/Users';
 export const fetchUsers = async (queryString?: string): Promise<Pagination<User>> => {
   const params = new URLSearchParams(queryString);
   const pageIndex = +(params.get('pageIndex') || 0);
-  const pageSize = +(params.get('pageSize') || 50);
+  const pageSize = +(params.get('pageSize') || 20);
   const offset = pageIndex * pageSize;
 
   const res = await axios.get(url);
