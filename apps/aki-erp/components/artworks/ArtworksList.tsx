@@ -145,6 +145,11 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
       },
     },
     {
+      id: 'edition',
+      header: '版次',
+      accessorKey: 'metadata.edition',
+    },
+    {
       id: 'storeType',
       header: '庫存狀態',
       accessorKey: 'metadata',
