@@ -175,6 +175,7 @@ const ShipmentOrderDetail: React.FC<ShipmentOrderDetailProps> = ({ disabled }) =
           properties: {
             metadata: {
               storeType: StoreType.SHIPPING,
+              salesType: 'sold',
               shippingDepartment: formData.shippingDepartment,
               returnedShippingDepartment: undefined,
             },
