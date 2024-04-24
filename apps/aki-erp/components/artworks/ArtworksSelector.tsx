@@ -3,15 +3,12 @@
 import { useEffect } from 'react';
 
 import SearchInput from '@components/shared/field/SearchField';
-import {
-  assetsTypeOptions,
-  salesTypeOptions,
-  storeTypeOptionMap,
-} from '@constants/artwork.constant';
+import { assetsTypeOptions, salesTypeOptions } from '@constants/artwork.constant';
 import { CheckIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import useArtworksTable, { selectColumn } from '@utils/hooks/useArtworksTable';
+import { showStoreTypeText } from '@utils/showStoreTypeText';
 import cx from 'classnames';
 import { ArtworkDetail, Status } from 'data-access/models';
 import Link from 'next/link';
@@ -147,8 +144,8 @@ const ArtworksSelector = ({
       header: '庫存狀態',
       accessorKey: 'metadata',
       cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
-        const storeTypeId = cell.getValue()?.storeType ?? 'inStock';
-        return storeTypeOptionMap[storeTypeId].label;
+        const storeTypeId = cell.getValue()?.storeType;
+        return showStoreTypeText(storeTypeId);
       },
     },
     {

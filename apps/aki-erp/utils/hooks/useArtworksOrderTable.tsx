@@ -3,16 +3,13 @@
 import { useState } from 'react';
 
 import { ArtworksOrderAddBtn } from '@components/artworks';
-import {
-  assetsTypeOptionMap,
-  salesTypeOptionMap,
-  storeTypeOptionMap,
-} from '@constants/artwork.constant';
+import { assetsTypeOptionMap, salesTypeOptionMap } from '@constants/artwork.constant';
 import { createOrUpdateArtworkDetail } from '@data-access/apis';
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { useMutation } from '@tanstack/react-query';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { useTable } from '@utils/hooks';
+import { showStoreTypeText } from '@utils/showStoreTypeText';
 import { ArtworkDetail } from 'data-access/models';
 import Link from 'next/link';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
@@ -159,8 +156,8 @@ const useArtworksOrderTable = ({
       header: '庫存狀態',
       accessorKey: 'metadata',
       cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
-        const storeTypeId = cell.getValue()?.storeType ?? 'inStock';
-        return storeTypeOptionMap[storeTypeId].label;
+        const storeTypeId = cell.getValue()?.storeType;
+        return showStoreTypeText(storeTypeId);
       },
     },
     {

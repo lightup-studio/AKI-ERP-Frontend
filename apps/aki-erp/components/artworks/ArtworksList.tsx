@@ -3,12 +3,7 @@
 import { useMemo } from 'react';
 
 import SearchField from '@components/shared/field/SearchField';
-import {
-  StoreType,
-  assetsTypeOptions,
-  salesTypeOptions,
-  storeTypeOptionMap,
-} from '@constants/artwork.constant';
+import { StoreType, assetsTypeOptions, salesTypeOptions } from '@constants/artwork.constant';
 import { deleteArtworks, patchArtworks } from '@data-access/apis/artworks.api';
 import { ArtworkDetail, Status } from '@data-access/models';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
@@ -21,6 +16,7 @@ import { CellContext, ColumnDef } from '@tanstack/react-table';
 
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import useArtworksTable, { selectColumn } from '@utils/hooks/useArtworksTable';
+import { showStoreTypeText } from '@utils/showStoreTypeText';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ArtworksTitleProps } from './ArtworksTitle';
@@ -154,8 +150,8 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
       header: '庫存狀態',
       accessorKey: 'metadata',
       cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
-        const storeTypeId = cell.getValue()?.storeType ?? 'inStock';
-        return storeTypeOptionMap[storeTypeId].label;
+        const storeTypeId = cell.getValue()?.storeType;
+        return showStoreTypeText(storeTypeId);
       },
     },
     {
