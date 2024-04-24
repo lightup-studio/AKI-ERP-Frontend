@@ -188,7 +188,6 @@ const useArtworksOrderTable = ({
     data: [...artworks, ...selectedArtworks],
     totalCount: artworks.length + selectedArtworks.length,
     columns,
-    disabled,
     isLoading: disabled ? isLoading : false,
   });
 

@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import dateFnsFormat from 'date-fns/format';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
 import * as yup from 'yup';
 
@@ -12,10 +12,12 @@ import { StoreType } from '@constants/artwork.constant';
 import {
   createRepairReturnOrder,
   exportRepairReturnOrderById,
+  fetchArtworkDetail,
   fetchRepairReturnOrderId,
   patchArtworksBatchId,
   updateRepairReturnOrder,
 } from '@data-access/apis';
+import { ArtworkDetail, ArtworkMetadata } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -60,6 +62,9 @@ interface RepairReturnOrderDetailProps {
 const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disabled }) => {
   const router = useRouter();
   const { id } = useParams();
+  const searchParams = useSearchParams();
+
+  const [draftArtworks, setDraftArtworks] = useState<ArtworkDetail<ArtworkMetadata>[]>([]);
 
   const configs: FieldConfig<FormData>[] = [
     {
@@ -140,8 +145,15 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
     setValue('memo', data.memo);
   }, [data]);
 
+  useEffect(() => {
+    const artworkIds = searchParams.getAll('artworkId');
+    Promise.all(artworkIds.map((item) => fetchArtworkDetail(item))).then((list) =>
+      setDraftArtworks(list),
+    );
+  }, []);
+
   const { table, tableBlock } = useArtworksOrderTable({
-    artworks: data?.artworks,
+    artworks: [...draftArtworks, ...(data?.artworks || [])],
     disabled,
     isLoading,
   });
@@ -173,7 +185,7 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
     },
     onSuccess: async () => {
       await showSuccess('新增成功！');
-      router.back();
+      router.push('/repair/return-orders');
     },
     onError: async () => {
       await showError('新增失敗！');

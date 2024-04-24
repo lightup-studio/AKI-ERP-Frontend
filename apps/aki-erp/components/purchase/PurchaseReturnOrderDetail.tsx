@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import dateFnsFormat from 'date-fns/format';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
 import * as yup from 'yup';
 
@@ -12,10 +12,12 @@ import { StoreType } from '@constants/artwork.constant';
 import {
   createPurchaseReturnOrder,
   exportPurchaseReturnOrderById,
+  fetchArtworkDetail,
   fetchPurchaseReturnOrderId,
   patchArtworksBatchId,
   updatePurchaseReturnOrder,
 } from '@data-access/apis';
+import { ArtworkDetail, ArtworkMetadata } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -58,6 +60,9 @@ interface PurchaseReturnOrderDetailProps {
 const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ disabled }) => {
   const router = useRouter();
   const { id } = useParams();
+  const searchParams = useSearchParams();
+
+  const [draftArtworks, setDraftArtworks] = useState<ArtworkDetail<ArtworkMetadata>[]>([]);
 
   const configs: FieldConfig<FormData>[] = [
     {
@@ -133,8 +138,15 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
     setValue('purchaseReturnTime', purchaseReturnTime);
   }, [data]);
 
+  useEffect(() => {
+    const artworkIds = searchParams.getAll('artworkId');
+    Promise.all(artworkIds.map((item) => fetchArtworkDetail(item))).then((list) =>
+      setDraftArtworks(list),
+    );
+  }, []);
+
   const { table, tableBlock } = useArtworksOrderTable({
-    artworks: data?.artworks,
+    artworks: [...draftArtworks, ...(data?.artworks || [])],
     disabled,
     isLoading,
   });
@@ -163,7 +175,7 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
     },
     onSuccess: async () => {
       await showSuccess('新增成功！');
-      router.back();
+      router.push('/purchase/return-orders');
     },
     onError: async () => {
       await showError('新增失敗！');
