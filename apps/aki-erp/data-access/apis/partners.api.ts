@@ -1,3 +1,4 @@
+import { DEFAULT_PAGE_SIZE } from '@constants/page.constant';
 import axios from '@contexts/axios';
 import { Pagination, Partner, PartnerType } from '@data-access/models';
 
@@ -7,7 +8,7 @@ export async function fetchPartnerList<
   type,
   keyword,
   pageIndex = 0,
-  pageSize = 20,
+  pageSize = DEFAULT_PAGE_SIZE,
 }: {
   type?: TPartnerType;
   keyword?: string | null;

@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 
 import SearchInput from '@components/shared/field/SearchField';
 import { assetsTypeOptions, salesTypeOptions } from '@constants/artwork.constant';
+import { PAGE_SIZES } from '@constants/page.constant';
 import { CheckIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
@@ -252,7 +253,7 @@ const ArtworksSelector = ({
                   table.setPageSize(Number(e.target.value));
                 }}
               >
-                {[10, 20, 50, 100].map((pageSize) => (
+                {PAGE_SIZES.map((pageSize) => (
                   <option key={pageSize} value={pageSize}>
                     {pageSize} 筆
                   </option>

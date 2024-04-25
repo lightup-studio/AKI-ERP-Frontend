@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { UpdateArtistDialog } from '@components/artists';
 import SearchInput from '@components/shared/field/SearchField';
 import { formSchema } from '@constants/artists.formSchema';
+import { DEFAULT_PAGE_SIZE, PAGE_SIZES } from '@constants/page.constant';
 import { usefetchPartnerList } from '@data-access/hooks';
 import { PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -31,7 +32,7 @@ const Artists = () => {
 
   const params = new URLSearchParams(searchParams);
   const pageIndex = +(params.get('pageIndex') || 0);
-  const pageSize = +(params.get('pageSize') || 20);
+  const pageSize = +(params.get('pageSize') || DEFAULT_PAGE_SIZE);
 
   const [keyword, setKeyword] = useState(params.get('keyword'));
 
@@ -272,7 +273,7 @@ const Artists = () => {
                 table.setPageSize(Number(e.target.value));
               }}
             >
-              {[10, 20, 50, 100].map((pageSize) => (
+              {PAGE_SIZES.map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   {pageSize} 筆
                 </option>

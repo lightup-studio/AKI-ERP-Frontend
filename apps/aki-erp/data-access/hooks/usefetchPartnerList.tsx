@@ -1,3 +1,4 @@
+import { DEFAULT_PAGE_SIZE } from '@constants/page.constant';
 import { fetchPartnerList } from '@data-access/apis/partners.api';
 import { PartnerType } from '@data-access/models';
 import { useQuery } from '@tanstack/react-query';
@@ -8,7 +9,7 @@ export const usefetchPartnerList = <
   type,
   keyword,
   pageIndex = 0,
-  pageSize = 20,
+  pageSize = DEFAULT_PAGE_SIZE,
 }: {
   type?: TPartnerType;
   keyword?: string | null;

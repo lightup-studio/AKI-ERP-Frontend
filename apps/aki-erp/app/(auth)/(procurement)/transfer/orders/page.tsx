@@ -9,6 +9,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 
 import { ArtworksBatchUpdateDialog, ArtworksPreviewBtn } from '@components/artworks';
 import { SearchField } from '@components/shared/field';
+import { PAGE_SIZES } from '@constants/page.constant';
 import {
   deleteTransferOrderId,
   exportTransferOrdersByIds,
@@ -181,7 +182,7 @@ const TransferOrders = () => {
                 table.setPageSize(Number(e.target.value));
               }}
             >
-              {[10, 20, 50, 100].map((pageSize) => (
+              {PAGE_SIZES.map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   {pageSize} 筆
                 </option>

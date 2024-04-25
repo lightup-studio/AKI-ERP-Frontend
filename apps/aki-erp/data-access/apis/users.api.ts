@@ -1,3 +1,4 @@
+import { DEFAULT_PAGE_SIZE } from '@constants/page.constant';
 import axios from '@contexts/axios';
 import { Pagination, User } from '@data-access/models';
 
@@ -6,7 +7,7 @@ const url = '/api/Users';
 export const fetchUsers = async (queryString?: string): Promise<Pagination<User>> => {
   const params = new URLSearchParams(queryString);
   const pageIndex = +(params.get('pageIndex') || 0);
-  const pageSize = +(params.get('pageSize') || 20);
+  const pageSize = +(params.get('pageSize') || DEFAULT_PAGE_SIZE);
   const offset = pageIndex * pageSize;
 
   const res = await axios.get(url);

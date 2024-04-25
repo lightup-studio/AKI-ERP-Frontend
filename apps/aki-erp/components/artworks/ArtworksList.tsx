@@ -19,6 +19,7 @@ import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
 import { useMutation } from '@tanstack/react-query';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 
+import { PAGE_SIZES } from '@constants/page.constant';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import useArtworksTable, { selectColumn } from '@utils/hooks/useArtworksTable';
 import { showStoreTypeText } from '@utils/showStoreTypeText';
@@ -281,7 +282,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
               table.setPageSize(Number(e.target.value));
             }}
           >
-            {[10, 20, 50, 100].map((pageSize) => (
+            {PAGE_SIZES.map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 {pageSize} 筆
               </option>

@@ -1,3 +1,4 @@
+import { DEFAULT_PAGE_SIZE } from '@constants/page.constant';
 import axios from '@contexts/axios';
 import { CreateOrUpdateLendOrderRequest, LendOrder, Pagination, Status } from '@data-access/models';
 
@@ -19,7 +20,7 @@ export const fetchLendOrder = async (
     if (key === 'serialNumbers') return query.append('metadatas', `{"serialNumber":"${value}"}`);
     if (key === 'pageIndex') {
       const pageIndex = +(params.get('pageIndex') || 0);
-      const pageSize = +(params.get('pageSize') || 20);
+      const pageSize = +(params.get('pageSize') || DEFAULT_PAGE_SIZE);
       return query.append('offset', `${pageIndex * pageSize}`);
     }
     if (key === 'pageSize') return query.append('take', value);
