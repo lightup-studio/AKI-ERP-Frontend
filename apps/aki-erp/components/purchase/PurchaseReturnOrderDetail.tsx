@@ -74,7 +74,7 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
     {
       type: 'DATE',
       name: 'purchaseReturnTime',
-      label: '進貨日期',
+      label: '退還日期',
       disabled: disabled,
     },
     {
