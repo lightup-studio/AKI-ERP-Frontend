@@ -190,7 +190,7 @@ const ShipmentReturnOrderDetail: React.FC<ShipmentReturnOrderDetailProps> = ({ d
   useEffect(() => {
     if (updateMutation.isSuccess) showSuccess('更新成功！');
     if (updateMutation.isError) showError('更新失敗！');
-  }, [updateMutation.isSuccess]);
+  }, [updateMutation.isSuccess, updateMutation.isError]);
 
   const onSubmit = async (formData: FormData) => {
     const { isConfirmed } = await showConfirm({
