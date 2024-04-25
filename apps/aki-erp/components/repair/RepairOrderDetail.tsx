@@ -281,16 +281,18 @@ const RepairOrderDetail: React.FC<RepairOrderDetailProps> = ({ disabled }) => {
         <div className="divider my-2"></div>
 
         <div className="bg-base-100 h-full w-full text-center">
-          <div className="flex items-center gap-2">
-            <span>已選擇 {selectedRowsCount} 筆</span>
-            <button
-              className="btn btn-accent"
-              onClick={handleAddOrders}
-              disabled={selectedRowsCount === 0}
-            >
-              加入維修歸還單
-            </button>
-          </div>
+          {disabled && (
+            <div className="flex items-center gap-2">
+              <span>已選擇 {selectedRowsCount} 筆</span>
+              <button
+                className="btn btn-accent"
+                onClick={handleAddOrders}
+                disabled={selectedRowsCount === 0}
+              >
+                加入維修歸還單
+              </button>
+            </div>
+          )}
 
           {tableBlock}
 
