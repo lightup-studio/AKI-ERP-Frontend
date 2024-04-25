@@ -37,7 +37,7 @@ type FormData = {
     phone?: string;
     address?: string;
   };
-  memo?: any;
+  memo?: string;
   metadata?: {
     carrier?: string;
   };
@@ -55,7 +55,7 @@ const schema = yup.object().shape({
     phone: yup.string().required('必填項目'),
     address: yup.string().required('必填項目'),
   }),
-  memo: yup.string().nullable(),
+  memo: yup.string(),
   metadata: yup.object({
     carrier: yup.string(),
   }),
@@ -147,7 +147,7 @@ const ShipmentOrderDetail: React.FC<ShipmentOrderDetailProps> = ({ disabled }) =
     setValue('contactPersonInformation', data.contactPersonInformation);
     setValue('receiverInformation', data.receiverInformation);
     setValue('shippingDepartment', data.shippingDepartment);
-    setValue('memo', data.memo);
+    setValue('memo', data.memo || '');
     setValue('metadata', data.metadata);
   }, [data]);
 
