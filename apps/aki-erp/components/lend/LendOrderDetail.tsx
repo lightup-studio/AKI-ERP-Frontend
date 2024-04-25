@@ -192,9 +192,12 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
 
   const updateMutation = useMutation({
     mutationFn: (formData: FormData) => updateLendOrder(formData),
-    onSuccess: async () => await showSuccess('更新成功！'),
-    onError: async () => await showError('更新失敗！'),
   });
+
+  useEffect(() => {
+    if (updateMutation.isSuccess) showSuccess('更新成功！');
+    if (updateMutation.isError) showError('更新失敗！');
+  }, [updateMutation.isSuccess]);
 
   const onSubmit = async (formData: FormData) => {
     const { isConfirmed } = await showConfirm({
