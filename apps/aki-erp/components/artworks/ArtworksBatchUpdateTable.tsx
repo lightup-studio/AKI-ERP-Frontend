@@ -44,7 +44,7 @@ const ArtworksBatchUpdateTable: React.FC<ArtworksBatchUpdateTableProps> = ({
       ),
     },
     {
-      header: '在庫位置',
+      header: '庫存位置',
       cell: ({ row }) => {
         return (
           <div className="flex items-center gap-2">

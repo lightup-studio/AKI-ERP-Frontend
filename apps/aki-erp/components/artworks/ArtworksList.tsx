@@ -3,7 +3,12 @@
 import { useMemo } from 'react';
 
 import SearchField from '@components/shared/field/SearchField';
-import { StoreType, assetsTypeOptions, salesTypeOptions } from '@constants/artwork.constant';
+import {
+  StoreType,
+  assetsTypeOptions,
+  salesTypeOptions,
+  warehouseMap,
+} from '@constants/artwork.constant';
 import { deleteArtworks, patchArtworks } from '@data-access/apis/artworks.api';
 import { ArtworkDetail, Status } from '@data-access/models';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
@@ -195,6 +200,14 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
           },
         });
       },
+    },
+    {
+      id: 'warehouseId',
+      header: '庫存位置',
+      accessorKey: 'warehouseId',
+      cell: ({ row }) => (
+        <>{row.original.warehouseId ? warehouseMap[row.original.warehouseId] : ''}</>
+      ),
     },
   ];
 

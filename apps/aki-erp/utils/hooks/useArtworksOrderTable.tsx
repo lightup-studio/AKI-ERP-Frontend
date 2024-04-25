@@ -126,7 +126,7 @@ const useArtworksOrderTable = ({
       },
     },
     {
-      header: '在庫位置',
+      header: '庫存位置',
       accessorKey: 'warehouseId',
       cell: ({ row }) => {
         const data = row.original;
