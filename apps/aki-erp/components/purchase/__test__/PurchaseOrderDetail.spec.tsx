@@ -38,12 +38,14 @@ describe('Purchase order', () => {
     render(await act(() => <PurchaseOrderDetail />), { wrapper });
 
     const labels = screen.getAllByRole('label');
-    expect(labels).toHaveLength(4);
+    expect(labels).toHaveLength(6);
 
     await waitFor(async () => expect(await screen.findByText('進貨單位')).toBeInTheDocument());
     await waitFor(async () => expect(await screen.findByText('進貨日期')).toBeInTheDocument());
     await waitFor(async () => expect(await screen.findByText('聯絡人')).toBeInTheDocument());
     await waitFor(async () => expect(await screen.findByText('聯絡人電話')).toBeInTheDocument());
+    await waitFor(async () => expect(await screen.findByText('備註')).toBeInTheDocument());
+    await waitFor(async () => expect(await screen.findByText('承運人')).toBeInTheDocument());
   });
 
   it('should render data', async () => {

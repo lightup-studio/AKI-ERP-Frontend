@@ -13,10 +13,7 @@ export const formSchema = yup.object().shape({
       const { zhName } = this.parent;
       return !!value?.trim() || !!zhName?.trim();
     }),
-  telephone: yup
-    .string()
-    .required('電話必填')
-    .matches(/^[0-9()-\s]+$/, '不能輸入奇怪的字元'),
+  telephone: yup.string(),
   metadata: yup.object().shape({
     email: yup.string().email('Email 格式錯誤'),
   }),

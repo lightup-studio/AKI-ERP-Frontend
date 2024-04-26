@@ -10,6 +10,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { ArtworksBatchUpdateDialog, ArtworksPreviewBtn } from '@components/artworks';
 import { SearchField } from '@components/shared/field';
 import { StoreType } from '@constants/artwork.constant';
+import { PAGE_SIZES } from '@constants/page.constant';
 import {
   deleteRepairOrderId,
   exportRepairOrdersByIds,
@@ -207,7 +208,7 @@ const RepairOrders = () => {
                 table.setPageSize(Number(e.target.value));
               }}
             >
-              {[10, 30, 50, 80, 100].map((pageSize) => (
+              {PAGE_SIZES.map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   {pageSize} 筆
                 </option>

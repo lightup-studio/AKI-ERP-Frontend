@@ -9,12 +9,14 @@ import * as yup from 'yup';
 
 import Button from '@components/shared/Button';
 import { StoreType } from '@constants/artwork.constant';
+import { PAGE_SIZES } from '@constants/page.constant';
 import {
   createPurchaseOrder,
   exportPurchaseOrderById,
   fetchArtworkDetail,
   fetchPurchaseOrderId,
   patchArtworksBatchId,
+  updatePurchaseOrder,
 } from '@data-access/apis';
 import { ArtworkDetail, ArtworkMetadata, Status } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
@@ -31,6 +33,10 @@ type FormData = {
     name?: string;
     phone?: string;
   };
+  metadata?: {
+    memo?: string;
+    carrier?: string;
+  };
 };
 
 const schema = yup.object().shape({
@@ -38,6 +44,10 @@ const schema = yup.object().shape({
   purchaseTime: yup.date().required('必填項目'),
   salesInformation: yup.object({
     name: yup.string().required('必填項目'),
+  }),
+  metadata: yup.object({
+    memo: yup.string(),
+    carrier: yup.string(),
   }),
 });
 
@@ -77,6 +87,18 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
       label: '聯絡人電話',
       disabled: disabled,
     },
+    {
+      type: 'TEXT',
+      name: 'metadata.memo',
+      label: '備註',
+      disabled: disabled,
+    },
+    {
+      type: 'TEXT',
+      name: 'metadata.carrier',
+      label: '承運人',
+      disabled: disabled,
+    },
   ];
 
   const { fieldForm, setValue, handleSubmit } = useFieldForm<FormData>({
@@ -110,9 +132,10 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
     setValue('purchaseTime', purchaseTime);
     setValue('salesCompany', data.salesCompany);
     setValue('salesInformation', data.salesInformation);
+    setValue('metadata', data.metadata);
   }, [data]);
 
-  const { table, tableBlock } = useArtworksOrderTable({
+  const { table, tableBlock, selectedRows, selectedRowsCount } = useArtworksOrderTable({
     artworks: [...draftArtworks, ...(data?.artworks || [])],
     disabled,
     isLoading,
@@ -128,6 +151,7 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
           salesCompany: formData.salesCompany,
           purchaseTime: formData.purchaseTime,
           salesInformation: formData.salesInformation,
+          metadata: formData.metadata,
         }),
         patchArtworksBatchId({
           idList: artworkIdList,
@@ -149,6 +173,15 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (formData: FormData) => updatePurchaseOrder(formData),
+  });
+
+  useEffect(() => {
+    if (updateMutation.isSuccess) showSuccess('更新成功！');
+    if (updateMutation.isError) showError('更新失敗！');
+  }, [updateMutation.isSuccess, updateMutation.isError]);
+
   const onSubmit = async (formData: FormData) => {
     const { isConfirmed } = await showConfirm({
       title: '確定新增進貨單？',
@@ -157,6 +190,10 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
 
     if (!isConfirmed) return;
     await createMutation.mutateAsync(formData);
+  };
+
+  const onUpdate = async (formData: FormData) => {
+    await updateMutation.mutateAsync(formData);
   };
 
   const exportOrderMutation = useMutation({
@@ -173,6 +210,13 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
 
   const onExportOrder = async () => {
     await exportOrderMutation.mutateAsync(+id);
+  };
+
+  const handleAddOrders = () => {
+    const query = new URLSearchParams();
+    selectedRows.map((artwork) => query.append('artworkId', artwork.id.toString()));
+
+    router.push(`/purchase/return-orders/add?${query.toString()}`);
   };
 
   return (
@@ -207,7 +251,7 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
                 table.setPageSize(Number(e.target.value));
               }}
             >
-              {[10, 30, 50, 80, 100].map((pageSize) => (
+              {PAGE_SIZES.map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   {pageSize} 筆
                 </option>
@@ -219,10 +263,23 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
         <div className="divider my-2"></div>
 
         <div className="bg-base-100 h-full w-full text-center">
+          {disabled && (
+            <div className="flex items-center gap-2">
+              <span>已選擇 {selectedRowsCount} 筆</span>
+              <button
+                className="btn btn-accent"
+                onClick={handleAddOrders}
+                disabled={selectedRowsCount === 0}
+              >
+                加入進貨歸還單
+              </button>
+            </div>
+          )}
+
           {tableBlock}
 
-          {!disabled && (
-            <div className="bg-base-100 mt-4 flex justify-center gap-2 md:col-span-2">
+          {!disabled ? (
+            <div className="bg-base-100 my-4 flex justify-center gap-2 md:col-span-2">
               <Button
                 className="btn btn-success"
                 isLoading={createMutation.isLoading}
@@ -236,6 +293,12 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
                 onClick={() => router.back()}
               >
                 <XMarkIcon className="w-4"></XMarkIcon> 取消
+              </button>
+            </div>
+          ) : (
+            <div className="bg-base-100 my-4">
+              <button className="btn btn-warning" onClick={handleSubmit(onUpdate)}>
+                修改
               </button>
             </div>
           )}

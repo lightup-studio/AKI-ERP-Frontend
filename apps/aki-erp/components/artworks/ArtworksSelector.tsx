@@ -3,15 +3,13 @@
 import { useEffect } from 'react';
 
 import SearchInput from '@components/shared/field/SearchField';
-import {
-  assetsTypeOptions,
-  salesTypeOptions,
-  storeTypeOptionMap,
-} from '@constants/artwork.constant';
+import { assetsTypeOptions, salesTypeOptions } from '@constants/artwork.constant';
+import { PAGE_SIZES } from '@constants/page.constant';
 import { CheckIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import useArtworksTable, { selectColumn } from '@utils/hooks/useArtworksTable';
+import { showStoreTypeText } from '@utils/showStoreTypeText';
 import cx from 'classnames';
 import { ArtworkDetail, Status } from 'data-access/models';
 import Link from 'next/link';
@@ -117,7 +115,7 @@ const ArtworksSelector = ({
       cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
         const { length, width, height } = cell.getValue<ArtworkDetail['metadata']>() || {};
         return length || width || height
-          ? `${length && `長 ${length} cm`} ${width && `x 寬 ${width} cm`} ${
+          ? `${length && `長 ${length}`} ${width && `x 寬 ${width}`} ${
               height && `x 高 ${height} cm`
             }`
           : '無';
@@ -147,8 +145,8 @@ const ArtworksSelector = ({
       header: '庫存狀態',
       accessorKey: 'metadata',
       cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
-        const storeTypeId = cell.getValue()?.storeType ?? 'inStock';
-        return storeTypeOptionMap[storeTypeId].label;
+        const storeTypeId = cell.getValue()?.storeType;
+        return showStoreTypeText(storeTypeId);
       },
     },
     {
@@ -255,7 +253,7 @@ const ArtworksSelector = ({
                   table.setPageSize(Number(e.target.value));
                 }}
               >
-                {[10, 30, 50, 80, 100].map((pageSize) => (
+                {PAGE_SIZES.map((pageSize) => (
                   <option key={pageSize} value={pageSize}>
                     {pageSize} 筆
                   </option>

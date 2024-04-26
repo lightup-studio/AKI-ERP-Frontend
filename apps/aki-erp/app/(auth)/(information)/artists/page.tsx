@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { UpdateArtistDialog } from '@components/artists';
 import SearchInput from '@components/shared/field/SearchField';
 import { formSchema } from '@constants/artists.formSchema';
+import { DEFAULT_PAGE_SIZE, PAGE_SIZES } from '@constants/page.constant';
 import { usefetchPartnerList } from '@data-access/hooks';
 import { PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -31,7 +32,7 @@ const Artists = () => {
 
   const params = new URLSearchParams(searchParams);
   const pageIndex = +(params.get('pageIndex') || 0);
-  const pageSize = +(params.get('pageSize') || 50);
+  const pageSize = +(params.get('pageSize') || DEFAULT_PAGE_SIZE);
 
   const [keyword, setKeyword] = useState(params.get('keyword'));
 
@@ -129,7 +130,6 @@ const Artists = () => {
       zhName: '',
       enName: '',
       address: '',
-      telephone: '',
       metadata: {
         email: '',
       },
@@ -189,9 +189,7 @@ const Artists = () => {
               <label className="font-bold">電話</label>
               <div className="relative flex-1">
                 <input
-                  className={cx('input input-bordered w-full text-center', {
-                    'input-error': errors.telephone,
-                  })}
+                  className="input input-bordered w-full text-center"
                   placeholder="請輸入電話"
                   {...register('telephone')}
                 />
@@ -275,7 +273,7 @@ const Artists = () => {
                 table.setPageSize(Number(e.target.value));
               }}
             >
-              {[10, 30, 50, 80, 100].map((pageSize) => (
+              {PAGE_SIZES.map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   {pageSize} 筆
                 </option>

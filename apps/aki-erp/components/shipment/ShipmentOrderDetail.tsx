@@ -10,11 +10,13 @@ import * as yup from 'yup';
 
 import Button from '@components/shared/Button';
 import { StoreType } from '@constants/artwork.constant';
+import { PAGE_SIZES } from '@constants/page.constant';
 import {
   createSalesOrder,
   exportSalesOrderById,
   fetchSalesOrderId,
   patchArtworksBatchId,
+  updateSalesOrder,
 } from '@data-access/apis';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -36,6 +38,9 @@ type FormData = {
     address?: string;
   };
   memo?: string;
+  metadata?: {
+    carrier?: string;
+  };
 };
 
 const schema = yup.object().shape({
@@ -51,6 +56,9 @@ const schema = yup.object().shape({
     address: yup.string().required('必填項目'),
   }),
   memo: yup.string(),
+  metadata: yup.object({
+    carrier: yup.string(),
+  }),
 });
 
 interface ShipmentOrderDetailProps {
@@ -110,6 +118,12 @@ const ShipmentOrderDetail: React.FC<ShipmentOrderDetailProps> = ({ disabled }) =
       label: '備註',
       disabled: disabled,
     },
+    {
+      type: 'TEXT',
+      name: 'metadata.carrier',
+      label: '承運人',
+      disabled: disabled,
+    },
   ];
 
   const { fieldForm, setValue, handleSubmit } = useFieldForm<FormData>({
@@ -133,7 +147,8 @@ const ShipmentOrderDetail: React.FC<ShipmentOrderDetailProps> = ({ disabled }) =
     setValue('contactPersonInformation', data.contactPersonInformation);
     setValue('receiverInformation', data.receiverInformation);
     setValue('shippingDepartment', data.shippingDepartment);
-    setValue('memo', data.memo);
+    setValue('memo', data.memo || '');
+    setValue('metadata', data.metadata);
   }, [data]);
 
   const { table, tableBlock } = useArtworksOrderTable({
@@ -154,12 +169,14 @@ const ShipmentOrderDetail: React.FC<ShipmentOrderDetailProps> = ({ disabled }) =
           receiverInformation: formData.receiverInformation,
           contactPersonInformation: formData.contactPersonInformation,
           memo: formData.memo,
+          metadata: formData.metadata,
         }),
         patchArtworksBatchId({
           idList: artworkIdList,
           properties: {
             metadata: {
               storeType: StoreType.SHIPPING,
+              salesType: 'sold',
               shippingDepartment: formData.shippingDepartment,
               returnedShippingDepartment: undefined,
             },
@@ -176,6 +193,15 @@ const ShipmentOrderDetail: React.FC<ShipmentOrderDetailProps> = ({ disabled }) =
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (formData: FormData) => updateSalesOrder(formData),
+  });
+
+  useEffect(() => {
+    if (updateMutation.isSuccess) showSuccess('更新成功！');
+    if (updateMutation.isError) showError('更新失敗！');
+  }, [updateMutation.isSuccess, updateMutation.isError]);
+
   const onSubmit = async (formData: FormData) => {
     const { isConfirmed } = await showConfirm({
       title: '確定新增出貨單？',
@@ -184,6 +210,10 @@ const ShipmentOrderDetail: React.FC<ShipmentOrderDetailProps> = ({ disabled }) =
 
     if (!isConfirmed) return;
     await createMutation.mutateAsync(formData);
+  };
+
+  const onUpdate = async (formData: FormData) => {
+    await updateMutation.mutateAsync(formData);
   };
 
   const exportOrderMutation = useMutation({
@@ -234,7 +264,7 @@ const ShipmentOrderDetail: React.FC<ShipmentOrderDetailProps> = ({ disabled }) =
                 table.setPageSize(Number(e.target.value));
               }}
             >
-              {[10, 30, 50, 80, 100].map((pageSize) => (
+              {PAGE_SIZES.map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   {pageSize} 筆
                 </option>
@@ -248,7 +278,7 @@ const ShipmentOrderDetail: React.FC<ShipmentOrderDetailProps> = ({ disabled }) =
         <div className="bg-base-100 h-full w-full text-center">
           {tableBlock}
 
-          {!disabled && (
+          {!disabled ? (
             <div className="bg-base-100 mt-4 flex justify-center gap-2 md:col-span-2">
               <Button
                 className="btn btn-success"
@@ -263,6 +293,12 @@ const ShipmentOrderDetail: React.FC<ShipmentOrderDetailProps> = ({ disabled }) =
                 onClick={() => router.back()}
               >
                 <XMarkIcon className="w-4"></XMarkIcon> 取消
+              </button>
+            </div>
+          ) : (
+            <div className="bg-base-100 my-4">
+              <button className="btn btn-warning" onClick={handleSubmit(onUpdate)}>
+                修改
               </button>
             </div>
           )}
