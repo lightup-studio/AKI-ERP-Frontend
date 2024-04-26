@@ -183,3 +183,8 @@ export async function patchArtworksBatchId(
   const res = await axios.patch(`/api/Artworks/batch/id`, data);
   return res.data;
 }
+
+export const exportArtworksByIds = async (idList: number[]) => {
+  const res = await axios.post<{ downloadPageUrl: string }>(`/api/Artworks/exports`, { idList });
+  return res.data;
+};

@@ -1,7 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
-
 import SearchField from '@components/shared/field/SearchField';
 import {
   StoreType,
@@ -9,8 +7,10 @@ import {
   salesTypeOptions,
   warehouseMap,
 } from '@constants/artwork.constant';
-import { deleteArtworks, patchArtworks } from '@data-access/apis/artworks.api';
+import { deleteArtworks, exportArtworksByIds, patchArtworks } from '@data-access/apis/artworks.api';
 import { ArtworkDetail, Status } from '@data-access/models';
+import cx from 'classnames';
+import { useMemo } from 'react';
 import { Button, Dialog, DialogTrigger, Popover } from 'react-aria-components';
 
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
@@ -23,6 +23,7 @@ import { PAGE_SIZES } from '@constants/page.constant';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import useArtworksTable, { selectColumn } from '@utils/hooks/useArtworksTable';
 import { showStoreTypeText } from '@utils/showStoreTypeText';
+import { showWarning } from '@utils/swalUtil';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ArtworksTitleProps } from './ArtworksTitle';
@@ -257,6 +258,30 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
     router.push(`/purchase/orders/add?${query.toString()}`);
   };
 
+  const exportArtworksMutation = useMutation({
+    mutationKey: ['exportArtworks'],
+    mutationFn: exportArtworksByIds,
+  });
+
+  const onExport = async () => {
+    if (selectedRowsCount === 0) {
+      showWarning('請至少選擇1筆借出單！');
+      return;
+    }
+
+    const { downloadPageUrl } = await exportArtworksMutation.mutateAsync(
+      selectedRows.map((item) => item.id),
+    );
+
+    if (!downloadPageUrl) return;
+
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', downloadPageUrl);
+    linkElement.setAttribute('target', '_blank');
+    linkElement.click();
+    linkElement.remove();
+  };
+
   return (
     <div className="card bg-base-100 min-h-full w-full p-6 shadow-xl">
       <div className="mb-3 md:w-1/2">
@@ -270,8 +295,21 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
         </div>
         <div className="flex flex-col justify-between gap-2">
           <div className="flex gap-2 md:flex-col">
-            <button aria-label="export table file" className="btn btn-accent flex-1" disabled>
-              表格匯出
+            <button
+              aria-label="export pdf file"
+              className={cx('btn btn-accent flex-1', {
+                'flex-nowrap whitespace-nowrap': exportArtworksMutation.isLoading,
+              })}
+              onClick={onExport}
+              disabled={exportArtworksMutation.isLoading}
+            >
+              {exportArtworksMutation.isLoading ? (
+                <>
+                  處理中 <span className="loading loading-ring loading-sm"></span>
+                </>
+              ) : (
+                <>表格匯出</>
+              )}
             </button>
           </div>
           <i className="flex-grow"></i>
