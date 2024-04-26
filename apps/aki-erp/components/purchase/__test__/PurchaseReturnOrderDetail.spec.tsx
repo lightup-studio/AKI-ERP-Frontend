@@ -42,7 +42,7 @@ describe('Purchase return order', () => {
     expect(labels).toHaveLength(7);
 
     expect(screen.getByText('進貨退還單位')).toBeInTheDocument();
-    expect(screen.getByText('進貨日期')).toBeInTheDocument();
+    expect(screen.getByText('退還日期')).toBeInTheDocument();
     expect(screen.getByText('聯絡人')).toBeInTheDocument();
     expect(screen.getByText('聯絡人電話')).toBeInTheDocument();
     expect(screen.getByText('收件人')).toBeInTheDocument();

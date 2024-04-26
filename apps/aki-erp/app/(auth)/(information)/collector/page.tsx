@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import UpdateCustomerDialog from '@components/collector/UpdateCustomerDialog';
 import SearchInput from '@components/shared/field/SearchField';
 import { formSchema } from '@constants/collector.formSchema';
+import { DEFAULT_PAGE_SIZE, PAGE_SIZES } from '@constants/page.constant';
 import { usefetchPartnerList } from '@data-access/hooks';
 import { PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -31,7 +32,7 @@ const Collector = () => {
 
   const params = new URLSearchParams(searchParams);
   const pageIndex = +(params.get('pageIndex') || 0);
-  const pageSize = +(params.get('pageSize') || 50);
+  const pageSize = +(params.get('pageSize') || DEFAULT_PAGE_SIZE);
 
   const [keyword, setKeyword] = useState(params.get('keyword'));
 
@@ -297,7 +298,7 @@ const Collector = () => {
                 table.setPageSize(Number(e.target.value));
               }}
             >
-              {[10, 30, 50, 80, 100].map((pageSize) => (
+              {PAGE_SIZES.map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   {pageSize} 筆
                 </option>

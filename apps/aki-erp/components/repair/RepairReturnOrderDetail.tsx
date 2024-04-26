@@ -1,20 +1,24 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import dateFnsFormat from 'date-fns/format';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
 import * as yup from 'yup';
 
 import Button from '@components/shared/Button';
 import { StoreType } from '@constants/artwork.constant';
+import { PAGE_SIZES } from '@constants/page.constant';
 import {
   createRepairReturnOrder,
   exportRepairReturnOrderById,
+  fetchArtworkDetail,
   fetchRepairReturnOrderId,
   patchArtworksBatchId,
+  updateRepairReturnOrder,
 } from '@data-access/apis';
+import { ArtworkDetail, ArtworkMetadata } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -59,6 +63,9 @@ interface RepairReturnOrderDetailProps {
 const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disabled }) => {
   const router = useRouter();
   const { id } = useParams();
+  const searchParams = useSearchParams();
+
+  const [draftArtworks, setDraftArtworks] = useState<ArtworkDetail<ArtworkMetadata>[]>([]);
 
   const configs: FieldConfig<FormData>[] = [
     {
@@ -139,8 +146,15 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
     setValue('memo', data.memo);
   }, [data]);
 
+  useEffect(() => {
+    const artworkIds = searchParams.getAll('artworkId');
+    Promise.all(artworkIds.map((item) => fetchArtworkDetail(item))).then((list) =>
+      setDraftArtworks(list),
+    );
+  }, []);
+
   const { table, tableBlock } = useArtworksOrderTable({
-    artworks: data?.artworks,
+    artworks: [...draftArtworks, ...(data?.artworks || [])],
     disabled,
     isLoading,
   });
@@ -172,12 +186,21 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
     },
     onSuccess: async () => {
       await showSuccess('新增成功！');
-      router.back();
+      router.push('/repair/return-orders');
     },
     onError: async () => {
       await showError('新增失敗！');
     },
   });
+
+  const updateMutation = useMutation({
+    mutationFn: (formData: FormData) => updateRepairReturnOrder(formData),
+  });
+
+  useEffect(() => {
+    if (updateMutation.isSuccess) showSuccess('更新成功！');
+    if (updateMutation.isError) showError('更新失敗！');
+  }, [updateMutation.isSuccess, updateMutation.isError]);
 
   const onSubmit = async (formData: FormData) => {
     const { isConfirmed } = await showConfirm({
@@ -187,6 +210,10 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
 
     if (!isConfirmed) return;
     await createMutation.mutateAsync(formData);
+  };
+
+  const onUpdate = async (formData: FormData) => {
+    await updateMutation.mutateAsync(formData);
   };
 
   const exportOrderMutation = useMutation({
@@ -237,7 +264,7 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
                 table.setPageSize(Number(e.target.value));
               }}
             >
-              {[10, 30, 50, 80, 100].map((pageSize) => (
+              {PAGE_SIZES.map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   {pageSize} 筆
                 </option>
@@ -251,7 +278,7 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
         <div className="bg-base-100 h-full w-full text-center">
           {tableBlock}
 
-          {!disabled && (
+          {!disabled ? (
             <div className="bg-base-100 mt-4 flex justify-center gap-2 md:col-span-2">
               <Button
                 className="btn btn-success"
@@ -266,6 +293,12 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
                 onClick={() => router.back()}
               >
                 <XMarkIcon className="w-4"></XMarkIcon> 取消
+              </button>
+            </div>
+          ) : (
+            <div className="bg-base-100 my-4">
+              <button className="btn btn-warning" onClick={handleSubmit(onUpdate)}>
+                修改
               </button>
             </div>
           )}

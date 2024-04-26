@@ -1,5 +1,6 @@
 'use client';
 
+import { PAGE_SIZES } from '@constants/page.constant';
 import { createUser, deleteUser, fetchUsers } from '@data-access/apis';
 import { User } from '@data-access/models';
 import { PlusIcon } from '@heroicons/react/20/solid';
@@ -182,7 +183,7 @@ const Admins = () => {
               table.setPageSize(Number(e.target.value));
             }}
           >
-            {[10, 30, 50, 80, 100].map((pageSize) => (
+            {PAGE_SIZES.map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 {pageSize} 筆
               </option>

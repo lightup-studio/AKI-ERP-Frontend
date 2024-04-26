@@ -9,11 +9,13 @@ import * as yup from 'yup';
 
 import Button from '@components/shared/Button';
 import { StoreType } from '@constants/artwork.constant';
+import { PAGE_SIZES } from '@constants/page.constant';
 import {
   createLendOrder,
   exportLendOrderById,
   fetchLendOrderId,
   patchArtworksBatchId,
+  updateLendOrder,
 } from '@data-access/apis';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -35,6 +37,9 @@ type FormData = {
     address?: string;
   };
   memo?: string;
+  metadata?: {
+    carrier?: string;
+  };
 };
 
 const schema = yup.object().shape({
@@ -50,6 +55,9 @@ const schema = yup.object().shape({
     address: yup.string().required('必填項目'),
   }),
   memo: yup.string(),
+  metadata: yup.object({
+    carrier: yup.string(),
+  }),
 });
 
 interface LendOrderDetailProps {
@@ -109,6 +117,12 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
       label: '備註',
       disabled: disabled,
     },
+    {
+      type: 'TEXT',
+      name: 'metadata.carrier',
+      label: '承運人',
+      disabled: disabled,
+    },
   ];
 
   const { fieldForm, setValue, handleSubmit } = useFieldForm<FormData>({
@@ -132,10 +146,11 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
     setValue('lendDepartment', data.lendDepartment);
     setValue('receiverInformation', data.receiverInformation);
     setValue('contactPersonInformation', data.contactPersonInformation);
-    setValue('memo', data.memo);
+    setValue('memo', data.memo || '');
+    setValue('metadata', data.metadata);
   }, [data]);
 
-  const { table, tableBlock } = useArtworksOrderTable({
+  const { table, tableBlock, selectedRows, selectedRowsCount } = useArtworksOrderTable({
     artworks: data?.artworks,
     disabled,
     isLoading,
@@ -153,6 +168,7 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
           receiverInformation: formData.receiverInformation,
           contactPersonInformation: formData.contactPersonInformation,
           memo: formData.memo,
+          metadata: formData.metadata,
         }),
         patchArtworksBatchId({
           idList: artworkIdList,
@@ -174,6 +190,15 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (formData: FormData) => updateLendOrder(formData),
+  });
+
+  useEffect(() => {
+    if (updateMutation.isSuccess) showSuccess('更新成功！');
+    if (updateMutation.isError) showError('更新失敗！');
+  }, [updateMutation.isSuccess, updateMutation.isError]);
+
   const onSubmit = async (formData: FormData) => {
     const { isConfirmed } = await showConfirm({
       title: '確定新增借出單？',
@@ -182,6 +207,10 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
 
     if (!isConfirmed) return;
     await createMutation.mutateAsync(formData);
+  };
+
+  const onUpdate = async (formData: FormData) => {
+    await updateMutation.mutateAsync(formData);
   };
 
   const exportOrderMutation = useMutation({
@@ -198,6 +227,13 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
 
   const onExportOrder = async () => {
     await exportOrderMutation.mutateAsync(+id);
+  };
+
+  const handleAddOrders = () => {
+    const query = new URLSearchParams();
+    selectedRows.map((artwork) => query.append('artworkId', artwork.id.toString()));
+
+    router.push(`/lend/return-orders/add?${query.toString()}`);
   };
 
   return (
@@ -232,7 +268,7 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
                 table.setPageSize(Number(e.target.value));
               }}
             >
-              {[10, 30, 50, 80, 100].map((pageSize) => (
+              {PAGE_SIZES.map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   {pageSize} 筆
                 </option>
@@ -244,9 +280,22 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
         <div className="divider my-2"></div>
 
         <div className="bg-base-100 h-full w-full text-center">
+          {disabled && (
+            <div className="flex items-center gap-2">
+              <span>已選擇 {selectedRowsCount} 筆</span>
+              <button
+                className="btn btn-accent"
+                onClick={handleAddOrders}
+                disabled={selectedRowsCount === 0}
+              >
+                加入借出歸還單
+              </button>
+            </div>
+          )}
+
           {tableBlock}
 
-          {!disabled && (
+          {!disabled ? (
             <div className="bg-base-100 mt-4 flex justify-center gap-2 md:col-span-2">
               <Button
                 className="btn btn-success"
@@ -261,6 +310,12 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
                 onClick={() => router.back()}
               >
                 <XMarkIcon className="w-4"></XMarkIcon> 取消
+              </button>
+            </div>
+          ) : (
+            <div className="bg-base-100 my-4">
+              <button className="btn btn-warning" onClick={handleSubmit(onUpdate)}>
+                修改
               </button>
             </div>
           )}

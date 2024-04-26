@@ -7,7 +7,7 @@ import {
   StoreType,
   assetsTypeOptions,
   salesTypeOptions,
-  storeTypeOptionMap,
+  warehouseMap,
 } from '@constants/artwork.constant';
 import { deleteArtworks, patchArtworks } from '@data-access/apis/artworks.api';
 import { ArtworkDetail, Status } from '@data-access/models';
@@ -19,8 +19,10 @@ import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
 import { useMutation } from '@tanstack/react-query';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 
+import { PAGE_SIZES } from '@constants/page.constant';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import useArtworksTable, { selectColumn } from '@utils/hooks/useArtworksTable';
+import { showStoreTypeText } from '@utils/showStoreTypeText';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ArtworksTitleProps } from './ArtworksTitle';
@@ -119,7 +121,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
       cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
         const { length, width, height } = cell.getValue<ArtworkDetail['metadata']>() || {};
         return length || width || height
-          ? `${length && `長 ${length} cm`} ${width && `x 寬 ${width} cm`} ${
+          ? `${length && `長 ${length}`} ${width && `x 寬 ${width}`} ${
               height && `x 高 ${height} cm`
             }`
           : '無';
@@ -145,12 +147,17 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
       },
     },
     {
+      id: 'edition',
+      header: '版次',
+      accessorKey: 'metadata.edition',
+    },
+    {
       id: 'storeType',
       header: '庫存狀態',
       accessorKey: 'metadata',
       cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
-        const storeTypeId = cell.getValue()?.storeType ?? 'inStock';
-        return storeTypeOptionMap[storeTypeId].label;
+        const storeTypeId = cell.getValue()?.storeType;
+        return showStoreTypeText(storeTypeId);
       },
     },
     {
@@ -194,6 +201,14 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
           },
         });
       },
+    },
+    {
+      id: 'warehouseId',
+      header: '庫存位置',
+      accessorKey: 'warehouseId',
+      cell: ({ row }) => (
+        <>{row.original.warehouseId ? warehouseMap[row.original.warehouseId] : ''}</>
+      ),
     },
   ];
 
@@ -267,7 +282,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
               table.setPageSize(Number(e.target.value));
             }}
           >
-            {[10, 30, 50, 80, 100].map((pageSize) => (
+            {PAGE_SIZES.map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 {pageSize} 筆
               </option>

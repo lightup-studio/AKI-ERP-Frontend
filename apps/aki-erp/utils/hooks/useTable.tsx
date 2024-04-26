@@ -1,6 +1,7 @@
 import Table from '@components/shared/Table';
 import TablePagination from '@components/shared/TablePagination';
 import { IndeterminateCheckbox } from '@components/shared/field';
+import { DEFAULT_PAGE_SIZE } from '@constants/page.constant';
 import {
   ColumnDef,
   PaginationState,
@@ -12,7 +13,7 @@ import {
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
-const useTable = <T = any>({
+const useTable = <T = any,>({
   data = [],
   meta,
   columns,
@@ -33,19 +34,21 @@ const useTable = <T = any>({
 
   const params = new URLSearchParams(searchParams);
   const [{ pageSize, pageIndex }, setPagination] = useState<PaginationState>({
-    pageSize: +(params.get('pageSize') || 50),
+    pageSize: +(params.get('pageSize') || DEFAULT_PAGE_SIZE),
     pageIndex: +(params.get('pageIndex') || 0),
   });
 
   useEffect(() => {
     if (
-      pageSize === +(params.get('pageSize') || 50) &&
+      pageSize === +(params.get('pageSize') || DEFAULT_PAGE_SIZE) &&
       pageIndex === +(params.get('pageIndex') || 0)
     ) {
       return;
     }
 
-    pageSize !== 50 ? params.set('pageSize', `${pageSize}`) : params.delete('pageSize');
+    pageSize !== DEFAULT_PAGE_SIZE
+      ? params.set('pageSize', `${pageSize}`)
+      : params.delete('pageSize');
     pageIndex > 0 ? params.set('pageIndex', `${pageIndex}`) : params.delete('pageIndex');
 
     router.push(`${pathname}?${params}`);

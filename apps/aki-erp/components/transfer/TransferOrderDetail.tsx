@@ -10,11 +10,13 @@ import * as yup from 'yup';
 
 import Button from '@components/shared/Button';
 import { StoreType } from '@constants/artwork.constant';
+import { PAGE_SIZES } from '@constants/page.constant';
 import {
   createTransferOrder,
   exportTransferOrderById,
   fetchTransferOrderId,
   patchArtworksBatchId,
+  updateTransferOrder,
 } from '@data-access/apis';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -126,6 +128,15 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (formData: FormData) => updateTransferOrder(formData),
+  });
+
+  useEffect(() => {
+    if (updateMutation.isSuccess) showSuccess('更新成功！');
+    if (updateMutation.isError) showError('更新失敗！');
+  }, [updateMutation.isSuccess, updateMutation.isError]);
+
   const onSubmit = async (formData: FormData) => {
     const { isConfirmed } = await showConfirm({
       title: '確定新增調撥單？',
@@ -134,6 +145,10 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
 
     if (!isConfirmed) return;
     await createMutation.mutateAsync(formData);
+  };
+
+  const onUpdate = async (formData: FormData) => {
+    await updateMutation.mutateAsync(formData);
   };
 
   const exportOrderMutation = useMutation({
@@ -184,7 +199,7 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
                 table.setPageSize(Number(e.target.value));
               }}
             >
-              {[10, 30, 50, 80, 100].map((pageSize) => (
+              {PAGE_SIZES.map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   {pageSize} 筆
                 </option>
@@ -198,7 +213,7 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
         <div className="bg-base-100 h-full w-full text-center">
           {tableBlock}
 
-          {!disabled && (
+          {!disabled ? (
             <div className="bg-base-100 mt-4 flex justify-center gap-2 md:col-span-2">
               <Button
                 className="btn btn-success"
@@ -213,6 +228,12 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
                 onClick={() => router.back()}
               >
                 <XMarkIcon className="w-4"></XMarkIcon> 取消
+              </button>
+            </div>
+          ) : (
+            <div className="bg-base-100 my-4">
+              <button className="btn btn-warning" onClick={handleSubmit(onUpdate)}>
+                修改
               </button>
             </div>
           )}

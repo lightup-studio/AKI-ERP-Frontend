@@ -1,20 +1,24 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import dateFnsFormat from 'date-fns/format';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
 import * as yup from 'yup';
 
 import Button from '@components/shared/Button';
 import { StoreType } from '@constants/artwork.constant';
+import { PAGE_SIZES } from '@constants/page.constant';
 import {
   createPurchaseReturnOrder,
   exportPurchaseReturnOrderById,
+  fetchArtworkDetail,
   fetchPurchaseReturnOrderId,
   patchArtworksBatchId,
+  updatePurchaseReturnOrder,
 } from '@data-access/apis';
+import { ArtworkDetail, ArtworkMetadata } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -57,6 +61,9 @@ interface PurchaseReturnOrderDetailProps {
 const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ disabled }) => {
   const router = useRouter();
   const { id } = useParams();
+  const searchParams = useSearchParams();
+
+  const [draftArtworks, setDraftArtworks] = useState<ArtworkDetail<ArtworkMetadata>[]>([]);
 
   const configs: FieldConfig<FormData>[] = [
     {
@@ -68,7 +75,7 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
     {
       type: 'DATE',
       name: 'purchaseReturnTime',
-      label: '進貨日期',
+      label: '退還日期',
       disabled: disabled,
     },
     {
@@ -132,8 +139,15 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
     setValue('purchaseReturnTime', purchaseReturnTime);
   }, [data]);
 
+  useEffect(() => {
+    const artworkIds = searchParams.getAll('artworkId');
+    Promise.all(artworkIds.map((item) => fetchArtworkDetail(item))).then((list) =>
+      setDraftArtworks(list),
+    );
+  }, []);
+
   const { table, tableBlock } = useArtworksOrderTable({
-    artworks: data?.artworks,
+    artworks: [...draftArtworks, ...(data?.artworks || [])],
     disabled,
     isLoading,
   });
@@ -162,12 +176,21 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
     },
     onSuccess: async () => {
       await showSuccess('新增成功！');
-      router.back();
+      router.push('/purchase/return-orders');
     },
     onError: async () => {
       await showError('新增失敗！');
     },
   });
+
+  const updateMutation = useMutation({
+    mutationFn: (formData: FormData) => updatePurchaseReturnOrder(formData),
+  });
+
+  useEffect(() => {
+    if (updateMutation.isSuccess) showSuccess('更新成功！');
+    if (updateMutation.isError) showError('更新失敗！');
+  }, [updateMutation.isSuccess, updateMutation.isError]);
 
   const onSubmit = async (formData: FormData) => {
     const { isConfirmed } = await showConfirm({
@@ -177,6 +200,10 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
 
     if (!isConfirmed) return;
     await createMutation.mutateAsync(formData);
+  };
+
+  const onUpdate = async (formData: FormData) => {
+    await updateMutation.mutateAsync(formData);
   };
 
   const exportOrderMutation = useMutation({
@@ -227,7 +254,7 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
                 table.setPageSize(Number(e.target.value));
               }}
             >
-              {[10, 30, 50, 80, 100].map((pageSize) => (
+              {PAGE_SIZES.map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   {pageSize} 筆
                 </option>
@@ -241,7 +268,7 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
         <div className="bg-base-100 h-full w-full text-center">
           {tableBlock}
 
-          {!disabled && (
+          {!disabled ? (
             <div className="bg-base-100 mt-4 flex justify-center gap-2 md:col-span-2">
               <Button
                 className="btn btn-success"
@@ -256,6 +283,12 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
                 onClick={() => router.back()}
               >
                 <XMarkIcon className="w-4"></XMarkIcon> 取消
+              </button>
+            </div>
+          ) : (
+            <div className="bg-base-100 my-4">
+              <button className="btn btn-warning" onClick={handleSubmit(onUpdate)}>
+                修改
               </button>
             </div>
           )}
