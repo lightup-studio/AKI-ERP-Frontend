@@ -14,6 +14,8 @@ import {
 import { DEFAULT_PAGE_SIZE } from '@constants/page.constant';
 import { fetchCountryList } from './countries.api';
 
+const url = '/api/Artworks';
+
 export async function fetchSelectOptions() {
   const artworkOtherInfoOptions: ComboboxOption[] = [
     { label: '無', value: 'none' },
@@ -59,12 +61,12 @@ export async function fetchSelectOptions() {
 }
 
 export async function fetchArtistOptions() {
-  const res = await axios.get<string[]>('/api/Artworks/autoComplete/artist');
+  const res = await axios.get<string[]>(`${url}/autoComplete/artist`);
   return res.data.filter(Boolean).map((artist) => ({ label: artist, value: artist }));
 }
 
 export async function fetchSerialNumberOptions() {
-  const res = await axios.get<string[]>('/api/Artworks/autoComplete/metadata/serialNumber');
+  const res = await axios.get<string[]>(`${url}/autoComplete/metadata/serialNumber`);
   return res.data
     .filter(Boolean)
     .map((serialNumber) => ({ label: serialNumber, value: serialNumber }));
@@ -72,7 +74,7 @@ export async function fetchSerialNumberOptions() {
 
 export async function fetchYearAgeOptions() {
   try {
-    const res = await axios.get<string[]>('/api/Artworks/autoComplete/yearAge');
+    const res = await axios.get<string[]>(`${url}/autoComplete/yearAge`);
     return res.data.sort((a, b) => +b - +a).map((yearAge) => ({ label: yearAge, value: yearAge }));
   } catch {
     const options = rangeRight(new Date().getFullYear(), 1980).map((year) => ({
@@ -85,12 +87,12 @@ export async function fetchYearAgeOptions() {
 }
 
 export async function fetchMediaOptions() {
-  const res = await axios.get<string[]>('/api/Artworks/autoComplete/metadata/media');
+  const res = await axios.get<string[]>(`${url}/autoComplete/metadata/media`);
   return res.data.map((media) => ({ label: media, value: media }));
 }
 
 export async function fetchAgentGalleryOptions() {
-  const res = await axios.get<string[]>('/api/Artworks/autoComplete/metadata/agentGalleries');
+  const res = await axios.get<string[]>(`${url}/autoComplete/metadata/agentGalleries`);
 
   const distinctAgentGalleries = res.data
     .map((item) => JSON.parse(item))
@@ -127,7 +129,7 @@ export async function fetchArtworkList(
     })
     .filter(Boolean)
     .join('&');
-  const res = await axios.get<Pagination<ArtworkDetail>>(`/api/artworks/query`, {
+  const res = await axios.get<Pagination<ArtworkDetail>>(`${url}/query`, {
     params: new URLSearchParams(`status=${status}&${queryString}`),
   });
   res.data.pageCount = Math.ceil(res.data.totalCount / res.data.take);
@@ -135,17 +137,17 @@ export async function fetchArtworkList(
 }
 
 export async function fetchArtworkDetail(id: string) {
-  const res = await axios.get<ArtworkDetail>(`/api/Artworks/${id}`);
+  const res = await axios.get<ArtworkDetail>(`${url}/${id}`);
   return res.data;
 }
 
 export async function fetchArtworkDetailByDisplayId(displayId: string) {
-  const res = await axios.get<ArtworkDetail>(`/api/Artworks/DID:${displayId}`);
+  const res = await axios.get<ArtworkDetail>(`${url}/DID:${displayId}`);
   return res.data;
 }
 
 export async function createOrUpdateArtworkDetail(artwork: ArtworkDetail) {
-  const res = await axios.put('/api/Artworks', artwork, {
+  const res = await axios.put(url, artwork, {
     params: {
       allowCreate: true,
     },
@@ -164,7 +166,7 @@ export async function patchArtwork(
   id: number,
   data: Partial<ArtworkDetail<Partial<ArtworkMetadata>>>,
 ) {
-  const res = await axios.patch(`/api/Artworks/${id}`, data);
+  const res = await axios.patch(`${url}/${id}`, data);
   return res.data;
 }
 
@@ -173,13 +175,18 @@ export async function deleteArtworks(ids: number[]) {
 }
 
 export async function deleteArtwork(id: number) {
-  const res = await axios.delete(`/api/Artworks/${id}`);
+  const res = await axios.delete(`${url}/${id}`);
   return res.data;
 }
 
 export async function patchArtworksBatchId(
   data?: CommonBatchPartialUpdateById,
 ): Promise<Array<ArtworkDetail>> {
-  const res = await axios.patch(`/api/Artworks/batch/id`, data);
+  const res = await axios.patch(`${url}/batch/id`, data);
   return res.data;
 }
+
+export const exportArtworksByIds = async (idList: number[]) => {
+  const res = await axios.post<{ downloadPageUrl: string }>(`${url}/exports`, { idList });
+  return res.data;
+};
