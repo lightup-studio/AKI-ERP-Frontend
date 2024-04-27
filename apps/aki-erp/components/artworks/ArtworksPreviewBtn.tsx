@@ -1,41 +1,36 @@
 'use client';
 
+import Dialog from '@components/shared/Dialog';
 import { ArtworkDetail, ArtworkMetadata } from '@data-access/models';
-import { useRef } from 'react';
+import { useState } from 'react';
 
 interface ArtworksPreviewBtnProps {
   artworks?: ArtworkDetail<ArtworkMetadata>[];
 }
 
 const ArtworksPreviewBtn: React.FC<ArtworksPreviewBtnProps> = ({ artworks }) => {
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  const [open, setOpen] = useState(false);
 
   return (
     <>
-      <button className="btn" onClick={() => dialogRef.current?.showModal()}>
+      <button className="btn" onClick={() => setOpen(true)}>
         預覽
       </button>
 
-      <dialog ref={dialogRef} className="modal">
-        <div className="modal-box">
-          <h3 className="mb-4 text-lg font-bold">藝術品</h3>
-          <div className="flex flex-wrap gap-4">
-            {artworks?.map((item) => (
-              <img
-                key={item.id}
-                src={item.imageUrl}
-                alt={item.enName}
-                loading="lazy"
-                className="h-20"
-              />
-            ))}
-          </div>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <h3 className="mb-4 text-lg font-bold">藝術品</h3>
+        <div className="flex flex-wrap gap-4">
+          {artworks?.map((item) => (
+            <img
+              key={item.id}
+              src={item.thumbnailUrl || item.imageUrl}
+              alt={item.enName}
+              loading="lazy"
+              className="h-20"
+            />
+          ))}
         </div>
-
-        <form method="dialog" className="modal-backdrop">
-          <button>close</button>
-        </form>
-      </dialog>
+      </Dialog>
     </>
   );
 };
