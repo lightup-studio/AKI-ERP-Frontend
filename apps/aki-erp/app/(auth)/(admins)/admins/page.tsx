@@ -10,6 +10,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 import { useFieldForm, useTable } from '@utils/hooks';
 import { FieldConfig } from '@utils/hooks/useFieldForm';
+import usePermission, { Action } from '@utils/hooks/usePermission';
 import { showConfirm } from '@utils/swalUtil';
 import cx from 'classnames';
 import { useSearchParams } from 'next/navigation';
@@ -69,6 +70,8 @@ const Admins = () => {
 
   const searchParams = useSearchParams();
 
+  const { hasPermission } = usePermission();
+
   const params = new URLSearchParams(searchParams);
   const { data, isFetching, refetch } = useQuery({
     queryKey: ['fetchUsers', params.toString()],
@@ -118,47 +121,49 @@ const Admins = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="card bg-base-100 min-h-full w-full p-6 shadow-xl">
-        <h2 className="border-accent mb-6 border-l-8 pl-4 text-xl font-bold">新增管理者</h2>
+      {hasPermission([Action.CREATE_ADMIN]) && (
+        <div className="card bg-base-100 min-h-full w-full p-6 shadow-xl">
+          <h2 className="border-accent mb-6 border-l-8 pl-4 text-xl font-bold">新增管理者</h2>
 
-        <form className="flex flex-wrap items-end gap-3" onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-1">
-            <label className="font-bold">帳號</label>
-            <div className="relative flex-1">
-              <input
-                className={cx('input input-bordered w-full text-center', {
-                  'input-error': errors.account,
-                })}
-                placeholder="請輸入帳號"
-                {...register('account')}
-              />
-              {errors.account && (
-                <p className="text-error absolute text-xs italic">{errors.account?.message}</p>
-              )}
+          <form className="flex flex-wrap items-end gap-3" onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex flex-col gap-1">
+              <label className="font-bold">帳號</label>
+              <div className="relative flex-1">
+                <input
+                  className={cx('input input-bordered w-full text-center', {
+                    'input-error': errors.account,
+                  })}
+                  placeholder="請輸入帳號"
+                  {...register('account')}
+                />
+                {errors.account && (
+                  <p className="text-error absolute text-xs italic">{errors.account?.message}</p>
+                )}
+              </div>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="font-bold">角色</label>
-            <div className="relative flex-1">
-              <input
-                className={cx('input input-bordered w-full text-center', {
-                  'input-error': errors.name,
-                })}
-                placeholder="請輸入角色"
-                {...register('name')}
-              />
-              {errors.name && (
-                <p className="text-error absolute text-xs italic">{errors.name?.message}</p>
-              )}
+            <div className="flex flex-col gap-1">
+              <label className="font-bold">角色</label>
+              <div className="relative flex-1">
+                <input
+                  className={cx('input input-bordered w-full text-center', {
+                    'input-error': errors.name,
+                  })}
+                  placeholder="請輸入角色"
+                  {...register('name')}
+                />
+                {errors.name && (
+                  <p className="text-error absolute text-xs italic">{errors.name?.message}</p>
+                )}
+              </div>
             </div>
-          </div>
 
-          <button className="btn btn-info">
-            <PlusIcon className="h-5 w-5"></PlusIcon>
-          </button>
-        </form>
-      </div>
+            <button className="btn btn-info">
+              <PlusIcon className="h-5 w-5"></PlusIcon>
+            </button>
+          </form>
+        </div>
+      )}
 
       <div className="card bg-base-100 min-h-full w-full p-6 shadow-xl">
         <h2 className="border-accent mb-6 border-l-8 pl-4 text-xl font-bold">管理者列表</h2>
@@ -166,14 +171,16 @@ const Admins = () => {
         <div className="flex items-center gap-2">
           <span>已選擇 {selectedRowsCount} 筆</span>
 
-          <button
-            className="btn btn-error"
-            disabled={selectedRowsCount === 0}
-            onClick={handleDelete}
-          >
-            <TrashIcon className="h-5 w-5"></TrashIcon>
-            刪除
-          </button>
+          {hasPermission([Action.DELETE_ADMIN]) && (
+            <button
+              className="btn btn-error"
+              disabled={selectedRowsCount === 0}
+              onClick={handleDelete}
+            >
+              <TrashIcon className="h-5 w-5"></TrashIcon>
+              刪除
+            </button>
+          )}
 
           <i className="flex-grow"></i>
           <select

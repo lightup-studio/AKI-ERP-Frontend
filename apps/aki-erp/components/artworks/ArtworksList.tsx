@@ -22,6 +22,7 @@ import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { PAGE_SIZES } from '@constants/page.constant';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import useArtworksTable, { selectColumn } from '@utils/hooks/useArtworksTable';
+import usePermission, { Action } from '@utils/hooks/usePermission';
 import { showStoreTypeText } from '@utils/showStoreTypeText';
 import { showWarning } from '@utils/swalUtil';
 import Link from 'next/link';
@@ -34,6 +35,8 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const { hasPermission } = usePermission();
 
   const { getSearchInputProps, selectItems, selectedOptions, onSelectionChange } =
     useArtworkSearches();
@@ -333,11 +336,19 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
 
       <div className="flex items-center gap-2">
         <span>已選擇 {selectedRowsCount} 筆</span>
-        <button className="btn btn-error" onClick={handleDelete} disabled={selectedRowsCount === 0}>
-          <TrashIcon className="h-5 w-5"></TrashIcon>
-          刪除
-        </button>
-        {status === 'Draft' && (
+
+        {hasPermission([Action.DELETE_ARTWORK]) && (
+          <button
+            className="btn btn-error"
+            onClick={handleDelete}
+            disabled={selectedRowsCount === 0}
+          >
+            <TrashIcon className="h-5 w-5"></TrashIcon>
+            刪除
+          </button>
+        )}
+
+        {status === Status.Draft && (
           <button
             className="btn btn-accent"
             onClick={handleAddOrders}
@@ -346,11 +357,15 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
             加入庫存
           </button>
         )}
+
         <i className="flex-grow"></i>
-        <Link className="btn btn-info" href={`${pathname}/add?${searchParams.toString()}`}>
-          <PlusIcon className="h-5 w-5"></PlusIcon>
-          新增
-        </Link>
+
+        {hasPermission([Action.CREATE_ARTWORK]) && (
+          <Link className="btn btn-info" href={`${pathname}/add?${searchParams.toString()}`}>
+            <PlusIcon className="h-5 w-5"></PlusIcon>
+            新增
+          </Link>
+        )}
       </div>
       <div className="bg-base-100 h-full w-full pb-6 text-center">{tableBlock}</div>
     </div>
