@@ -1,7 +1,8 @@
 'use client';
 
+import { UpdateRoleBtn } from '@components/admins';
 import { PAGE_SIZES } from '@constants/page.constant';
-import { createUser, deleteUser, fetchUsers } from '@data-access/apis';
+import { createUser, deleteUser, fetchRoles, fetchUsers } from '@data-access/apis';
 import { User } from '@data-access/models';
 import { PlusIcon } from '@heroicons/react/20/solid';
 import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
@@ -66,6 +67,15 @@ const Admins = () => {
       header: '狀態',
       accessorKey: 'status',
     },
+    {
+      id: 'action',
+      header: '功能',
+      accessorKey: 'action',
+      cell: ({ row }) => {
+        const roleId = roles?.find((item) => item.name === row.original.name)?.id;
+        return <UpdateRoleBtn user={row.original} />;
+      },
+    },
   ];
 
   const searchParams = useSearchParams();
@@ -76,6 +86,12 @@ const Admins = () => {
   const { data, isFetching, refetch } = useQuery({
     queryKey: ['fetchUsers', params.toString()],
     queryFn: () => fetchUsers(params.toString()),
+    keepPreviousData: true,
+  });
+
+  const { data: roles } = useQuery({
+    queryKey: ['fetchRoles'],
+    queryFn: () => fetchRoles(),
     keepPreviousData: true,
   });
 
@@ -144,16 +160,27 @@ const Admins = () => {
 
             <div className="flex flex-col gap-1">
               <label className="font-bold">角色</label>
-              <div className="relative flex-1">
-                <input
-                  className={cx('input input-bordered w-full text-center', {
+              <div className="relative">
+                <select
+                  className={cx('select select-bordered w-full max-w-xs text-lg', {
                     'input-error': errors.name,
                   })}
-                  placeholder="請輸入角色"
+                  data-testid="name"
                   {...register('name')}
-                />
+                >
+                  <option value="">請選擇</option>
+                  {roles?.map((item) => (
+                    <option
+                      key={`name__option-${item.id}`}
+                      data-testid={`name__option-${item.id}`}
+                      value={item.name}
+                    >
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
                 {errors.name && (
-                  <p className="text-error absolute text-xs italic">{errors.name?.message}</p>
+                  <p className="text-error absolute text-xs italic">{errors.name.message}</p>
                 )}
               </div>
             </div>
