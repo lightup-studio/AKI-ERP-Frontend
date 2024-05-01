@@ -7,7 +7,7 @@ export const sendEmailAuth = async (userId?: number, roleId?: number): Promise<v
   return res.data;
 };
 
-export const verifyEmail = async (code: string): Promise<void> => {
+export const verifyEmail = async (code?: string): Promise<void> => {
   const res = await axios.post(`${url}/verify?code=${code}`);
   return res.data;
 };
