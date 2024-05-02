@@ -1,4 +1,5 @@
 export * from './artworks.api';
+export * from './authorizations.api';
 export * from './email.api';
 export * from './lend.order.api';
 export * from './lend.return.order.api';

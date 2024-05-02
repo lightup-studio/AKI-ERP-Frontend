@@ -77,7 +77,7 @@ const usePermission = () => {
   const { data } = useMe();
 
   const hasPermission = (actions: Action[]) => {
-    return actions.every((action) => data?.account && config[data.account][action]);
+    return actions.every((action) => data?.account && config[data.account]?.[action]);
   };
 
   return { hasPermission };

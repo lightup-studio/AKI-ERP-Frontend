@@ -1,6 +1,6 @@
 'use client';
 
-import { UpdateRoleBtn } from '@components/admins';
+import { UpdatePasswordBtn, UpdateRoleBtn } from '@components/admins';
 import { PAGE_SIZES } from '@constants/page.constant';
 import { createUser, deleteUser, fetchRoles, fetchUsers } from '@data-access/apis';
 import { User } from '@data-access/models';
@@ -73,7 +73,13 @@ const Admins = () => {
       accessorKey: 'action',
       cell: ({ row }) => {
         return (
-          <UpdateRoleBtn user={row.original} disabled={!hasPermission([Action.UPDATE_ROLE])} />
+          <div className="flex gap-2">
+            <UpdateRoleBtn user={row.original} disabled={!hasPermission([Action.UPDATE_ROLE])} />
+            <UpdatePasswordBtn
+              user={row.original}
+              disabled={!hasPermission([Action.UPDATE_ROLE])}
+            />
+          </div>
         );
       },
     },

@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 
 import { AxiosError } from 'axios';
-import { authorizeWithPassword } from 'data-access/apis/authorizations.api';
+import { authorizeWithPassword } from 'data-access/apis';
 import { AuthorizeWithPasswordResponse } from 'data-access/models';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

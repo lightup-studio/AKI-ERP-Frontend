@@ -116,7 +116,7 @@ const UpdateRoleBtn: React.FC<UpdateRoleBtnProps> = ({ user, disabled }) => {
       <Dialog open={open} onClose={() => setOpen(false)}>
         <h3 className="mb-4 text-lg font-bold">角色變更</h3>
 
-        <section className="flex flex-wrap items-end gap-3">
+        <section className="grid w-full grid-cols-3 gap-4">
           <div className="flex flex-col gap-1">
             <label className="font-bold">帳號</label>
             <div className="relative flex-1">
@@ -170,7 +170,9 @@ const UpdateRoleBtn: React.FC<UpdateRoleBtnProps> = ({ user, disabled }) => {
               </div>
             </div>
           )}
+        </section>
 
+        <section className="mt-4 text-center">
           {showCode ? (
             <Button
               className="btn btn-info"

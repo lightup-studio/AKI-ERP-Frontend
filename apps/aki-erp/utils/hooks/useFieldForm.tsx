@@ -38,7 +38,7 @@ const useFieldForm = <TFieldValues extends FieldValues = FieldValues, TContext =
           switch (type) {
             case 'TEXT':
             case 'PASSWORD':
-              return <TextField {...fieldProps} {...field} />;
+              return <TextField {...fieldProps} {...field} disabled={config.disabled} />;
 
             case 'DATE':
               return <DatePickerField {...fieldProps} {...field} />;
