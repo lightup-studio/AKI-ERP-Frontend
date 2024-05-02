@@ -18,6 +18,7 @@ type FormData = {
 
 interface UpdateRoleBtnProps {
   user: User;
+  disabled?: boolean;
 }
 
 const configs: FieldConfig<FormData>[] = [
@@ -38,7 +39,7 @@ const configs: FieldConfig<FormData>[] = [
   },
 ];
 
-const UpdateRoleBtn: React.FC<UpdateRoleBtnProps> = ({ user }) => {
+const UpdateRoleBtn: React.FC<UpdateRoleBtnProps> = ({ user, disabled }) => {
   const [open, setOpen] = useState(false);
   const [showCode, setShowCode] = useState(false);
 
@@ -108,7 +109,7 @@ const UpdateRoleBtn: React.FC<UpdateRoleBtnProps> = ({ user }) => {
 
   return (
     <>
-      <button className="btn btn-warning" onClick={() => setOpen(true)}>
+      <button className="btn btn-warning" disabled={disabled} onClick={() => setOpen(true)}>
         角色變更
       </button>
 

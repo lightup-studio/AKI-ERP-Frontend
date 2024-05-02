@@ -72,8 +72,9 @@ const Admins = () => {
       header: '功能',
       accessorKey: 'action',
       cell: ({ row }) => {
-        const roleId = roles?.find((item) => item.name === row.original.name)?.id;
-        return <UpdateRoleBtn user={row.original} />;
+        return (
+          <UpdateRoleBtn user={row.original} disabled={!hasPermission([Action.UPDATE_ROLE])} />
+        );
       },
     },
   ];
