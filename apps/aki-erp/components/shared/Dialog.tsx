@@ -1,4 +1,4 @@
-interface DialogProps {
+export interface DialogProps {
   open: boolean;
   onClose: () => void;
   children?: React.ReactNode;
