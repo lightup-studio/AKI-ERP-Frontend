@@ -14,6 +14,7 @@ export enum Action {
   CREATE_ARTWORK = 'CREATE_ARTWORK',
   UPDATE_ARTWORK = 'UPDATE_ARTWORK',
   DELETE_ARTWORK = 'DELETE_ARTWORK',
+  UPDATE_ROLE = 'UPDATE_ROLE',
   CREATE_ORDER = 'CREATE_ORDER',
   UPDATE_ORDER = 'UPDATE_ORDER',
   DELETE_ORDER = 'DELETE_ORDER',
@@ -30,6 +31,7 @@ const config: Record<string, Record<string, boolean>> = {
     [Action.CREATE_ARTWORK]: true,
     [Action.UPDATE_ARTWORK]: true,
     [Action.DELETE_ARTWORK]: true,
+    [Action.UPDATE_ROLE]: true,
     [Action.CREATE_ORDER]: true,
     [Action.UPDATE_ORDER]: true,
     [Action.DELETE_ORDER]: true,
@@ -75,7 +77,7 @@ const usePermission = () => {
   const { data } = useMe();
 
   const hasPermission = (actions: Action[]) => {
-    return actions.every((action) => data?.account && config[data.account][action]);
+    return actions.every((action) => data?.account && config[data.account]?.[action]);
   };
 
   return { hasPermission };
