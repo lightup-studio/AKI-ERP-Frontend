@@ -67,37 +67,31 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
       type: 'TEXT',
       name: 'salesCompany',
       label: '進貨單位',
-      disabled: disabled,
     },
     {
       type: 'DATE',
       name: 'purchaseTime',
       label: '進貨日期',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'salesInformation.name',
       label: '聯絡人',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'salesInformation.phone',
       label: '聯絡人電話',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'metadata.memo',
       label: '備註',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'metadata.carrier',
       label: '承運人',
-      disabled: disabled,
     },
   ];
 

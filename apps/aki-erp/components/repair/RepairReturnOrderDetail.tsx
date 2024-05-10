@@ -39,6 +39,9 @@ type FormData = {
     address?: string;
   };
   memo?: string;
+  metadata?: {
+    carrier?: string;
+  };
 };
 
 const schema = yup.object().shape({
@@ -54,6 +57,9 @@ const schema = yup.object().shape({
     address: yup.string().required('必填項目'),
   }),
   memo: yup.string(),
+  metadata: yup.object({
+    carrier: yup.string(),
+  }),
 });
 
 interface RepairReturnOrderDetailProps {
@@ -72,49 +78,46 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
       type: 'TEXT',
       name: 'repairDepartment',
       label: '維修歸還單位',
-      disabled: disabled,
     },
     {
       type: 'DATE',
       name: 'repairReturnTime',
       label: '維修日期',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'contactPersonInformation.name',
       label: '聯絡人',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'contactPersonInformation.phone',
       label: '聯絡人電話',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'returnerInformation.name',
       label: '收件人',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'returnerInformation.phone',
       label: '收件人電話',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'returnerInformation.address',
       label: '地址',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'memo',
       label: '備註',
-      disabled: disabled,
+    },
+    {
+      type: 'TEXT',
+      name: 'metadata.carrier',
+      label: '承運人',
     },
   ];
 
@@ -143,7 +146,8 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
     setValue('returnerInformation', data.returnerInformation);
     setValue('repairDepartment', data.repairDepartment);
     setValue('repairReturnTime', repairReturnTime);
-    setValue('memo', data.memo);
+    setValue('memo', data.memo || '');
+    setValue('metadata', data.metadata);
   }, [data]);
 
   useEffect(() => {
@@ -171,6 +175,7 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
           returnerInformation: formData.returnerInformation,
           contactPersonInformation: formData.contactPersonInformation,
           memo: formData.memo,
+          metadata: formData.metadata,
         }),
         patchArtworksBatchId({
           idList: artworkIdList,

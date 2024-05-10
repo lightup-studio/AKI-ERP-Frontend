@@ -37,6 +37,9 @@ type FormData = {
     address?: string;
   };
   memo?: string;
+  metadata?: {
+    carrier?: string;
+  };
 };
 
 const schema = yup.object().shape({
@@ -52,6 +55,9 @@ const schema = yup.object().shape({
     address: yup.string().required('必填項目'),
   }),
   memo: yup.string(),
+  metadata: yup.object({
+    carrier: yup.string(),
+  }),
 });
 
 interface ShipmentReturnOrderDetailProps {
@@ -67,49 +73,46 @@ const ShipmentReturnOrderDetail: React.FC<ShipmentReturnOrderDetailProps> = ({ d
       type: 'TEXT',
       name: 'shippingDepartment',
       label: '退貨單位',
-      disabled: disabled,
     },
     {
       type: 'DATE',
       name: 'shippingReturnTime',
       label: '退貨日期',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'contactPersonInformation.name',
       label: '聯絡人',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'contactPersonInformation.phone',
       label: '聯絡人電話',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'returnerInformation.name',
       label: '收件人',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'returnerInformation.phone',
       label: '收件人電話',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'returnerInformation.address',
       label: '地址',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'memo',
       label: '備註',
-      disabled: disabled,
+    },
+    {
+      type: 'TEXT',
+      name: 'metadata.carrier',
+      label: '承運人',
     },
   ];
 
@@ -140,7 +143,7 @@ const ShipmentReturnOrderDetail: React.FC<ShipmentReturnOrderDetailProps> = ({ d
     setValue('contactPersonInformation', data.contactPersonInformation);
     setValue('returnerInformation', data.returnerInformation);
     setValue('shippingDepartment', data.shippingDepartment);
-    setValue('memo', data.memo);
+    setValue('memo', data.memo || '');
   }, [data]);
 
   const { table, tableBlock } = useArtworksOrderTable({
@@ -161,6 +164,7 @@ const ShipmentReturnOrderDetail: React.FC<ShipmentReturnOrderDetailProps> = ({ d
           returnerInformation: formData.returnerInformation,
           contactPersonInformation: formData.contactPersonInformation,
           memo: formData.memo,
+          metadata: formData.metadata,
         }),
         patchArtworksBatchId({
           idList: artworkIdList,

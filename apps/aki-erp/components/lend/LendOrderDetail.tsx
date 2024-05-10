@@ -73,55 +73,46 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
       type: 'TEXT',
       name: 'lendDepartment',
       label: '借展單位',
-      disabled: disabled,
     },
     {
       type: 'DATE',
       name: 'lendTime',
       label: '借展日期',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'contactPersonInformation.name',
       label: '聯絡人',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'contactPersonInformation.phone',
       label: '聯絡人電話',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'receiverInformation.name',
       label: '收件人',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'receiverInformation.phone',
       label: '收件人電話',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'receiverInformation.address',
       label: '地址',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'memo',
       label: '備註',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'metadata.carrier',
       label: '承運人',
-      disabled: disabled,
     },
   ];
 

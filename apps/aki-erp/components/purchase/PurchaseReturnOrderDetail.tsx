@@ -38,6 +38,10 @@ type FormData = {
     phone?: string;
     address?: string;
   };
+  metadata?: {
+    memo?: string;
+    carrier?: string;
+  };
 };
 
 const schema = yup.object().shape({
@@ -51,6 +55,10 @@ const schema = yup.object().shape({
   contactPersonInformation: yup.object({
     name: yup.string().required('必填項目'),
     phone: yup.string().required('必填項目'),
+  }),
+  metadata: yup.object({
+    memo: yup.string(),
+    carrier: yup.string(),
   }),
 });
 
@@ -70,43 +78,46 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
       type: 'TEXT',
       name: 'returnCompany',
       label: '進貨退還單位',
-      disabled: disabled,
     },
     {
       type: 'DATE',
       name: 'purchaseReturnTime',
       label: '退還日期',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'contactPersonInformation.name',
       label: '聯絡人',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'contactPersonInformation.phone',
       label: '聯絡人電話',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'returnerInformation.name',
       label: '收件人',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'returnerInformation.phone',
       label: '收件人電話',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'returnerInformation.address',
       label: '地址',
-      disabled: disabled,
+    },
+    {
+      type: 'TEXT',
+      name: 'metadata.memo',
+      label: '備註',
+    },
+    {
+      type: 'TEXT',
+      name: 'metadata.carrier',
+      label: '承運人',
     },
   ];
 
@@ -137,6 +148,7 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
     setValue('returnerInformation', data.returnerInformation);
     setValue('contactPersonInformation', data.contactPersonInformation);
     setValue('purchaseReturnTime', purchaseReturnTime);
+    setValue('metadata', data.metadata);
   }, [data]);
 
   useEffect(() => {
@@ -163,6 +175,7 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
           purchaseReturnTime: formData.purchaseReturnTime,
           returnerInformation: formData.returnerInformation,
           contactPersonInformation: formData.contactPersonInformation,
+          metadata: formData.metadata,
         }),
         patchArtworksBatchId({
           idList: artworkIdList,
