@@ -9,6 +9,7 @@ import { CheckIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/20/soli
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import useArtworksTable, { selectColumn } from '@utils/hooks/useArtworksTable';
+import { showSizeText } from '@utils/showSizeText';
 import { showStoreTypeText } from '@utils/showStoreTypeText';
 import cx from 'classnames';
 import { ArtworkDetail, Status } from 'data-access/models';
@@ -114,11 +115,7 @@ const ArtworksSelector = ({
       accessorKey: 'metadata',
       cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
         const { length, width, height } = cell.getValue<ArtworkDetail['metadata']>() || {};
-        return length || width || height
-          ? `${length && `長 ${length}`} ${width && `x 寬 ${width}`} ${
-              height && `x 高 ${height} cm`
-            }`
-          : '無';
+        return showSizeText(length, width, height);
       },
     },
     {
