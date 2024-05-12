@@ -46,6 +46,8 @@ const useTable = <T = any,>({
       return;
     }
 
+    setRowSelection({});
+
     pageSize !== DEFAULT_PAGE_SIZE
       ? params.set('pageSize', `${pageSize}`)
       : params.delete('pageSize');

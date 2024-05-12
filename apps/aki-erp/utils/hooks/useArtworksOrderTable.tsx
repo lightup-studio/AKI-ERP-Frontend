@@ -9,6 +9,7 @@ import { PencilSquareIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { useMutation } from '@tanstack/react-query';
 import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { useTable } from '@utils/hooks';
+import { showSizeText } from '@utils/showSizeText';
 import { showStoreTypeText } from '@utils/showStoreTypeText';
 import { ArtworkDetail } from 'data-access/models';
 import Link from 'next/link';
@@ -99,11 +100,7 @@ const useArtworksOrderTable = ({
       accessorKey: 'metadata',
       cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
         const { length, width, height } = cell.getValue<ArtworkDetail['metadata']>() || {};
-        return length || width || height
-          ? `${length && `長 ${length}`} ${width && `x 寬 ${width}`} ${
-              height && `x 高 ${height} cm`
-            }`
-          : '無';
+        return showSizeText(length, width, height);
       },
     },
     {
