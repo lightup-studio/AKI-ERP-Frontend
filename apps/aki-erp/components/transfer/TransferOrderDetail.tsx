@@ -50,19 +50,16 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
       type: 'TEXT',
       name: 'transporter',
       label: '運輸廠商',
-      disabled: disabled,
     },
     {
       type: 'DATE',
       name: 'transferTime',
       label: '調撥日期',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'memo',
       label: '備註',
-      disabled: disabled,
     },
   ];
 
@@ -89,7 +86,7 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
 
     setValue('transporter', data.transporter);
     setValue('transferTime', transferTime);
-    setValue('memo', data.memo);
+    setValue('memo', data.memo || '');
   }, [data]);
 
   const { table, tableBlock } = useArtworksOrderTable({
@@ -148,6 +145,12 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
   };
 
   const onUpdate = async (formData: FormData) => {
+    const { isConfirmed } = await showConfirm({
+      title: '確定修改嗎？',
+      icon: 'warning',
+    });
+
+    if (!isConfirmed) return;
     await updateMutation.mutateAsync(formData);
   };
 

@@ -78,55 +78,46 @@ const LendReturnOrderDetail: React.FC<LendReturnOrderDetailProps> = ({ disabled 
       type: 'TEXT',
       name: 'lendDepartment',
       label: '借展單位',
-      disabled: disabled,
     },
     {
       type: 'DATE',
       name: 'lendReturnTime',
       label: '借展日期',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'contactPersonInformation.name',
       label: '聯絡人',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'contactPersonInformation.phone',
       label: '聯絡人電話',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'returnerInformation.name',
       label: '收件人',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'returnerInformation.phone',
       label: '收件人電話',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'returnerInformation.address',
       label: '地址',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'memo',
       label: '備註',
-      disabled: disabled,
     },
     {
       type: 'TEXT',
       name: 'metadata.carrier',
       label: '承運人',
-      disabled: disabled,
     },
   ];
 
@@ -226,6 +217,12 @@ const LendReturnOrderDetail: React.FC<LendReturnOrderDetailProps> = ({ disabled 
   };
 
   const onUpdate = async (formData: FormData) => {
+    const { isConfirmed } = await showConfirm({
+      title: '確定修改嗎？',
+      icon: 'warning',
+    });
+
+    if (!isConfirmed) return;
     await updateMutation.mutateAsync(formData);
   };
 

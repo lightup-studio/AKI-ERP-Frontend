@@ -23,6 +23,7 @@ import { PAGE_SIZES } from '@constants/page.constant';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
 import useArtworksTable, { selectColumn } from '@utils/hooks/useArtworksTable';
 import usePermission, { Action } from '@utils/hooks/usePermission';
+import { showSizeText } from '@utils/showSizeText';
 import { showStoreTypeText } from '@utils/showStoreTypeText';
 import { showWarning } from '@utils/swalUtil';
 import Link from 'next/link';
@@ -124,11 +125,7 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
       accessorKey: 'metadata',
       cell: ({ cell }: CellContext<ArtworkDetail, ArtworkDetail['metadata']>) => {
         const { length, width, height } = cell.getValue<ArtworkDetail['metadata']>() || {};
-        return length || width || height
-          ? `${length && `長 ${length}`} ${width && `x 寬 ${width}`} ${
-              height && `x 高 ${height} cm`
-            }`
-          : '無';
+        return showSizeText(length, width, height);
       },
     },
     {

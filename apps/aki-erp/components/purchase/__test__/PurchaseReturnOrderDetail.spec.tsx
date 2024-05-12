@@ -39,7 +39,7 @@ describe('Purchase return order', () => {
 
   it('should render the form with all fields and labels', () => {
     const labels = screen.getAllByRole('label');
-    expect(labels).toHaveLength(7);
+    expect(labels).toHaveLength(9);
 
     expect(screen.getByText('進貨退還單位')).toBeInTheDocument();
     expect(screen.getByText('退還日期')).toBeInTheDocument();
@@ -48,6 +48,8 @@ describe('Purchase return order', () => {
     expect(screen.getByText('收件人')).toBeInTheDocument();
     expect(screen.getByText('收件人電話')).toBeInTheDocument();
     expect(screen.getByText('地址')).toBeInTheDocument();
+    expect(screen.getByText('備註')).toBeInTheDocument();
+    expect(screen.getByText('承運人')).toBeInTheDocument();
   });
 
   it('should render data', () => {
