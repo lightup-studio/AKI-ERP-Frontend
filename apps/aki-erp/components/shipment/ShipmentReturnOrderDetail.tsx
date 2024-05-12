@@ -207,6 +207,12 @@ const ShipmentReturnOrderDetail: React.FC<ShipmentReturnOrderDetailProps> = ({ d
   };
 
   const onUpdate = async (formData: FormData) => {
+    const { isConfirmed } = await showConfirm({
+      title: '確定修改嗎？',
+      icon: 'warning',
+    });
+
+    if (!isConfirmed) return;
     await updateMutation.mutateAsync(formData);
   };
 

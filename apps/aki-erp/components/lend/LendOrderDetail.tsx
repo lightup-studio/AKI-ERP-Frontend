@@ -201,6 +201,12 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
   };
 
   const onUpdate = async (formData: FormData) => {
+    const { isConfirmed } = await showConfirm({
+      title: '確定修改嗎？',
+      icon: 'warning',
+    });
+
+    if (!isConfirmed) return;
     await updateMutation.mutateAsync(formData);
   };
 
