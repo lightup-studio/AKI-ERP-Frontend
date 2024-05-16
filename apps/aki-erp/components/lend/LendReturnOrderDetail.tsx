@@ -1,12 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
-import dateFnsFormat from 'date-fns/format';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
-import * as yup from 'yup';
-
 import Button from '@components/shared/Button';
 import { StoreType } from '@constants/artwork.constant';
 import { PAGE_SIZES } from '@constants/page.constant';
@@ -25,6 +18,12 @@ import { parseDate } from '@internationalized/date';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useArtworksOrderTable } from '@utils/hooks';
 import useFieldForm, { FieldConfig } from '@utils/hooks/useFieldForm';
+import cx from 'classnames';
+import dateFnsFormat from 'date-fns/format';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
+import * as yup from 'yup';
 
 type FormData = {
   lendDepartment?: string;
@@ -250,7 +249,7 @@ const LendReturnOrderDetail: React.FC<LendReturnOrderDetailProps> = ({ disabled 
 
           <div className="mt-8 flex flex-col justify-between gap-4">
             <div className="flex gap-2 md:flex-col">
-              {/* <button
+              <button
                 aria-label="export pdf file"
                 className={cx('btn btn-accent flex-1', {
                   'flex-nowrap whitespace-nowrap': exportOrderMutation.isLoading,
@@ -265,7 +264,7 @@ const LendReturnOrderDetail: React.FC<LendReturnOrderDetailProps> = ({ disabled 
                 ) : (
                   <>PDF 匯出</>
                 )}
-              </button> */}
+              </button>
             </div>
             <select
               className="select select-bordered"
