@@ -10,6 +10,7 @@ import {
   patchArtworksBatchId,
   updateSalesReturnOrder,
 } from '@data-access/apis';
+import { CreateOrUpdateSalesReturnOrderRequest } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -187,7 +188,12 @@ const ShipmentReturnOrderDetail: React.FC<ShipmentReturnOrderDetailProps> = ({ d
   });
 
   const updateMutation = useMutation({
-    mutationFn: (formData: FormData) => updateSalesReturnOrder(formData),
+    mutationFn: (formData: FormData) =>
+      updateSalesReturnOrder({
+        artworkIdList: data?.artworks?.map((item) => item.id),
+        ...(data as CreateOrUpdateSalesReturnOrderRequest),
+        ...formData,
+      }),
   });
 
   useEffect(() => {

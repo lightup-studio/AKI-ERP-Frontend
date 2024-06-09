@@ -49,7 +49,7 @@ export const createSalesOrder = async (
 export const updateSalesOrder = async (
   body?: CreateOrUpdateSalesOrderRequest,
 ): Promise<SalesOrder> => {
-  const res = await axios.put(url, body, { params: { allowCreate: true } });
+  const res = await axios.put(url, body);
   return res.data;
 };
 

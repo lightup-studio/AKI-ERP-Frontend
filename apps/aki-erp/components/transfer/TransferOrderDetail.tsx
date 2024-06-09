@@ -18,6 +18,7 @@ import {
   patchArtworksBatchId,
   updateTransferOrder,
 } from '@data-access/apis';
+import { CreateOrUpdateTransferOrderRequest } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -126,7 +127,12 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
   });
 
   const updateMutation = useMutation({
-    mutationFn: (formData: FormData) => updateTransferOrder(formData),
+    mutationFn: (formData: FormData) =>
+      updateTransferOrder({
+        artworkIdList: data?.artworks?.map((item) => item.id),
+        ...(data as CreateOrUpdateTransferOrderRequest),
+        ...formData,
+      }),
   });
 
   useEffect(() => {

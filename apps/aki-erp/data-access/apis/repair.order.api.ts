@@ -49,7 +49,7 @@ export const createRepairOrder = async (
 export const updateRepairOrder = async (
   body?: CreateOrUpdateRepairOrderRequest,
 ): Promise<RepairOrder> => {
-  const res = await axios.put(url, body, { params: { allowCreate: true } });
+  const res = await axios.put(url, body);
   return res.data;
 };
 
