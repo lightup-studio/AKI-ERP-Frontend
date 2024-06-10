@@ -11,7 +11,12 @@ import {
   patchArtworksBatchId,
   updatePurchaseOrder,
 } from '@data-access/apis';
-import { ArtworkDetail, ArtworkMetadata, Status } from '@data-access/models';
+import {
+  ArtworkDetail,
+  ArtworkMetadata,
+  CreateOrUpdatePurchaseOrderRequest,
+  Status,
+} from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -167,7 +172,12 @@ const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ disabled }) =
   });
 
   const updateMutation = useMutation({
-    mutationFn: (formData: FormData) => updatePurchaseOrder(formData),
+    mutationFn: (formData: FormData) =>
+      updatePurchaseOrder({
+        artworkIdList: data?.artworks?.map((item) => item.id),
+        ...(data as CreateOrUpdatePurchaseOrderRequest),
+        ...formData,
+      }),
   });
 
   useEffect(() => {

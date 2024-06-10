@@ -18,6 +18,7 @@ import {
   patchArtworksBatchId,
   updateSalesOrder,
 } from '@data-access/apis';
+import { CreateOrUpdateSalesOrderRequest } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -185,7 +186,12 @@ const ShipmentOrderDetail: React.FC<ShipmentOrderDetailProps> = ({ disabled }) =
   });
 
   const updateMutation = useMutation({
-    mutationFn: (formData: FormData) => updateSalesOrder(formData),
+    mutationFn: (formData: FormData) =>
+      updateSalesOrder({
+        artworkIdList: data?.artworks?.map((item) => item.id),
+        ...(data as CreateOrUpdateSalesOrderRequest),
+        ...formData,
+      }),
   });
 
   useEffect(() => {

@@ -51,7 +51,7 @@ export const createRepairReturnOrder = async (
 export const updateRepairReturnOrder = async (
   body?: CreateOrUpdateRepairReturnOrderRequest,
 ): Promise<RepairReturnOrder> => {
-  const res = await axios.put(url, body, { params: { allowCreate: true } });
+  const res = await axios.put(url, body);
   return res.data;
 };
 

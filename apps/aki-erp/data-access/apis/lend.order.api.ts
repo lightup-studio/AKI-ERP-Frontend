@@ -44,7 +44,7 @@ export const createLendOrder = async (
 export const updateLendOrder = async (
   body?: CreateOrUpdateLendOrderRequest,
 ): Promise<LendOrder> => {
-  const res = await axios.put(url, body, { params: { allowCreate: true } });
+  const res = await axios.put(url, body);
   return res.data;
 };
 

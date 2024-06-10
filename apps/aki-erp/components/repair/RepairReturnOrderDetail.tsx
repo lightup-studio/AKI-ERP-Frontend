@@ -11,7 +11,11 @@ import {
   patchArtworksBatchId,
   updateRepairReturnOrder,
 } from '@data-access/apis';
-import { ArtworkDetail, ArtworkMetadata } from '@data-access/models';
+import {
+  ArtworkDetail,
+  ArtworkMetadata,
+  CreateOrUpdateRepairReturnOrderRequest,
+} from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -198,7 +202,12 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
   });
 
   const updateMutation = useMutation({
-    mutationFn: (formData: FormData) => updateRepairReturnOrder(formData),
+    mutationFn: (formData: FormData) =>
+      updateRepairReturnOrder({
+        artworkIdList: data?.artworks?.map((item) => item.id),
+        ...(data as CreateOrUpdateRepairReturnOrderRequest),
+        ...formData,
+      }),
   });
 
   useEffect(() => {
