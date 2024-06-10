@@ -207,12 +207,17 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
       id: 'warehouseId',
       header: '庫存位置',
       accessorKey: 'warehouseId',
-      cell: ({ row }) => (
-        <>
-          {row.original.warehouseId !== undefined ? warehouseMap[row.original.warehouseId] : ''}-
-          {row.original.metadata?.warehouseLocation}
-        </>
-      ),
+      cell: ({ row }) => {
+        const warehouseId = row.original.warehouseId;
+        const warehouseLocation = row.original.metadata?.warehouseLocation;
+
+        return (
+          <>
+            {warehouseId !== undefined ? warehouseMap[warehouseId] : ''}
+            {warehouseLocation ? `-${warehouseLocation}` : ''}
+          </>
+        );
+      },
     },
   ];
 
