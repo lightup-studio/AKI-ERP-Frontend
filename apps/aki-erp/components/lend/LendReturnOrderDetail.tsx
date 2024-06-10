@@ -11,7 +11,11 @@ import {
   patchArtworksBatchId,
   updateLendReturnOrder,
 } from '@data-access/apis';
-import { ArtworkDetail, ArtworkMetadata } from '@data-access/models';
+import {
+  ArtworkDetail,
+  ArtworkMetadata,
+  CreateOrUpdateLendReturnOrderRequest,
+} from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -197,7 +201,12 @@ const LendReturnOrderDetail: React.FC<LendReturnOrderDetailProps> = ({ disabled 
   });
 
   const updateMutation = useMutation({
-    mutationFn: (formData: FormData) => updateLendReturnOrder(formData),
+    mutationFn: (formData: FormData) =>
+      updateLendReturnOrder({
+        artworkIdList: data?.artworks?.map((item) => item.id),
+        ...(data as CreateOrUpdateLendReturnOrderRequest),
+        ...formData,
+      }),
   });
 
   useEffect(() => {

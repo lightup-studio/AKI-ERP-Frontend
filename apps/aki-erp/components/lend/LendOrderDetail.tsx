@@ -10,6 +10,7 @@ import {
   patchArtworksBatchId,
   updateLendOrder,
 } from '@data-access/apis';
+import { CreateOrUpdateLendOrderRequest } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -181,7 +182,12 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (formData: FormData) => updateLendOrder(formData),
+    mutationFn: (formData: FormData) =>
+      updateLendOrder({
+        artworkIdList: data?.artworks?.map((item) => item.id),
+        ...(data as CreateOrUpdateLendOrderRequest),
+        ...formData,
+      }),
   });
 
   useEffect(() => {

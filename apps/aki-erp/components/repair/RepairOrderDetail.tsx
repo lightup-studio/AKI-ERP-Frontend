@@ -10,6 +10,7 @@ import {
   patchArtworksBatchId,
   updateRepairOrder,
 } from '@data-access/apis';
+import { CreateOrUpdateRepairOrderRequest } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -182,7 +183,12 @@ const RepairOrderDetail: React.FC<RepairOrderDetailProps> = ({ disabled }) => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (formData: FormData) => updateRepairOrder(formData),
+    mutationFn: (formData: FormData) =>
+      updateRepairOrder({
+        artworkIdList: data?.artworks?.map((item) => item.id),
+        ...(data as CreateOrUpdateRepairOrderRequest),
+        ...formData,
+      }),
   });
 
   useEffect(() => {

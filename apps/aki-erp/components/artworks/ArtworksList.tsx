@@ -208,7 +208,10 @@ const ArtworksList = ({ type }: ArtworksListProps) => {
       header: '庫存位置',
       accessorKey: 'warehouseId',
       cell: ({ row }) => (
-        <>{row.original.warehouseId ? warehouseMap[row.original.warehouseId] : ''}</>
+        <>
+          {row.original.warehouseId !== undefined ? warehouseMap[row.original.warehouseId] : ''}-
+          {row.original.metadata?.warehouseLocation}
+        </>
       ),
     },
   ];

@@ -49,7 +49,7 @@ export const createTransferOrder = async (
 export const updateTransferOrder = async (
   body?: CreateOrUpdateTransferOrderRequest,
 ): Promise<TransferOrder> => {
-  const res = await axios.put(url, body, { params: { allowCreate: true } });
+  const res = await axios.put(url, body);
   return res.data;
 };
 
