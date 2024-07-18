@@ -36,12 +36,12 @@ const useArtworksOrderTable = ({
     {
       header: '編號',
       accessorKey: 'displayId',
-      cell: ({ cell }) => (
+      cell: ({ row }) => (
         <Link
           className="text-info flex items-center whitespace-nowrap"
-          href={`/artworks/${cell.getValue()}`}
+          href={`/artworks/${row.original.displayId}`}
         >
-          {cell.getValue()}
+          {row.original.displayId}
           <PencilSquareIcon className="ml-2 inline-block h-4 w-4"></PencilSquareIcon>
         </Link>
       ),
