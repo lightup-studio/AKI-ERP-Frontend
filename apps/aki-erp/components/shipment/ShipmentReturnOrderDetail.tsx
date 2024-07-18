@@ -144,6 +144,7 @@ const ShipmentReturnOrderDetail: React.FC<ShipmentReturnOrderDetailProps> = ({ d
     setValue('returnerInformation', data.returnerInformation);
     setValue('shippingDepartment', data.shippingDepartment);
     setValue('memo', data.memo || '');
+    setValue('metadata', data.metadata);
   }, [data]);
 
   const { table, tableBlock } = useArtworksOrderTable({

@@ -142,8 +142,9 @@ const useArtworksOrderTable = ({
             <option value={0}>A</option>
             <option value={1}>B</option>
             <option value={2}>C</option>
-            <option value={3}>D</option>
-            <option value={4}>E</option>
+            <option value={3}>D1</option>
+            <option value={4}>D2</option>
+            <option value={5}>E</option>
           </select>
         );
       },
