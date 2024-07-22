@@ -20,8 +20,8 @@ export const warehouseMap = {
   1: 'B',
   2: 'C',
   3: 'D1',
-  4: 'D2',
-  5: 'E',
+  4: 'E',
+  5: 'D2',
 } as Record<number, string>;
 
 export const storeTypeOptions = [
