@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 
-import cx from 'classnames';
 import { LendOrder, Status } from 'data-access/models';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -181,24 +180,6 @@ const LendOrders = () => {
           </div>
 
           <div className="flex flex-col justify-between gap-2">
-            <div className="flex gap-2 md:flex-col">
-              <button
-                aria-label="export pdf file"
-                className={cx('btn btn-accent flex-1', {
-                  'flex-nowrap whitespace-nowrap': exportOrdersMutation.isLoading,
-                })}
-                onClick={onExportOrders}
-                disabled={exportOrdersMutation.isLoading}
-              >
-                {exportOrdersMutation.isLoading ? (
-                  <>
-                    處理中 <span className="loading loading-ring loading-sm"></span>
-                  </>
-                ) : (
-                  <>表格匯出</>
-                )}
-              </button>
-            </div>
             <i className="flex-grow"></i>
             <select
               className="select select-bordered"

@@ -184,7 +184,7 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
           idList: artworkIdList,
           properties: {
             metadata: {
-              storeType: StoreType.RETURNED_LEND_OR_RETURNED_REPAIR,
+              storeType: StoreType.IN_STOCK,
               repairDepartment: undefined,
               returnRepairDepartment: formData.repairDepartment,
             },
