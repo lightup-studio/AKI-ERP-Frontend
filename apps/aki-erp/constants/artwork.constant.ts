@@ -1,10 +1,17 @@
 export enum StoreType {
+  // 非庫存
   NONE = 'none',
+  // 在庫
   IN_STOCK = 'inStock',
+  // 借展
   LEND = 'lend',
+  // 維修
   REPAIR = 'repair',
+  // 已歸還
   RETURNED_LEND_OR_RETURNED_REPAIR = 'returnedLend_or_returnedRepair',
+  // 已出貨
   SHIPPING = 'shipping',
+  // 已退回
   RETURNED_SHIPPING = 'returnedShipping',
 }
 

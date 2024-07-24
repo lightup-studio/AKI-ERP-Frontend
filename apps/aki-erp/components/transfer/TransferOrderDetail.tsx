@@ -111,7 +111,7 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
           idList: artworkIdList,
           properties: {
             metadata: {
-              storeType: StoreType.NONE,
+              storeType: StoreType.IN_STOCK,
             },
           },
         }),
