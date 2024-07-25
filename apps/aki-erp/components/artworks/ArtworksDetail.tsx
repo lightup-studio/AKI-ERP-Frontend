@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 import { StoreType, assetsTypeOptions } from '@constants/artwork.constant';
 import {
@@ -21,6 +21,8 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { fetchCountryList } from '@data-access/apis/countries.api';
 import { usefetchPartnerList } from '@data-access/hooks';
+import { usePremission } from '@utils/hooks';
+import { Action } from '@utils/hooks/usePermission';
 import cx from 'classnames';
 import { useParams, useRouter } from 'next/navigation';
 
@@ -92,6 +94,8 @@ const schema = yup.object().shape({
 const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
   const router = useRouter();
   const params = useParams<{ id?: string }>();
+
+  const { hasPermission } = usePremission();
 
   const { isLoading, isSuccess, data, isInitialLoading } = useQuery(
     ['data', params.id],
@@ -173,7 +177,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
     mode: 'all',
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isSuccess) {
       reset(data);
     }
@@ -988,6 +992,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
+                      disabled={!hasPermission([Action.UPDATE_SALES_INFO])}
                       className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salesName,
                       })}
@@ -1008,6 +1013,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
+                      disabled={!hasPermission([Action.UPDATE_SALES_INFO])}
                       className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salseReciver,
                       })}
@@ -1028,6 +1034,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
+                      disabled={!hasPermission([Action.UPDATE_SALES_INFO])}
                       className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salesPhone,
                       })}
@@ -1048,6 +1055,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
+                      disabled={!hasPermission([Action.UPDATE_SALES_INFO])}
                       className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salesAddress,
                       })}
@@ -1068,6 +1076,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
+                      disabled={!hasPermission([Action.UPDATE_SALES_INFO])}
                       className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salesDate,
                       })}
@@ -1087,9 +1096,11 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
 
           <div className="bg-base-100 rounded-md p-4 shadow-md md:col-span-2">
             <div className="flex justify-center gap-2">
-              <button className="btn btn-success" data-testid="submitButton">
-                <CheckIcon className="w-4"></CheckIcon> 儲存
-              </button>
+              {hasPermission([Action.UPDATE_ARTWORK]) && (
+                <button className="btn btn-success" data-testid="submitButton">
+                  <CheckIcon className="w-4"></CheckIcon> 儲存
+                </button>
+              )}
               <button
                 className="btn btn-error btn-base-200"
                 data-testid="cancelButton"

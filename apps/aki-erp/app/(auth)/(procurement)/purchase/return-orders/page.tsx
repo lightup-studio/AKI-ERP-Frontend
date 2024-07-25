@@ -23,8 +23,9 @@ import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 import { formatDateTime } from '@utils/format';
-import { useTable } from '@utils/hooks';
+import { usePremission, useTable } from '@utils/hooks';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
+import { Action } from '@utils/hooks/usePermission';
 import { showConfirm, showWarning } from '@utils/swalUtil';
 
 const PurchaseReturnOrders = () => {
@@ -32,6 +33,8 @@ const PurchaseReturnOrders = () => {
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const { hasPermission } = usePremission();
 
   const { getSearchInputProps, selectItems, selectedOptions, onSelectionChange } =
     useArtworkSearches();
@@ -203,7 +206,7 @@ const PurchaseReturnOrders = () => {
           <span>已選擇 {selectedRowsCount} 筆</span>
           <button
             className="btn btn-success"
-            disabled={selectedRowsCount === 0}
+            disabled={selectedRowsCount === 0 || !hasPermission([Action.UPDATE_ORDER])}
             onClick={() => setIsOpen(true)}
           >
             <PencilIcon className="h-5 w-5"></PencilIcon>
@@ -211,8 +214,8 @@ const PurchaseReturnOrders = () => {
           </button>
           <button
             className="btn btn-error"
+            disabled={selectedRowsCount === 0 || !hasPermission([Action.UPDATE_ORDER])}
             onClick={handleDelete}
-            disabled={selectedRowsCount === 0}
           >
             <TrashIcon className="h-5 w-5"></TrashIcon>
             刪除
