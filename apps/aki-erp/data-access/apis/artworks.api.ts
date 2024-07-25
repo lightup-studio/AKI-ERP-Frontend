@@ -105,8 +105,11 @@ export async function fetchAgentGalleryOptions() {
 
 export async function fetchArtworkList(
   status: 'Enabled' | 'Disabled' | 'Draft' = 'Enabled',
+  assetsTypes?: string[],
   searchParams?: URLSearchParams,
 ) {
+  const roleassetsTypes = assetsTypes?.map((item) => `roleassetsType=${item}`).join('&');
+
   const queryString = (searchParams ? [...searchParams.entries()] : [])
     .map(([key, value]) => {
       if (key === 'nationalities') return `countryCode=${value}`;
@@ -127,8 +130,9 @@ export async function fetchArtworkList(
     })
     .filter(Boolean)
     .join('&');
+
   const res = await axios.get<Pagination<ArtworkDetail>>(`/api/artworks/query`, {
-    params: new URLSearchParams(`status=${status}&${queryString}`),
+    params: new URLSearchParams(`status=${status}&${roleassetsTypes}&${queryString}`),
   });
   res.data.pageCount = Math.ceil(res.data.totalCount / res.data.take);
   return res.data;
