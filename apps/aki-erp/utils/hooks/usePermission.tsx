@@ -80,6 +80,7 @@ const config: Record<string, Record<string, boolean>> = {
     [Action.CREATE_ORDER]: true,
     [Action.CREATE_ARTIST]: true,
     [Action.DELETE_ARTIST]: true,
+    [Action.CREATE_COMPANY]: true,
     [Action.READ_ASSETSTYPE_A]: true,
     [Action.READ_ASSETSTYPE_B]: true,
   },
