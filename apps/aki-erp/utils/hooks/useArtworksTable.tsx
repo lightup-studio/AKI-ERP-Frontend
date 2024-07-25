@@ -8,6 +8,8 @@ import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { cloneDeep } from 'lodash-es';
 import { useSearchParams } from 'next/navigation';
 import { SelectItem } from './useArtworkSearches';
+import useMe from './useMe';
+import usePermission, { Action } from './usePermission';
 import useSelectionList from './useSelectionList';
 import useTable from './useTable';
 
@@ -87,18 +89,29 @@ const useArtworksTable = ({
   getSelectAllProps?: ReturnType<typeof useSelectionList>['getSelectAllProps'];
   getSelectItemProps?: ReturnType<typeof useSelectionList>['getSelectItemProps'];
 }) => {
+  const { hasPermission } = usePermission();
+
+  const [assetsTypes, setAssetsTypes] = useState<string[]>(['無']);
+
+  const { data } = useMe();
   const searchParams = useSearchParams();
 
   const params = new URLSearchParams(searchParams);
 
   const dataQuery = useQuery({
-    queryKey: ['artworks', status, params.toString()],
-    queryFn: () => fetchArtworkList(status, params),
+    queryKey: ['artworks', status, assetsTypes.toString(), params.toString()],
+    queryFn: () => fetchArtworkList(status, assetsTypes, params),
     enabled: !!selectItems,
     keepPreviousData: true,
   });
 
   const [tableData, setTableData] = useState<ArtworkDetail[]>([]);
+
+  useEffect(() => {
+    if (hasPermission([Action.READ_ASSETSTYPE_A])) setAssetsTypes((prev) => [...prev, 'A']);
+    if (hasPermission([Action.READ_ASSETSTYPE_B])) setAssetsTypes((prev) => [...prev, 'B']);
+    if (hasPermission([Action.READ_ASSETSTYPE_C])) setAssetsTypes((prev) => [...prev, 'C']);
+  }, [data?.name]);
 
   useEffect(() => {
     if (dataQuery.isSuccess) {

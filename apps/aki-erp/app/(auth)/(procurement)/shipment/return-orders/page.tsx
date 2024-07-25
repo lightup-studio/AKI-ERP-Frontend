@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 
-import cx from 'classnames';
 import { SalesReturnOrder, Status } from 'data-access/models';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -24,6 +23,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { formatDateTime } from '@utils/format';
 import { useTable } from '@utils/hooks';
 import { useArtworkSearches, useArtworkSelectedList } from '@utils/hooks/useArtworkSearches';
+import usePermission, { Action } from '@utils/hooks/usePermission';
 import { showConfirm, showWarning } from '@utils/swalUtil';
 
 const ShipmentReturnOrders = () => {
@@ -31,6 +31,8 @@ const ShipmentReturnOrders = () => {
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const { hasPermission } = usePermission();
 
   const { getSearchInputProps, selectItems, selectedOptions, onSelectionChange } =
     useArtworkSearches();
@@ -184,24 +186,6 @@ const ShipmentReturnOrders = () => {
           </div>
 
           <div className="flex flex-col justify-between gap-2">
-            <div className="flex gap-2 md:flex-col">
-              <button
-                aria-label="export pdf file"
-                className={cx('btn btn-accent flex-1', {
-                  'flex-nowrap whitespace-nowrap': exportOrdersMutation.isLoading,
-                })}
-                onClick={onExportOrders}
-                disabled={exportOrdersMutation.isLoading}
-              >
-                {exportOrdersMutation.isLoading ? (
-                  <>
-                    處理中 <span className="loading loading-ring loading-sm"></span>
-                  </>
-                ) : (
-                  <>表格匯出</>
-                )}
-              </button>
-            </div>
             <i className="flex-grow"></i>
             <select
               className="select select-bordered"
@@ -225,7 +209,7 @@ const ShipmentReturnOrders = () => {
           <span>已選擇 {selectedRowsCount} 筆</span>
           <button
             className="btn btn-success"
-            disabled={selectedRowsCount === 0}
+            disabled={selectedRowsCount === 0 || !hasPermission([Action.UPDATE_ORDER])}
             onClick={() => setIsOpen(true)}
           >
             <PencilIcon className="h-5 w-5"></PencilIcon>
@@ -233,7 +217,7 @@ const ShipmentReturnOrders = () => {
           </button>
           <button
             className="btn btn-error"
-            disabled={selectedRowsCount === 0}
+            disabled={selectedRowsCount === 0 || !hasPermission([Action.UPDATE_ORDER])}
             onClick={handleDelete}
           >
             <TrashIcon className="h-5 w-5"></TrashIcon>
