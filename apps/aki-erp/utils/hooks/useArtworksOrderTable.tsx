@@ -37,13 +37,13 @@ const useArtworksOrderTable = ({
       header: '編號',
       accessorKey: 'displayId',
       cell: ({ row }) => (
-        <Link
+        <a
           className="text-info flex items-center whitespace-nowrap"
           href={`/artworks/${row.original.displayId}`}
         >
           {row.original.displayId}
           <PencilSquareIcon className="ml-2 inline-block h-4 w-4"></PencilSquareIcon>
-        </Link>
+        </a>
       ),
     },
     {
