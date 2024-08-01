@@ -33,7 +33,7 @@ export const warehouseMap = {
 
 export const storeTypeOptions = [
   {
-    label: '無',
+    label: '非庫存',
     value: StoreType.NONE,
   },
   {
