@@ -279,6 +279,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
               <div className="relative">
                 <input
                   type="file"
+                  disabled={!hasPermission([Action.UPDATE_ORDER])}
                   className={cx('file-input file-input-bordered max-w-xs', {
                     'border-error': errors.imageUrl?.message,
                   })}
@@ -319,6 +320,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     <div className="bg-base-200 flex flex-wrap items-center gap-1 p-1">
                       <div>
                         <select
+                          disabled={!hasPermission([Action.UPDATE_ORDER])}
                           className={cx('select select-bordered w-full max-w-xs text-lg', {
                             'select-error': errors.artists,
                           })}
@@ -345,6 +347,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
 
                       <div>
                         <select
+                          disabled={!hasPermission([Action.UPDATE_ORDER])}
                           className={cx('select select-bordered w-full max-w-xs text-lg', {
                             'select-error': errors.artists,
                           })}
@@ -403,6 +406,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
               </label>
               <div className="relative">
                 <select
+                  disabled={!hasPermission([Action.UPDATE_ORDER])}
                   className={cx('select select-bordered w-full max-w-xs text-lg', {
                     'select-error': errors.metadata?.assetsType,
                   })}
@@ -436,6 +440,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
               </label>
               <div className="relative">
                 <select
+                  disabled={!hasPermission([Action.UPDATE_ORDER])}
                   className={cx('select select-bordered w-full max-w-xs text-lg', {
                     'select-error': errors.metadata?.artworkType,
                   })}
@@ -469,6 +474,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     <div className="input-group border-base-200 rounded-lg border">
                       <div className="bg-base-200 flex flex-wrap items-center gap-2 p-1">
                         <select
+                          disabled={!hasPermission([Action.UPDATE_ORDER])}
                           className={cx('select select-bordered w-full max-w-xs text-lg')}
                           {...register(`metadata.agentGalleries.${index}.name`)}
                         >
@@ -513,6 +519,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
               </label>
               <div className="relative">
                 <select
+                  disabled={!hasPermission([Action.UPDATE_ORDER])}
                   className={cx('select select-bordered w-full max-w-xs text-lg', {
                     'select-error': errors.countryCode,
                   })}
@@ -542,6 +549,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 </label>
                 <div className="relative flex-1 p-1">
                   <input
+                    disabled={!hasPermission([Action.UPDATE_ORDER])}
                     className={cx('input input-bordered w-full max-w-xs', {
                       'input-error': errors.metadata?.purchasingUnit,
                     })}
@@ -561,6 +569,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 <div className="relative flex-1">
                   <div className="flex flex-wrap items-center gap-1 p-1">
                     <input
+                      disabled={!hasPermission([Action.UPDATE_ORDER])}
                       className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.zhName,
                       })}
@@ -568,6 +577,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                       {...register('zhName', { onChange: () => trigger(['enName', 'zhName']) })}
                     />
                     <input
+                      disabled={!hasPermission([Action.UPDATE_ORDER])}
                       className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.enName,
                       })}
@@ -594,6 +604,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     <label>長</label>
                     <div className="relative flex-1">
                       <input
+                        disabled={!hasPermission([Action.UPDATE_ORDER])}
                         className={cx('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.length,
                         })}
@@ -612,6 +623,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     <label>寬</label>
                     <div className="relative flex-1">
                       <input
+                        disabled={!hasPermission([Action.UPDATE_ORDER])}
                         className={cx('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.width,
                         })}
@@ -630,6 +642,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     <label>高</label>
                     <div className="relative flex-1">
                       <input
+                        disabled={!hasPermission([Action.UPDATE_ORDER])}
                         className={cx('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.height,
                         })}
@@ -648,6 +661,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     <label className="whitespace-nowrap">自定義尺寸</label>
                     <div className="relative flex-1">
                       <input
+                        disabled={!hasPermission([Action.UPDATE_ORDER])}
                         className={cx('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.customSize,
                         })}
@@ -668,6 +682,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     <label className="whitespace-nowrap">號數</label>
                     <div className="relative flex-1">
                       <input
+                        disabled={!hasPermission([Action.UPDATE_ORDER])}
                         className={cx('input input-bordered w-full max-w-xs', {
                           'input-error': errors.metadata?.serialNumber,
                         })}
@@ -692,6 +707,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 <div className="relative flex-1">
                   <div className="flex flex-wrap items-center gap-1 p-1">
                     <input
+                      disabled={!hasPermission([Action.UPDATE_ORDER])}
                       className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.zhMedia,
                       })}
@@ -701,6 +717,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                       })}
                     />
                     <input
+                      disabled={!hasPermission([Action.UPDATE_ORDER])}
                       className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.media,
                       })}
@@ -728,6 +745,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 <label className="font-bold">年代</label>
                 <div className="relative flex-1 p-1">
                   <input
+                    disabled={!hasPermission([Action.UPDATE_ORDER])}
                     className={cx('input input-bordered w-full max-w-xs', {
                       'input-error': errors.yearAge,
                     })}
@@ -746,6 +764,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 </label>
                 <div className="relative flex-1">
                   <input
+                    disabled={!hasPermission([Action.UPDATE_ORDER])}
                     className={cx('input input-bordered w-full max-w-xs', {
                       'input-error': errors.metadata?.edition,
                     })}
@@ -768,6 +787,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   <div className="flex gap-2">
                     <label className="label-text flex items-center gap-2 whitespace-nowrap">
                       <input
+                        disabled={!hasPermission([Action.UPDATE_ORDER])}
                         type="checkbox"
                         className="checkbox checkbox-secondary"
                         {...register('metadata.otherInfo.frame')}
@@ -776,15 +796,16 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     </label>
                     <input
                       type="text"
+                      disabled={!watch('metadata.otherInfo.frame')}
                       className="input input-bordered"
                       {...register('metadata.otherInfo.frameDimensions')}
-                      disabled={!watch('metadata.otherInfo.frame')}
                     />
                   </div>
                   <div className="flex gap-2">
                     <label className="label-text flex items-center gap-2">
                       <input
                         type="checkbox"
+                        disabled={!hasPermission([Action.UPDATE_ORDER])}
                         className="checkbox checkbox-secondary"
                         {...register('metadata.otherInfo.pedestal')}
                       />
@@ -792,15 +813,16 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     </label>
                     <input
                       type="text"
+                      disabled={!watch('metadata.otherInfo.pedestal')}
                       className="input input-bordered"
                       {...register('metadata.otherInfo.pedestalDimensions')}
-                      disabled={!watch('metadata.otherInfo.pedestal')}
                     />
                   </div>
                   <div className="flex gap-2 py-3">
                     <label className="label-text flex items-center gap-2">
                       <input
                         type="checkbox"
+                        disabled={!hasPermission([Action.UPDATE_ORDER])}
                         className="checkbox checkbox-secondary"
                         {...register('metadata.otherInfo.cardboardBox')}
                       />
@@ -811,6 +833,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     <label className="label-text flex items-center gap-2">
                       <input
                         type="checkbox"
+                        disabled={!hasPermission([Action.UPDATE_ORDER])}
                         className="checkbox checkbox-secondary"
                         {...register('metadata.otherInfo.woodenBox')}
                       />
@@ -831,6 +854,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                 <div className="flex flex-row gap-2">
                   <div className="relative">
                     <select
+                      disabled={!hasPermission([Action.UPDATE_ORDER])}
                       className={cx('select select-bordered text-lg', {
                         'select-error': errors.warehouseId,
                       })}
@@ -859,6 +883,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </div>
                   <input
                     type="text"
+                    disabled={!hasPermission([Action.UPDATE_ORDER])}
                     className="input input-bordered"
                     placeholder="自填位置"
                     {...register('metadata.warehouseLocation')}
@@ -874,6 +899,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   <label className="label gap-2">
                     <input
                       type="radio"
+                      disabled={!hasPermission([Action.UPDATE_ORDER])}
                       className="radio radio-secondary"
                       value={StoreType.IN_STOCK}
                       {...register('metadata.storeType')}
@@ -884,6 +910,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   <label className="label gap-2">
                     <input
                       type="radio"
+                      disabled={!hasPermission([Action.UPDATE_ORDER])}
                       className="radio radio-secondary"
                       value={StoreType.LEND}
                       {...register('metadata.storeType')}
@@ -892,14 +919,18 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <input
                     type="text"
+                    disabled={
+                      watch('metadata.storeType') !== StoreType.LEND ||
+                      !hasPermission([Action.UPDATE_ORDER])
+                    }
                     className="input input-bordered"
-                    disabled={watch('metadata.storeType') !== StoreType.LEND}
                     {...register('metadata.lendDepartment')}
                   />
 
                   <label className="label gap-2">
                     <input
                       type="radio"
+                      disabled={!hasPermission([Action.UPDATE_ORDER])}
                       className="radio radio-secondary"
                       value={StoreType.REPAIR}
                       {...register('metadata.storeType')}
@@ -908,16 +939,23 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <input
                     type="text"
+                    disabled={
+                      watch('metadata.storeType') !== StoreType.REPAIR ||
+                      !hasPermission([Action.UPDATE_ORDER])
+                    }
                     className="input input-bordered"
-                    disabled={watch('metadata.storeType') !== StoreType.REPAIR}
                     {...register('metadata.repairDepartment')}
                   />
+
                   <label className="label gap-2 pl-0">
                     <span className="label-text">，狀態說明</span>
                     <input
                       type="text"
+                      disabled={
+                        watch('metadata.storeType') !== StoreType.REPAIR ||
+                        !hasPermission([Action.UPDATE_ORDER])
+                      }
                       className="input input-bordered"
-                      disabled={watch('metadata.storeType') !== StoreType.REPAIR}
                       {...register('metadata.repairNote')}
                     />
                   </label>
@@ -925,6 +963,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   <label className="label gap-2">
                     <input
                       type="radio"
+                      disabled={!hasPermission([Action.UPDATE_ORDER])}
                       className="radio radio-secondary"
                       value={StoreType.RETURNED_LEND_OR_RETURNED_REPAIR}
                       {...register('metadata.storeType')}
@@ -935,7 +974,8 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                     type="text"
                     className="input input-bordered"
                     disabled={
-                      watch('metadata.storeType') !== StoreType.RETURNED_LEND_OR_RETURNED_REPAIR
+                      watch('metadata.storeType') !== StoreType.RETURNED_LEND_OR_RETURNED_REPAIR ||
+                      !hasPermission([Action.UPDATE_ORDER])
                     }
                     {...register('metadata.returnRepairDepartment')}
                   />
@@ -943,6 +983,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   <label className="label gap-2">
                     <input
                       type="radio"
+                      disabled={!hasPermission([Action.UPDATE_ORDER])}
                       className="radio radio-secondary"
                       value={StoreType.SHIPPING}
                       {...register('metadata.storeType')}
@@ -953,6 +994,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   <label className="label gap-2">
                     <input
                       type="radio"
+                      disabled={!hasPermission([Action.UPDATE_ORDER])}
                       className="radio radio-secondary"
                       value={StoreType.RETURNED_SHIPPING}
                       {...register('metadata.storeType')}
@@ -961,14 +1003,18 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <input
                     type="text"
+                    disabled={
+                      watch('metadata.storeType') !== StoreType.RETURNED_SHIPPING ||
+                      !hasPermission([Action.UPDATE_ORDER])
+                    }
                     className="input input-bordered"
-                    disabled={watch('metadata.storeType') !== StoreType.RETURNED_SHIPPING}
                     {...register('metadata.returnedShippingDepartment')}
                   />
 
                   <label className="label gap-2">
                     <input
                       type="radio"
+                      disabled={!hasPermission([Action.UPDATE_ORDER])}
                       className="radio radio-secondary"
                       value={StoreType.NONE}
                       {...register('metadata.storeType')}
@@ -1096,11 +1142,10 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
 
           <div className="bg-base-100 rounded-md p-4 shadow-md md:col-span-2">
             <div className="flex justify-center gap-2">
-              {hasPermission([Action.UPDATE_ARTWORK]) && (
-                <button className="btn btn-success" data-testid="submitButton">
-                  <CheckIcon className="w-4"></CheckIcon> 儲存
-                </button>
-              )}
+              <button className="btn btn-success" data-testid="submitButton">
+                <CheckIcon className="w-4"></CheckIcon> 儲存
+              </button>
+
               <button
                 className="btn btn-error btn-base-200"
                 data-testid="cancelButton"
