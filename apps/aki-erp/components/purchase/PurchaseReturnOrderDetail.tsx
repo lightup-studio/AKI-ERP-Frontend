@@ -22,6 +22,7 @@ import { parseDate } from '@internationalized/date';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useArtworksOrderTable } from '@utils/hooks';
 import useFieldForm, { FieldConfig } from '@utils/hooks/useFieldForm';
+import usePermission, { Action } from '@utils/hooks/usePermission';
 import cx from 'classnames';
 import dateFnsFormat from 'date-fns/format';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
@@ -73,6 +74,8 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
   const router = useRouter();
   const { id } = useParams();
   const searchParams = useSearchParams();
+
+  const { hasPermission } = usePermission();
 
   const [draftArtworks, setDraftArtworks] = useState<ArtworkDetail<ArtworkMetadata>[]>([]);
 
@@ -312,12 +315,14 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
                 <XMarkIcon className="w-4"></XMarkIcon> 取消
               </button>
             </div>
-          ) : (
+          ) : hasPermission([Action.UPDATE_ORDER]) ? (
             <div className="bg-base-100 my-4">
               <button className="btn btn-warning" onClick={handleSubmit(onUpdate)}>
                 修改
               </button>
             </div>
+          ) : (
+            <></>
           )}
         </div>
       </div>
