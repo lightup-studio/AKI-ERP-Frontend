@@ -200,10 +200,12 @@ const PurchaseOrders = () => {
             刪除
           </button>
           <i className="flex-grow"></i>
-          <Link className="btn btn-info" href={`${pathname}/add?${searchParams.toString()}`}>
-            <PlusIcon className="h-5 w-5"></PlusIcon>
-            新增進貨單
-          </Link>
+          {hasPermission([Action.CREATE_ORDER]) && (
+            <Link className="btn btn-info" href={`${pathname}/add?${searchParams.toString()}`}>
+              <PlusIcon className="h-5 w-5"></PlusIcon>
+              新增進貨單
+            </Link>
+          )}
         </div>
 
         <div className="bg-base-100 h-full w-full pb-6 text-center">{tableBlock}</div>

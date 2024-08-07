@@ -25,6 +25,7 @@ import { parseDate } from '@internationalized/date';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useArtworksOrderTable } from '@utils/hooks';
 import useFieldForm, { FieldConfig } from '@utils/hooks/useFieldForm';
+import usePermission, { Action } from '@utils/hooks/usePermission';
 
 type FormData = {
   transporter?: string;
@@ -45,6 +46,8 @@ interface TransferOrderDetailProps {
 const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) => {
   const router = useRouter();
   const { id } = useParams();
+
+  const { hasPermission } = usePermission();
 
   const configs: FieldConfig<FormData>[] = [
     {
@@ -239,12 +242,14 @@ const TransferOrderDetail: React.FC<TransferOrderDetailProps> = ({ disabled }) =
                 <XMarkIcon className="w-4"></XMarkIcon> 取消
               </button>
             </div>
-          ) : (
+          ) : hasPermission([Action.UPDATE_ORDER]) ? (
             <div className="bg-base-100 my-4">
               <button className="btn btn-warning" onClick={handleSubmit(onUpdate)}>
                 修改
               </button>
             </div>
+          ) : (
+            <></>
           )}
         </div>
       </div>
