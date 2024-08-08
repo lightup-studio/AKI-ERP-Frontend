@@ -10,7 +10,7 @@ import {
   patchArtworksBatchId,
   updateRepairOrder,
 } from '@data-access/apis';
-import { CreateOrUpdateRepairOrderRequest } from '@data-access/models';
+import { CreateOrUpdateRepairOrderRequest, Status } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -167,6 +167,7 @@ const RepairOrderDetail: React.FC<RepairOrderDetailProps> = ({ disabled }) => {
         patchArtworksBatchId({
           idList: artworkIdList,
           properties: {
+            status: Status.Disabled,
             metadata: {
               storeType: StoreType.REPAIR,
               repairDepartment: formData.repairDepartment,

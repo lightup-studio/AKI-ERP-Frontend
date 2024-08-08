@@ -2,7 +2,12 @@ import { rangeRight } from 'lodash-es';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Option as ComboboxOption } from '@components/shared/MyCombobox';
-import { assetsTypeOptions, salesTypeOptions, storeTypeOptions } from '@constants/artwork.constant';
+import {
+  assetsTypeOptions,
+  salesTypeOptions,
+  StoreType,
+  storeTypeOptions,
+} from '@constants/artwork.constant';
 import axios from '@contexts/axios';
 import {
   ArtworkDetail,
@@ -110,7 +115,24 @@ export async function fetchArtworkList(
 ) {
   const roleassetsTypes = assetsTypes?.map((item) => `roleassetsType=${item}`).join('&');
 
-  const queryString = (searchParams ? [...searchParams.entries()] : [])
+  if (!searchParams) {
+    searchParams = new URLSearchParams();
+  }
+
+  if (!searchParams.has('storeTypes')) {
+    if (status === 'Enabled') {
+      searchParams.append('storeTypes', StoreType.IN_STOCK);
+    } else if (status === 'Disabled') {
+      searchParams.append('storeTypes', StoreType.LEND);
+      searchParams.append('storeTypes', StoreType.NONE);
+      searchParams.append('storeTypes', StoreType.REPAIR);
+      searchParams.append('storeTypes', StoreType.RETURNED_LEND_OR_RETURNED_REPAIR);
+      searchParams.append('storeTypes', StoreType.RETURNED_SHIPPING);
+      searchParams.append('storeTypes', StoreType.SHIPPING);
+    }
+  }
+
+  const queryString = [...searchParams.entries()]
     .map(([key, value]) => {
       if (key === 'nationalities') return `countryCode=${value}`;
       if (key === 'artists') return `artistName=${value}`;
