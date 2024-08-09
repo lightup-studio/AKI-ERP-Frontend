@@ -28,7 +28,7 @@ export enum Action {
   READ_ASSETSTYPE_A = 'READ_ASSETSTYPE_A',
   READ_ASSETSTYPE_B = 'READ_ASSETSTYPE_B',
   READ_ASSETSTYPE_C = 'READ_ASSETSTYPE_C',
-  UPDATE_SALES_INFO = 'UPDATE_SALES_INFO',
+  UPDATE_SALESINFO = 'UPDATE_SALESINFO',
 }
 
 const config: Record<string, Record<string, boolean>> = {
@@ -52,7 +52,7 @@ const config: Record<string, Record<string, boolean>> = {
     [Action.READ_ASSETSTYPE_A]: true,
     [Action.READ_ASSETSTYPE_B]: true,
     [Action.READ_ASSETSTYPE_C]: true,
-    [Action.UPDATE_SALES_INFO]: true,
+    [Action.UPDATE_SALESINFO]: true,
   },
   [Role.WAREHOUSE]: {
     [Action.CREATE_ARTWORK]: true,
@@ -68,7 +68,7 @@ const config: Record<string, Record<string, boolean>> = {
     [Action.READ_ASSETSTYPE_A]: true,
     [Action.READ_ASSETSTYPE_B]: true,
     [Action.READ_ASSETSTYPE_C]: true,
-    [Action.UPDATE_SALES_INFO]: true,
+    [Action.UPDATE_SALESINFO]: true,
   },
   [Role.EXHIBITION]: {
     [Action.CREATE_ARTWORK]: true,
@@ -89,7 +89,7 @@ const config: Record<string, Record<string, boolean>> = {
     [Action.DELETE_COLLECTOR]: true,
     [Action.READ_ASSETSTYPE_A]: true,
     [Action.READ_ASSETSTYPE_B]: true,
-    [Action.UPDATE_SALES_INFO]: true,
+    [Action.UPDATE_SALESINFO]: true,
   },
   [Role.ASSISTANT]: {
     [Action.CREATE_ARTWORK]: true,

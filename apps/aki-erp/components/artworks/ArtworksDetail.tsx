@@ -1038,7 +1038,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
-                      disabled={!hasPermission([Action.UPDATE_SALES_INFO])}
+                      disabled={!hasPermission([Action.UPDATE_SALESINFO])}
                       className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salesName,
                       })}
@@ -1059,7 +1059,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
-                      disabled={!hasPermission([Action.UPDATE_SALES_INFO])}
+                      disabled={!hasPermission([Action.UPDATE_SALESINFO])}
                       className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salseReciver,
                       })}
@@ -1080,7 +1080,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
-                      disabled={!hasPermission([Action.UPDATE_SALES_INFO])}
+                      disabled={!hasPermission([Action.UPDATE_SALESINFO])}
                       className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salesPhone,
                       })}
@@ -1101,7 +1101,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
-                      disabled={!hasPermission([Action.UPDATE_SALES_INFO])}
+                      disabled={!hasPermission([Action.UPDATE_SALESINFO])}
                       className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salesAddress,
                       })}
@@ -1122,7 +1122,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   </label>
                   <div className="relative flex-1">
                     <input
-                      disabled={!hasPermission([Action.UPDATE_SALES_INFO])}
+                      disabled={!hasPermission([Action.UPDATE_SALESINFO])}
                       className={cx('input input-bordered w-full max-w-xs', {
                         'input-error': errors.metadata?.salesDate,
                       })}
