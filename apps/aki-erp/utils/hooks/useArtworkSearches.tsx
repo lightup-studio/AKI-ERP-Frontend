@@ -1,11 +1,21 @@
-import { useEffect, useState } from 'react';
+import {
+  useEffect,
+  useState,
+} from 'react';
 
-import MyCombobox, { Option as ComboboxOption } from '@components/shared/MyCombobox';
+import {
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
+
+import MyCombobox, {
+  Option as ComboboxOption,
+} from '@components/shared/MyCombobox';
 import { fetchSelectOptions } from '@data-access/apis/artworks.api';
 import { XMarkIcon } from '@heroicons/react/20/solid';
 import { useQuery } from '@tanstack/react-query';
 import { removeSingleValueForSearchParams } from '@utils/searchParamsUtil';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export type SelectItemKey = keyof Awaited<ReturnType<typeof fetchSelectOptions>>;
 
@@ -77,7 +87,7 @@ export const useArtworkSearches = () => {
 
   useEffect(() => {
     if (!selectOptionsQuery.data) return;
-    searchParams.getAll('otherInfos'); //?
+
     const selectedOptions = ([...searchParams.entries()] as [SelectItemKey, string][])
       .filter(([key]) => key in selectOptionsQuery.data)
       .map<SelectedOption>(([key, value]) => ({
@@ -123,8 +133,6 @@ export const useArtworkSearches = () => {
     selectItemKey,
     selectedOptionValue,
   }: OnSelectionChangeValue) => {
-    selectItemKey; //?
-    selectedOptionValue; //?
     const values = params.getAll(selectItemKey);
     if (!values.includes(selectedOptionValue)) {
       params.append(selectItemKey, selectedOptionValue);
