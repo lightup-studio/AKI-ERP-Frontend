@@ -37,13 +37,13 @@ const useArtworksOrderTable = ({
       header: '編號',
       accessorKey: 'displayId',
       cell: ({ row }) => (
-        <Link
+        <a
           className="text-info flex items-center whitespace-nowrap"
           href={`/artworks/${row.original.displayId}`}
         >
           {row.original.displayId}
           <PencilSquareIcon className="ml-2 inline-block h-4 w-4"></PencilSquareIcon>
-        </Link>
+        </a>
       ),
     },
     {
@@ -143,8 +143,8 @@ const useArtworksOrderTable = ({
             <option value={1}>B</option>
             <option value={2}>C</option>
             <option value={3}>D1</option>
-            <option value={4}>D2</option>
-            <option value={5}>E</option>
+            <option value={5}>D2</option>
+            <option value={4}>E</option>
           </select>
         );
       },

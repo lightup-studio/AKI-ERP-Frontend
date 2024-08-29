@@ -865,8 +865,8 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                       <option value={1}>B</option>
                       <option value={2}>C</option>
                       <option value={3}>D1</option>
-                      <option value={4}>D2</option>
-                      <option value={5}>E</option>
+                      <option value={5}>D2</option>
+                      <option value={4}>E</option>
                     </select>
                     {errors.warehouseId && (
                       <p className="text-error absolute text-xs italic">
