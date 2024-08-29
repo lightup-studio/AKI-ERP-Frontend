@@ -1,22 +1,11 @@
 'use client';
 
-import {
-  useEffect,
-  useState,
-} from 'react';
+import { useEffect, useState } from 'react';
 
 import cx from 'classnames';
 import dateFnsFormat from 'date-fns/format';
-import {
-  useParams,
-  useRouter,
-  useSearchParams,
-} from 'next/navigation';
-import {
-  showConfirm,
-  showError,
-  showSuccess,
-} from 'utils/swalUtil';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
 import * as yup from 'yup';
 
 import Button from '@components/shared/Button';
@@ -34,17 +23,12 @@ import {
   ArtworkDetail,
   ArtworkMetadata,
   CreateOrUpdateLendReturnOrderRequest,
+  Status,
 } from '@data-access/models';
-import {
-  CheckIcon,
-  XMarkIcon,
-} from '@heroicons/react/20/solid';
+import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
-import {
-  useMutation,
-  useQuery,
-} from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useArtworksOrderTable } from '@utils/hooks';
 import useFieldForm, { FieldConfig } from '@utils/hooks/useFieldForm';
 import usePermission, { Action } from '@utils/hooks/usePermission';
@@ -205,6 +189,7 @@ const LendReturnOrderDetail: React.FC<LendReturnOrderDetailProps> = ({ disabled 
         patchArtworksBatchId({
           idList: artworkIdList,
           properties: {
+            status: Status.Enabled,
             metadata: {
               storeType: StoreType.IN_STOCK,
               lendDepartment: formData.lendDepartment,

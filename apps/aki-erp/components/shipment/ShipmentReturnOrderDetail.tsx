@@ -10,7 +10,7 @@ import {
   patchArtworksBatchId,
   updateSalesReturnOrder,
 } from '@data-access/apis';
-import { CreateOrUpdateSalesReturnOrderRequest } from '@data-access/models';
+import { CreateOrUpdateSalesReturnOrderRequest, Status } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -173,8 +173,9 @@ const ShipmentReturnOrderDetail: React.FC<ShipmentReturnOrderDetailProps> = ({ d
         patchArtworksBatchId({
           idList: artworkIdList,
           properties: {
+            status: Status.Enabled,
             metadata: {
-              storeType: StoreType.RETURNED_SHIPPING,
+              storeType: StoreType.IN_STOCK,
               shippingDepartment: undefined,
               returnedShippingDepartment: formData.shippingDepartment,
             },

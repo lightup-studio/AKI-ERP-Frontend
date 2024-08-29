@@ -10,7 +10,7 @@ import {
   patchArtworksBatchId,
   updateLendOrder,
 } from '@data-access/apis';
-import { CreateOrUpdateLendOrderRequest } from '@data-access/models';
+import { CreateOrUpdateLendOrderRequest, Status } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -167,6 +167,7 @@ const LendOrderDetail: React.FC<LendOrderDetailProps> = ({ disabled }) => {
         patchArtworksBatchId({
           idList: artworkIdList,
           properties: {
+            status: Status.Disabled,
             metadata: {
               storeType: StoreType.LEND,
               lendDepartment: formData.lendDepartment,

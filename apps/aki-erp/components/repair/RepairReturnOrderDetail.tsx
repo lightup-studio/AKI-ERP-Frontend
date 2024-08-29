@@ -15,6 +15,7 @@ import {
   ArtworkDetail,
   ArtworkMetadata,
   CreateOrUpdateRepairReturnOrderRequest,
+  Status,
 } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -186,6 +187,7 @@ const RepairReturnOrderDetail: React.FC<RepairReturnOrderDetailProps> = ({ disab
         patchArtworksBatchId({
           idList: artworkIdList,
           properties: {
+            status: Status.Enabled,
             metadata: {
               storeType: StoreType.IN_STOCK,
               repairDepartment: undefined,

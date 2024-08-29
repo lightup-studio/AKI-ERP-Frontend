@@ -15,6 +15,7 @@ import {
   ArtworkDetail,
   ArtworkMetadata,
   CreateOrUpdatePurchaseReturnOrderRequest,
+  Status,
 } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -186,8 +187,9 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
         patchArtworksBatchId({
           idList: artworkIdList,
           properties: {
+            status: Status.Disabled,
             metadata: {
-              storeType: StoreType.NONE,
+              storeType: StoreType.RETURNED_SHIPPING,
             },
           },
         }),

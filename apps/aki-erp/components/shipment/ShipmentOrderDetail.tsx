@@ -18,7 +18,7 @@ import {
   patchArtworksBatchId,
   updateSalesOrder,
 } from '@data-access/apis';
-import { CreateOrUpdateSalesOrderRequest } from '@data-access/models';
+import { CreateOrUpdateSalesOrderRequest, Status } from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -169,6 +169,7 @@ const ShipmentOrderDetail: React.FC<ShipmentOrderDetailProps> = ({ disabled }) =
         patchArtworksBatchId({
           idList: artworkIdList,
           properties: {
+            status: Status.Disabled,
             metadata: {
               storeType: StoreType.SHIPPING,
               salesType: 'sold',
