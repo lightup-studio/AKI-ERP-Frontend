@@ -2,7 +2,12 @@ import { rangeRight } from 'lodash-es';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Option as ComboboxOption } from '@components/shared/MyCombobox';
-import { assetsTypeOptions, salesTypeOptions, storeTypeOptions } from '@constants/artwork.constant';
+import {
+  assetsTypeOptions,
+  salesTypeOptions,
+  storeTypeOptions,
+} from '@constants/artwork.constant';
+import { DEFAULT_PAGE_SIZE } from '@constants/page.constant';
 import axios from '@contexts/axios';
 import {
   ArtworkDetail,
@@ -11,7 +16,6 @@ import {
   Pagination,
 } from '@data-access/models';
 
-import { DEFAULT_PAGE_SIZE } from '@constants/page.constant';
 import { fetchCountryList } from './countries.api';
 
 export async function fetchSelectOptions() {

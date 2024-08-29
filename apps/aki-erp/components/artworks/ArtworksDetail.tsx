@@ -1,30 +1,53 @@
 'use client';
 
-import { ChangeEvent, useEffect, useState } from 'react';
+import {
+  ChangeEvent,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
-import { StoreType, assetsTypeOptions } from '@constants/artwork.constant';
+import cx from 'classnames';
 import {
   createOrUpdateArtworkDetail,
   fetchArtworkDetailByDisplayId,
 } from 'data-access/apis/artworks.api';
 import { uploadImageToS3 } from 'data-access/apis/files.api';
-import { ArtworkDetail, Status } from 'data-access/models';
-import { useFieldArray, useForm } from 'react-hook-form';
-import { showError, showSuccess } from 'utils/swalUtil';
+import {
+  ArtworkDetail,
+  Status,
+} from 'data-access/models';
+import {
+  useParams,
+  useRouter,
+} from 'next/navigation';
+import {
+  useFieldArray,
+  useForm,
+} from 'react-hook-form';
+import {
+  showError,
+  showSuccess,
+} from 'utils/swalUtil';
 import * as yup from 'yup';
 
+import MyCombobox from '@components/shared/MyCombobox';
+import {
+  assetsTypeOptions,
+  StoreType,
+} from '@constants/artwork.constant';
+import { fetchCountryList } from '@data-access/apis/countries.api';
+import { usefetchPartnerList } from '@data-access/hooks';
 import { CheckIcon } from '@heroicons/react/20/solid';
 import PlusIcon from '@heroicons/react/24/outline/PlusIcon';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useMutation, useQuery } from '@tanstack/react-query';
-
-import { fetchCountryList } from '@data-access/apis/countries.api';
-import { usefetchPartnerList } from '@data-access/hooks';
+import {
+  useMutation,
+  useQuery,
+} from '@tanstack/react-query';
 import { usePremission } from '@utils/hooks';
 import { Action } from '@utils/hooks/usePermission';
-import cx from 'classnames';
-import { useParams, useRouter } from 'next/navigation';
 
 const salesInfoDisplayed = true;
 
@@ -112,6 +135,24 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
   const { data: artistList } = usefetchPartnerList({ type: 'Artist', pageSize: 100000 });
   const { data: companyList } = usefetchPartnerList({ type: 'Company', pageSize: 100000 });
 
+  const artistZhNameOptions = useMemo(() => {
+    return artistList?.data
+      .filter((item) => item.zhName.trim())
+      .map((item) => ({
+        label: item.zhName,
+        value: item.zhName,
+      }));
+  }, [artistList?.data]);
+
+  const artistEnNameOptions = useMemo(() => {
+    return artistList?.data
+      .filter((item) => item.enName.trim())
+      .map((item) => ({
+        label: item.enName,
+        value: item.enName,
+      }));
+  }, [artistList?.data]);
+
   const mutation = useMutation({
     mutationFn: (data: ArtworkDetail) => createOrUpdateArtworkDetail(data),
     onSuccess: async () => {
@@ -133,6 +174,7 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
     formState: { errors },
     trigger,
     watch,
+    getValues,
   } = useForm<ArtworkDetail>({
     defaultValues: {
       zhName: '',
@@ -319,57 +361,31 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                   <div className="input-group border-base-200 rounded-lg border ">
                     <div className="bg-base-200 flex flex-wrap items-center gap-1 p-1">
                       <div>
-                        <select
+                        <MyCombobox
                           disabled={!hasPermission([Action.UPDATE_ORDER])}
-                          className={cx('select select-bordered w-full max-w-xs text-lg', {
-                            'select-error': errors.artists,
-                          })}
-                          {...register(`artists.${index}.zhName`, {
-                            onChange: () => trigger('artists'),
-                          })}
-                        >
-                          <option value="" disabled>
-                            請選擇中文名稱
-                          </option>
-                          {artistList?.data
-                            .filter((item) => item.zhName)
-                            .map((item) => (
-                              <option
-                                key={`artist__option-${item.id}`}
-                                data-testid={`artist__option-${item.id}`}
-                                value={item.zhName}
-                              >
-                                {item.zhName}
-                              </option>
-                            ))}
-                        </select>
+                          placeholder="請選擇中文名稱"
+                          options={artistZhNameOptions}
+                          value={getValues(`artists.${index}.zhName`)}
+                          autoClearQuery={false}
+                          onSelectionChange={(option) => {
+                            setValue(`artists.${index}.zhName`, option.value);
+                            trigger('artists');
+                          }}
+                        ></MyCombobox>
                       </div>
 
                       <div>
-                        <select
+                        <MyCombobox
                           disabled={!hasPermission([Action.UPDATE_ORDER])}
-                          className={cx('select select-bordered w-full max-w-xs text-lg', {
-                            'select-error': errors.artists,
-                          })}
-                          {...register(`artists.${index}.enName`, {
-                            onChange: () => trigger('artists'),
-                          })}
-                        >
-                          <option value="" disabled>
-                            請選擇英文名稱
-                          </option>
-                          {artistList?.data
-                            .filter((item) => item.enName)
-                            .map((item) => (
-                              <option
-                                key={`artist__option-${item.id}`}
-                                data-testid={`artist__option-${item.id}`}
-                                value={item.enName}
-                              >
-                                {item.enName}
-                              </option>
-                            ))}
-                        </select>
+                          placeholder="請選擇英文名稱"
+                          options={artistEnNameOptions}
+                          value={getValues(`artists.${index}.enName`)}
+                          autoClearQuery={false}
+                          onSelectionChange={(option) => {
+                            setValue(`artists.${index}.enName`, option.value);
+                            trigger('artists');
+                          }}
+                        ></MyCombobox>
                       </div>
                       {errors.artists?.at?.(index) && (
                         <p className="text-error absolute bottom-0 translate-y-full text-xs italic">
