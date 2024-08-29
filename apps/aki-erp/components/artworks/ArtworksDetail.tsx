@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  ChangeEvent,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 
 import cx from 'classnames';
 import {
@@ -13,39 +8,21 @@ import {
   fetchArtworkDetailByDisplayId,
 } from 'data-access/apis/artworks.api';
 import { uploadImageToS3 } from 'data-access/apis/files.api';
-import {
-  ArtworkDetail,
-  Status,
-} from 'data-access/models';
-import {
-  useParams,
-  useRouter,
-} from 'next/navigation';
-import {
-  useFieldArray,
-  useForm,
-} from 'react-hook-form';
-import {
-  showError,
-  showSuccess,
-} from 'utils/swalUtil';
+import { ArtworkDetail, Status } from 'data-access/models';
+import { useParams, useRouter } from 'next/navigation';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { showError, showSuccess } from 'utils/swalUtil';
 import * as yup from 'yup';
 
 import MyCombobox from '@components/shared/MyCombobox';
-import {
-  assetsTypeOptions,
-  StoreType,
-} from '@constants/artwork.constant';
+import { assetsTypeOptions, StoreType } from '@constants/artwork.constant';
 import { fetchCountryList } from '@data-access/apis/countries.api';
 import { usefetchPartnerList } from '@data-access/hooks';
 import { CheckIcon } from '@heroicons/react/20/solid';
 import PlusIcon from '@heroicons/react/24/outline/PlusIcon';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  useMutation,
-  useQuery,
-} from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { usePremission } from '@utils/hooks';
 import { Action } from '@utils/hooks/usePermission';
 
@@ -975,26 +952,6 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
                       {...register('metadata.repairNote')}
                     />
                   </label>
-
-                  <label className="label gap-2">
-                    <input
-                      type="radio"
-                      disabled={!hasPermission([Action.UPDATE_ORDER])}
-                      className="radio radio-secondary"
-                      value={StoreType.RETURNED_LEND_OR_RETURNED_REPAIR}
-                      {...register('metadata.storeType')}
-                    />
-                    <span className="label-text">已歸還，單位</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="input input-bordered"
-                    disabled={
-                      watch('metadata.storeType') !== StoreType.RETURNED_LEND_OR_RETURNED_REPAIR ||
-                      !hasPermission([Action.UPDATE_ORDER])
-                    }
-                    {...register('metadata.returnRepairDepartment')}
-                  />
 
                   <label className="label gap-2">
                     <input
