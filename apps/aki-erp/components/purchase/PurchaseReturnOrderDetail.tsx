@@ -189,7 +189,7 @@ const PurchaseReturnOrderDetail: React.FC<PurchaseReturnOrderDetailProps> = ({ d
           properties: {
             status: Status.Disabled,
             metadata: {
-              storeType: StoreType.NONE,
+              storeType: StoreType.RETURNED_SHIPPING,
             },
           },
         }),

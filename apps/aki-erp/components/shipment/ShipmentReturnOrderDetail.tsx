@@ -6,11 +6,17 @@ import { PAGE_SIZES } from '@constants/page.constant';
 import {
   createSalesReturnOrder,
   exportSalesReturnOrderById,
+  fetchArtworkDetail,
   fetchSalesReturnOrderId,
   patchArtworksBatchId,
   updateSalesReturnOrder,
 } from '@data-access/apis';
-import { CreateOrUpdateSalesReturnOrderRequest, Status } from '@data-access/models';
+import {
+  ArtworkDetail,
+  ArtworkMetadata,
+  CreateOrUpdateSalesReturnOrderRequest,
+  Status,
+} from '@data-access/models';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { parseDate } from '@internationalized/date';
@@ -20,8 +26,8 @@ import useFieldForm, { FieldConfig } from '@utils/hooks/useFieldForm';
 import usePermission, { Action } from '@utils/hooks/usePermission';
 import cx from 'classnames';
 import dateFnsFormat from 'date-fns/format';
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
 import * as yup from 'yup';
 
@@ -68,8 +74,11 @@ interface ShipmentReturnOrderDetailProps {
 const ShipmentReturnOrderDetail: React.FC<ShipmentReturnOrderDetailProps> = ({ disabled }) => {
   const router = useRouter();
   const { id } = useParams();
+  const searchParams = useSearchParams();
 
   const { hasPermission } = usePermission();
+
+  const [draftArtworks, setDraftArtworks] = useState<ArtworkDetail<ArtworkMetadata>[]>([]);
 
   const configs: FieldConfig<FormData>[] = [
     {
@@ -124,6 +133,13 @@ const ShipmentReturnOrderDetail: React.FC<ShipmentReturnOrderDetailProps> = ({ d
     resolver: yupResolver<FormData>(schema),
   });
 
+  useEffect(() => {
+    const artworkIds = searchParams.getAll('artworkId');
+    Promise.all(artworkIds.map((item) => fetchArtworkDetail(item))).then((list) =>
+      setDraftArtworks(list),
+    );
+  }, []);
+
   const { data, isLoading } = useQuery(
     ['fetchSalesReturnOrderId', id],
     () => fetchSalesReturnOrderId(+id),
@@ -151,7 +167,7 @@ const ShipmentReturnOrderDetail: React.FC<ShipmentReturnOrderDetailProps> = ({ d
   }, [data]);
 
   const { table, tableBlock } = useArtworksOrderTable({
-    artworks: data?.artworks,
+    artworks: [...draftArtworks, ...(data?.artworks || [])],
     disabled,
     isLoading,
   });
@@ -173,9 +189,9 @@ const ShipmentReturnOrderDetail: React.FC<ShipmentReturnOrderDetailProps> = ({ d
         patchArtworksBatchId({
           idList: artworkIdList,
           properties: {
-            status: Status.Disabled,
+            status: Status.Enabled,
             metadata: {
-              storeType: StoreType.RETURNED_SHIPPING,
+              storeType: StoreType.IN_STOCK,
               shippingDepartment: undefined,
               returnedShippingDepartment: formData.shippingDepartment,
             },

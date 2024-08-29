@@ -1,5 +1,13 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
+import cx from 'classnames';
+import dateFnsFormat from 'date-fns/format';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
+import * as yup from 'yup';
+
 import Button from '@components/shared/Button';
 import { StoreType } from '@constants/artwork.constant';
 import { PAGE_SIZES } from '@constants/page.constant';
@@ -24,12 +32,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useArtworksOrderTable } from '@utils/hooks';
 import useFieldForm, { FieldConfig } from '@utils/hooks/useFieldForm';
 import usePermission, { Action } from '@utils/hooks/usePermission';
-import cx from 'classnames';
-import dateFnsFormat from 'date-fns/format';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { showConfirm, showError, showSuccess } from 'utils/swalUtil';
-import * as yup from 'yup';
 
 type FormData = {
   lendDepartment?: string;
@@ -187,9 +189,9 @@ const LendReturnOrderDetail: React.FC<LendReturnOrderDetailProps> = ({ disabled 
         patchArtworksBatchId({
           idList: artworkIdList,
           properties: {
-            status: Status.Disabled,
+            status: Status.Enabled,
             metadata: {
-              storeType: StoreType.RETURNED_LEND_OR_RETURNED_REPAIR,
+              storeType: StoreType.IN_STOCK,
               lendDepartment: formData.lendDepartment,
             },
           },
