@@ -146,7 +146,7 @@ const ShipmentOrderDetail: React.FC<ShipmentOrderDetailProps> = ({ disabled }) =
     setValue('metadata', data.metadata);
   }, [data]);
 
-  const { table, tableBlock } = useArtworksOrderTable({
+  const { table, tableBlock, selectedRows, selectedRowsCount } = useArtworksOrderTable({
     artworks: data?.artworks,
     disabled,
     isLoading,
@@ -239,6 +239,13 @@ const ShipmentOrderDetail: React.FC<ShipmentOrderDetailProps> = ({ disabled }) =
     await exportOrderMutation.mutateAsync(+id);
   };
 
+  const handleAddOrders = () => {
+    const query = new URLSearchParams();
+    selectedRows.map((artwork) => query.append('artworkId', artwork.id.toString()));
+
+    router.push(`/shipment/return-orders/add?${query.toString()}`);
+  };
+
   return (
     <>
       <div className="card bg-base-100 min-h-full w-full p-6 shadow-xl">
@@ -283,6 +290,19 @@ const ShipmentOrderDetail: React.FC<ShipmentOrderDetailProps> = ({ disabled }) =
         <div className="divider my-2"></div>
 
         <div className="bg-base-100 h-full w-full text-center">
+          {disabled && (
+            <div className="flex items-center gap-2">
+              <span>已選擇 {selectedRowsCount} 筆</span>
+              <button
+                className="btn btn-accent"
+                onClick={handleAddOrders}
+                disabled={selectedRowsCount === 0}
+              >
+                加入退貨單
+              </button>
+            </div>
+          )}
+
           {tableBlock}
 
           {!disabled ? (
