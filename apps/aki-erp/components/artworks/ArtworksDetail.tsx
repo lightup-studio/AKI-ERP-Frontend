@@ -256,8 +256,11 @@ const ArtworksDetail = ({ status }: { status: Status }): JSX.Element => {
       data.metadata.salesType = 'sold';
     }
 
-    if (data.metadata?.storeType === StoreType.NONE) data.status = Status.Disabled;
-    if (data.metadata?.storeType === StoreType.IN_STOCK) data.status = Status.Enabled;
+    if (data.metadata?.storeType === StoreType.IN_STOCK) {
+      data.status = Status.Enabled;
+    } else {
+      data.status = Status.Disabled;
+    }
 
     if (data.metadata && data.metadata.storeType !== StoreType.IN_STOCK) {
       data.warehouseId = -1;
