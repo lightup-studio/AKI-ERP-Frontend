@@ -10,8 +10,8 @@ import {
 const url = '/api/Order/transfer';
 
 export const fetchTransferOrder = async (
-  status: Status,
   queryString?: string,
+  status?: Status,
 ): Promise<Pagination<TransferOrder>> => {
   const params = new URLSearchParams(queryString);
   const query = new URLSearchParams();
@@ -32,8 +32,10 @@ export const fetchTransferOrder = async (
     query.append(key, value);
   });
 
+  if (status) query.append('status', status);
+
   const res = await axios.get<Pagination<TransferOrder>>(
-    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`,
+    `${url}${query.toString() ? `?${query.toString()}` : ''}`,
   );
 
   return res.data;

@@ -10,8 +10,8 @@ import {
 const url = '/api/Order/lendReturn';
 
 export const fetchLendReturnOrder = async (
-  status: Status,
   queryString?: string,
+  status?: Status,
 ): Promise<Pagination<LendReturnOrder>> => {
   const params = new URLSearchParams(queryString);
   const query = new URLSearchParams();
@@ -32,8 +32,10 @@ export const fetchLendReturnOrder = async (
     query.append(key, value);
   });
 
+  if (status) query.append('status', status);
+
   const res = await axios.get<Pagination<LendReturnOrder>>(
-    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`,
+    `${url}${query.toString() ? `?${query.toString()}` : ''}`,
   );
 
   return res.data;

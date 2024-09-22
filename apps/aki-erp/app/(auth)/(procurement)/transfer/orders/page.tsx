@@ -76,7 +76,7 @@ const TransferOrders = () => {
   const params = new URLSearchParams(searchParams);
   const { data, isFetching, refetch } = useQuery({
     queryKey: ['transferOrder', params.toString()],
-    queryFn: () => fetchTransferOrder(Status.Enabled, params.toString()),
+    queryFn: () => fetchTransferOrder(params.toString()),
     enabled: !!selectItems,
     keepPreviousData: true,
   });

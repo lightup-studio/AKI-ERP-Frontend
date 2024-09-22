@@ -97,7 +97,7 @@ const RepairOrders = () => {
   const params = new URLSearchParams(searchParams);
   const { data, isFetching, refetch } = useQuery({
     queryKey: ['RepairOrder', params.toString()],
-    queryFn: () => fetchRepairOrder(Status.Enabled, params.toString()),
+    queryFn: () => fetchRepairOrder(params.toString()),
     enabled: !!selectItems,
     keepPreviousData: true,
   });

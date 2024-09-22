@@ -80,7 +80,7 @@ const PurchaseOrders = () => {
   const params = new URLSearchParams(searchParams);
   const { data, isFetching, refetch } = useQuery({
     queryKey: ['purchaseOrder', params.toString()],
-    queryFn: () => fetchPurchaseOrder(Status.Enabled, params.toString()),
+    queryFn: () => fetchPurchaseOrder(params.toString()),
     enabled: !!selectItems,
     keepPreviousData: true,
   });
