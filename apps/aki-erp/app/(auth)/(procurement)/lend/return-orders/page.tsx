@@ -97,7 +97,7 @@ const LendReturnOrders = () => {
   const params = new URLSearchParams(searchParams);
   const { data, isFetching, refetch } = useQuery({
     queryKey: ['LendReturnOrder', params.toString()],
-    queryFn: () => fetchLendReturnOrder(Status.Enabled, params.toString()),
+    queryFn: () => fetchLendReturnOrder(params.toString()),
     enabled: !!selectItems,
     keepPreviousData: true,
   });

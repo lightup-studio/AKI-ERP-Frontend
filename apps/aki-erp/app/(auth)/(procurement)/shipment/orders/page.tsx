@@ -97,7 +97,7 @@ const ShipmentOrders = () => {
   const params = new URLSearchParams(searchParams);
   const { data, isFetching, refetch } = useQuery({
     queryKey: ['SalesOrder', params.toString()],
-    queryFn: () => fetchSalesOrder(Status.Enabled, params.toString()),
+    queryFn: () => fetchSalesOrder(params.toString()),
     enabled: !!selectItems,
     keepPreviousData: true,
   });

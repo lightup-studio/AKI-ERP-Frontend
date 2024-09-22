@@ -5,8 +5,8 @@ import { CreateOrUpdateLendOrderRequest, LendOrder, Pagination, Status } from '@
 const url = '/api/Order/lend';
 
 export const fetchLendOrder = async (
-  status: Status,
   queryString?: string,
+  status?: Status,
 ): Promise<Pagination<LendOrder>> => {
   const params = new URLSearchParams(queryString);
   const query = new URLSearchParams();
@@ -27,8 +27,10 @@ export const fetchLendOrder = async (
     query.append(key, value);
   });
 
+  if (status) query.append('status', status);
+
   const res = await axios.get<Pagination<LendOrder>>(
-    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`,
+    `${url}${query.toString() ? `?${query.toString()}` : ''}`,
   );
 
   return res.data;

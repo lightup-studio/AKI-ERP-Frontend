@@ -10,8 +10,8 @@ import {
 const url = '/api/Order/repair';
 
 export const fetchRepairOrder = async (
-  status: Status,
   queryString?: string,
+  status?: Status,
 ): Promise<Pagination<RepairOrder>> => {
   const params = new URLSearchParams(queryString);
   const query = new URLSearchParams();
@@ -32,8 +32,10 @@ export const fetchRepairOrder = async (
     query.append(key, value);
   });
 
+  if (status) query.append('status', status);
+
   const res = await axios.get<Pagination<RepairOrder>>(
-    `${url}?status=${status}${query.toString() ? `&${query.toString()}` : ''}`,
+    `${url}${query.toString() ? `?${query.toString()}` : ''}`,
   );
 
   return res.data;
