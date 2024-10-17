@@ -8,6 +8,7 @@ import {
   StoreType,
   storeTypeOptions,
 } from '@constants/artwork.constant';
+import { DEFAULT_PAGE_SIZE } from '@constants/page.constant';
 import axios from '@contexts/axios';
 import {
   ArtworkDetail,
@@ -16,7 +17,6 @@ import {
   Pagination,
 } from '@data-access/models';
 
-import { DEFAULT_PAGE_SIZE } from '@constants/page.constant';
 import { fetchCountryList } from './countries.api';
 
 export async function fetchSelectOptions() {
@@ -114,25 +114,19 @@ export async function fetchArtworkList(
   searchParams?: URLSearchParams,
 ) {
   const roleassetsTypes = assetsTypes?.map((item) => `roleassetsType=${item}`).join('&');
+  const arstoreTypes = (() => {
+    let storeTypes: StoreType[] = [];
 
-  if (!searchParams) {
-    searchParams = new URLSearchParams();
-  }
-
-  if (!searchParams.has('storeTypes')) {
     if (status === 'Enabled') {
-      searchParams.append('storeTypes', StoreType.IN_STOCK);
+      storeTypes.push(StoreType.IN_STOCK);
     } else if (status === 'Disabled') {
-      searchParams.append('storeTypes', StoreType.LEND);
-      searchParams.append('storeTypes', StoreType.NONE);
-      searchParams.append('storeTypes', StoreType.REPAIR);
-      searchParams.append('storeTypes', StoreType.RETURNED_LEND_OR_RETURNED_REPAIR);
-      searchParams.append('storeTypes', StoreType.RETURNED_SHIPPING);
-      searchParams.append('storeTypes', StoreType.SHIPPING);
+      storeTypes.push(StoreType.LEND, StoreType.NONE, StoreType.REPAIR, StoreType.RETURNED_LEND_OR_RETURNED_REPAIR, StoreType.RETURNED_SHIPPING, StoreType.SHIPPING);
     }
-  }
 
-  const queryString = [...searchParams.entries()]
+    return storeTypes.map((item) => `arstoreType=${item}`).join('&');
+  })();
+
+  const queryString = [...(searchParams?.entries() ?? [])]
     .map(([key, value]) => {
       if (key === 'nationalities') return `countryCode=${value}`;
       if (key === 'artists') return `artistName=${value}`;
@@ -154,7 +148,7 @@ export async function fetchArtworkList(
     .join('&');
 
   const res = await axios.get<Pagination<ArtworkDetail>>(`/api/artworks/query`, {
-    params: new URLSearchParams(`status=${status}&${roleassetsTypes}&${queryString}`),
+    params: new URLSearchParams(`status=${status}${roleassetsTypes && `&${arstoreTypes}`}${arstoreTypes && `&${arstoreTypes}`}${queryString && `&${queryString}`}`),
   });
   res.data.pageCount = Math.ceil(res.data.totalCount / res.data.take);
   return res.data;
