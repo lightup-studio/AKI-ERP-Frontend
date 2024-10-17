@@ -148,7 +148,7 @@ export async function fetchArtworkList(
     .join('&');
 
   const res = await axios.get<Pagination<ArtworkDetail>>(`/api/artworks/query`, {
-    params: new URLSearchParams(`status=${status}${roleassetsTypes && `&${arstoreTypes}`}${arstoreTypes && `&${arstoreTypes}`}${queryString && `&${queryString}`}`),
+    params: new URLSearchParams(`status=${status}${roleassetsTypes && `&${roleassetsTypes}`}${arstoreTypes && `&${arstoreTypes}`}${queryString && `&${queryString}`}`),
   });
   res.data.pageCount = Math.ceil(res.data.totalCount / res.data.take);
   return res.data;
